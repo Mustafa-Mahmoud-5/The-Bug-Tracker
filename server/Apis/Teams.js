@@ -32,10 +32,13 @@ exports.getTeam = async (req, res, next) => {
 
 	try {
 		const team = await Team.findById(teamId)
-			.populate({ path: 'members', select: User.publicProps().join(' ') })
-			.populate({ path: 'projects', select: Project.publicProps().join(' ') })
+			.populate({
+				path: 'projects',
+				select: Project.publicProps().join(' ') + ' bugs',
+				populate: { path: 'owner', select: User.publicProps().join(' ') }
+			})
 			.populate({ path: 'leader', select: User.publicProps().join(' ') })
-			.select('-notifications')
+			.select('-notifications -members')
 			.lean();
 		console.log('exports.getTeam -> team', team);
 

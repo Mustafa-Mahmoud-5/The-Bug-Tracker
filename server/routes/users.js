@@ -43,4 +43,6 @@ router.patch('/bugReopen', isAuth, usersApis.bugReopen);
 router.patch('/closeOrReOpenProject', isAuth, usersApis.closeOrReOpenProject);
 
 router.get('/bugDetails/:bugId', isAuth, usersApis.getBugDetails);
+
+router.get('/personalProjects', isAuth, usersApis.getPersonalProjects);
 module.exports = router;
