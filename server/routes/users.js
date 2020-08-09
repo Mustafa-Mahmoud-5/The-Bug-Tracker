@@ -5,6 +5,7 @@ const express = require('express'),
 	router = express.Router();
 
 const { body } = require('express-validator');
+router.get('/personalData', isAuth, usersApis.getPersonalUserData);
 
 router.patch(
 	'/editPersonalData',

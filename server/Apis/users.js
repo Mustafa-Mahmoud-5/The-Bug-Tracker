@@ -5,6 +5,20 @@ const sendError = require('../helpers/sendError'),
 	Bug = require('../models/Bug'),
 	fs = require('fs');
 
+exports.getPersonalUserData = async (req, res, next) => {
+	const { userId } = req;
+
+	try {
+		const user = await User.findById(userId).select(User.publicProps().join(' ') + ' privateKey email').lean();
+
+		if (!user) sendError('User is not found', 404);
+
+		res.status(200).json({ user });
+	} catch (error) {
+		if (!error.statusCode) error.statusCode = 500;
+		next(error);
+	}
+};
 exports.editPersonalData = async (req, res, next) => {
 	// this api edit the personalData (editing the )
 	const { userId, file } = req;
