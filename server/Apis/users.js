@@ -1,7 +1,8 @@
-const sendError = require('../helpers/sendError');
-const Project = require('../models/Project');
-const Team = require('../models/Team');
-const User = require('../models/User'),
+const sendError = require('../helpers/sendError'),
+	Project = require('../models/Project'),
+	Team = require('../models/Team'),
+	User = require('../models/User'),
+	Bug = require('../models/Bug'),
 	fs = require('fs');
 
 exports.editPersonalData = async (req, res, next) => {
@@ -89,6 +90,19 @@ exports.closeOrReOpenProject = async (req, res, next) => {
 	}
 };
 
+exports.editBugDetails = async (req, res, next) => {
+	const { userId } = req;
+
+	try {
+		const user = await User.findById().lean();
+	} catch (error) {
+		if (!error.statusCode) error.statusCode = 500;
+		next(error);
+	}
+};
+
+// ____________________________________GET APIS_______________________________________
+
 exports.getUserWithPrivateKey = async (req, res, next) => {
 	const { privateKey } = req.params;
 
@@ -112,6 +126,22 @@ exports.getPersonalProjects = async (req, res, next) => {
 		// returning bugs for getting the bugs length
 
 		res.status(200).json({ message: 'Projects fetched sussessfully', projects: personalProjects });
+	} catch (error) {
+		if (!error.statusCode) error.statusCode = 500;
+		next(error);
+	}
+};
+
+exports.getBugDetails = async (req, res, next) => {
+	const { bugId } = req.params;
+
+	try {
+		const bug = await Bug.findById(bugId)
+			.populate({ path: 'creator', select: User.publicProps().join(' ') })
+			.populate({ path: 'fixer', select: User.publicProps().join(' ') })
+			.lean();
+
+		res.status(200).json({ bug });
 	} catch (error) {
 		if (!error.statusCode) error.statusCode = 500;
 		next(error);
