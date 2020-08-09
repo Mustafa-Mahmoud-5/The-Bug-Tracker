@@ -1,7 +1,6 @@
 const express = require('express'),
 	isAuth = require('../middlewares/isAuth'),
 	checkValidation = require('../middlewares/checkValidation'),
-	multerUploader = require('../middlewares/multerUploader'),
 	usersApis = require('../Apis/users'),
 	router = express.Router();
 
@@ -40,5 +39,7 @@ router.post(
 router.patch('/fixBug', isAuth, usersApis.fixBug);
 
 router.patch('/bugReopen', isAuth, usersApis.bugReopen);
+
+router.patch('/closeOrReOpenProject', isAuth, usersApis.closeOrReOpenProject);
 
 module.exports = router;

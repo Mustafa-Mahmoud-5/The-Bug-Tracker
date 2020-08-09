@@ -83,6 +83,8 @@ class TeamClass {
 		const { _id: notificationId } = await Notification.create(notificationsObj);
 
 		team.notifications.unshift(notificationId);
+
+		// always save in the outer function in order to take advantage of promise.all
 	}
 }
 

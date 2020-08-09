@@ -1,5 +1,6 @@
 const sendError = require('../helpers/sendError');
 const Project = require('../models/Project');
+const Team = require('../models/Team');
 const User = require('../models/User'),
 	fs = require('fs');
 
@@ -44,7 +45,7 @@ exports.addNewBug = async (req, res, next) => {
 	try {
 		await Project.addBug(userId, req.body);
 
-		res.status(201).json({ message: 'Bug added successfully' });
+		res.status(201).json({ message: 'Bug added successfully', status: true });
 	} catch (error) {
 		if (!error.statusCode) error.statusCode = 500;
 		next(error);
@@ -55,9 +56,9 @@ exports.fixBug = async (req, res, next) => {
 	const { userId } = req;
 
 	try {
-		const result = await Project.fixBug(userId, req.body);
+		await Project.fixBug(userId, req.body);
 
-		res.status(200).json({ message: 'Bug fixed successfully', result: result });
+		res.status(200).json({ message: 'Bug fixed successfully', status: true });
 	} catch (error) {
 		if (!error.statusCode) error.statusCode = 500;
 		next(error);
@@ -67,9 +68,21 @@ exports.fixBug = async (req, res, next) => {
 exports.bugReopen = async (req, res, next) => {
 	const { userId } = req;
 	try {
-		const result = await Project.reOpenBug(userId, req.body);
+		await Project.reOpenBug(userId, req.body);
 
-		res.status(200).json({ message: 'Bug reOpened successfully', result: result });
+		res.status(200).json({ message: 'Bug reOpened successfully', status: true });
+	} catch (error) {
+		if (!error.statusCode) error.statusCode = 500;
+		next(error);
+	}
+};
+
+exports.closeOrReOpenProject = async (req, res, next) => {
+	const { userId } = req;
+	try {
+		await Project.closeOrReOpenProject(userId, req.body);
+
+		res.status(200).json({ status: true });
 	} catch (error) {
 		if (!error.statusCode) error.statusCode = 500;
 		next(error);
