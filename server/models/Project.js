@@ -158,6 +158,19 @@ class ProjectClass {
 		}
 		await project.save();
 	}
+
+	static analyzeProjectStatistics = project => {
+		// bug status 0 is buggy, 1 is fixed
+		const bugs = { total: 0, fixed: 0, buggy: 0 };
+
+		project.bugs.forEach(bug => {
+			bugs.total++;
+			if (bug.status === 0) bugs.buggy++;
+			if (bug.status === 1) bugs.fixed++;
+		});
+
+		return bugs;
+	};
 }
 
 projectSchema.loadClass(ProjectClass);

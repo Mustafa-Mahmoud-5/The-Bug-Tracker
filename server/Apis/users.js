@@ -196,7 +196,8 @@ exports.getProjectDetails = async (req, res, next) => {
 		// time line will have its own api
 		if (!project) sendError('Project is not founbd', 404);
 
-		res.status(200).json({ project });
+		const projectStatistics = Project.analyzeProjectStatistics(project);
+		res.status(200).json({ project, projectStatistics });
 	} catch (error) {
 		if (!error.statusCode) error.statusCode = 500;
 		next(error);
