@@ -68,7 +68,10 @@ class TeamClass {
 
 		team.members.pull(memberId);
 
-		await this.newNotification(team, 'memberManipulation', 'has Kicked', leaderId, null, memberId);
+		await Promise.all([
+			this.newNotification(team, 'memberManipulation', 'has Kicked', leaderId, null, memberId),
+			User.newNotification(memberId, leaderId, 'has kicked you out of his team.')
+		]);
 
 		await team.save();
 	}
