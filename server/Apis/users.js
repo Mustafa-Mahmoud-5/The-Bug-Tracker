@@ -94,11 +94,56 @@ exports.closeOrReOpenProject = async (req, res, next) => {
 
 exports.editBugDetails = async (req, res, next) => {
 	const { userId } = req;
+	const { bugId, newName, newDescription } = req.body;
+	console.log('exports.editBugDetails -> bugId', bugId);
 
 	try {
-		const user = await User.findById().lean();
+		const user = await User.findById(userId).lean();
+
+		if (!user) sendError('User is not found', 404);
+
+		const bug = await Bug.findById(bugId);
+
+		if (!bug) sendError('Bug is not found', 404);
+
+		if (bug.creator.toString() !== userId) sendError('User is not bug owner', 404);
+
+		bug.name = newName;
+		bug.description = newDescription;
+
+		const { name, description } = await bug.save();
+
+		res.status(200).json({ status: 1, name, description });
 	} catch (error) {
 		if (!error.statusCode) error.statusCode = 500;
+		next(error);
+	}
+};
+
+exports.editProjectDetails = async (req, res, next) => {
+	const { userId } = req;
+	console.log('exports.editBugDetails -> userId', userId);
+
+	const { projectId, newName } = req.body;
+
+	try {
+		const user = await User.findById(userId);
+
+		if (!user) sendError('User is not found', 404);
+
+		const project = await Project.findById(projectId);
+
+		if (!user) sendError('Project is not found', 404);
+
+		if (project.owner.toString() !== userId) sendError('Project is not found', 404);
+
+		project.name = newName;
+
+		const { name } = await project.save();
+
+		res.status(200).json({ message: 'Project updated successfully', name });
+	} catch (error) {
+		error.statusCode = error.statusCode || 500;
 		next(error);
 	}
 };
@@ -121,7 +166,8 @@ exports.regeneratePrivateKey = async (req, res, next) => {
 		next(error);
 	}
 };
-// GET APIS & POPULATION(Aggregation)
+
+// _____________________GET APIS & POPULATION(Aggregation)______________________
 
 exports.getPersonalUserData = async (req, res, next) => {
 	const { userId } = req;

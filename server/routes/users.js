@@ -9,7 +9,6 @@ router.get('/personalData', isAuth, usersApis.getPersonalUserData);
 
 router.patch(
 	'/editPersonalData',
-	// multerUploader.single('image'),
 	isAuth,
 	[ body('firstName', 'FirstName is required').notEmpty(), body('lastName', 'LastName is required').notEmpty() ],
 	checkValidation,
@@ -18,7 +17,7 @@ router.patch(
 
 router.post(
 	'/newProject',
-	[ body('name', 'Name can`t be empty').notEmpty(), body('description', 'Description can`t be empty').notEmpty() ],
+	[ body('name', 'Name can`t be empty').notEmpty() ],
 	checkValidation,
 	isAuth,
 	usersApis.createNewProject
@@ -30,11 +29,30 @@ router.post(
 	'/addBug',
 	isAuth,
 	[
-		body('name', 'Name must be at most 30 characters').isLength({ max: 30 }),
-		body('description', 'Description is required').notEmpty()
+		body('newName', 'Name must be not empty, ').isLength({ max: 100 }).notEmpty(),
+		body('newDescription', 'Description is required, at most 100 characters').notEmpty()
 	],
 	checkValidation,
 	usersApis.addNewBug
+);
+
+router.patch(
+	'/editProject',
+	isAuth,
+	[ body('newName', 'Name can`t be empty').notEmpty() ],
+	checkValidation,
+	usersApis.editProjectDetails
+);
+
+router.patch(
+	'/editBug',
+	isAuth,
+	[
+		body('newName', 'Name must be not empty').notEmpty(),
+		body('newDescription', 'Description is required, at most 100 characters').notEmpty().isLength({ max: 100 })
+	],
+	checkValidation,
+	usersApis.editBugDetails
 );
 
 router.patch('/fixBug', isAuth, usersApis.fixBug);

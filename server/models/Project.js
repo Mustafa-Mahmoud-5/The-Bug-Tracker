@@ -47,8 +47,8 @@ class ProjectClass {
 		return [ 'name createdAt owner status type' ];
 	};
 
-	static async createProject(ownerId, { name, description, type, teamId }) {
-		const addedProject = await this.create({ name, description, owner: ownerId, type });
+	static async createProject(ownerId, { name, type, teamId }) {
+		const addedProject = await this.create({ name, owner: ownerId, type });
 
 		if (type === 'public') {
 			const projectId = addedProject._id;
@@ -62,8 +62,6 @@ class ProjectClass {
 	}
 
 	static async addBug(userId, { projectId, name, description }) {
-		// const user = await User.findById(userId).lean().select(User.publicProps().join(' '));
-
 		const project = await this.findById(projectId);
 
 		if (!project) sendError('Project with given id is not found', 403);
