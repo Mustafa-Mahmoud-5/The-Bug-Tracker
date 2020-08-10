@@ -43,7 +43,8 @@ const userSchema = new Schema(
 			{
 				from: {
 					type: Schema.Types.ObjectId,
-					ref: 'User'
+					ref: 'User',
+					required: true
 				},
 				content: String,
 				date: {

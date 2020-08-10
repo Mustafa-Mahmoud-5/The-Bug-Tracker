@@ -5,6 +5,7 @@ const express = require('express'),
 	router = express.Router();
 
 const { body } = require('express-validator');
+
 router.get('/personalData', isAuth, usersApis.getPersonalUserData);
 
 router.patch(
@@ -70,4 +71,5 @@ router.patch('/regeneratePrivateKey', isAuth, usersApis.regeneratePrivateKey);
 router.get('/projectDetails/:projectId', isAuth, usersApis.getProjectDetails);
 
 router.get('/projectTimeline/:projectId', isAuth, usersApis.getProjectTimeline);
+
 module.exports = router;
