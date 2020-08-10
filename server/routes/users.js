@@ -49,4 +49,7 @@ router.get('/personalProjects', isAuth, usersApis.getPersonalProjects);
 
 router.patch('/regeneratePrivateKey', isAuth, usersApis.regeneratePrivateKey);
 
+router.get('/projectDetails/:projectId', isAuth, usersApis.getProjectDetails);
+
+router.get('/projectTimeline/:projectId', isAuth, usersApis.getProjectTimeline);
 module.exports = router;

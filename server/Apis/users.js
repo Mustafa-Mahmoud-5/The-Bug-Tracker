@@ -3,6 +3,7 @@ const sendError = require('../helpers/sendError'),
 	Team = require('../models/Team'),
 	User = require('../models/User'),
 	Bug = require('../models/Bug'),
+	Timeline = require('../models/Timeline'),
 	fs = require('fs'),
 	{ v4: uuidv4 } = require('uuid');
 
@@ -178,6 +179,52 @@ exports.getBugDetails = async (req, res, next) => {
 		res.status(200).json({ bug });
 	} catch (error) {
 		if (!error.statusCode) error.statusCode = 500;
+		next(error);
+	}
+};
+
+exports.getProjectDetails = async (req, res, next) => {
+	const { projectId } = req.params;
+	console.log('exports.getProjectDetails -> projectId', projectId);
+
+	try {
+		const project = await Project.findById(projectId)
+			.select('-timeline')
+			.populate({ path: 'bugs', populate: { path: 'creator', select: User.publicProps().join(' ') } })
+			.populate({ path: 'owner', select: User.publicProps().join(' ') });
+
+		// time line will have its own api
+		if (!project) sendError('Project is not founbd', 404);
+
+		res.status(200).json({ project });
+	} catch (error) {
+		if (!error.statusCode) error.statusCode = 500;
+		next(error);
+	}
+};
+
+exports.getProjectTimeline = async (req, res, next) => {
+	const { projectId } = req.params;
+	console.log('exports.getProjectTimeline -> projectId', projectId);
+	try {
+		const project = await Project.findById(projectId);
+
+		if (!project) sendError('Project is not found', 404);
+
+		const projectTimelines = project.timeline; // [ObjectId, ObjectId]
+
+		if (projectTimelines.length === 0) {
+			return res.status(200).json({ timelines: [] });
+		}
+
+		const timelines = await Timeline.find({ _id: { $in: projectTimelines } })
+			.populate({ path: 'from', select: User.publicProps().join(' ') })
+			.populate({ path: 'bug', select: 'name createdAt' })
+			.lean();
+
+		res.status(200).json({ timelines });
+	} catch (error) {
+		error.statusCode = error.statusCode || 500;
 		next(error);
 	}
 };
