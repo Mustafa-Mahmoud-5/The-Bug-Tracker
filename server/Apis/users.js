@@ -3,22 +3,9 @@ const sendError = require('../helpers/sendError'),
 	Team = require('../models/Team'),
 	User = require('../models/User'),
 	Bug = require('../models/Bug'),
-	fs = require('fs');
+	fs = require('fs'),
+	{ v4: uuidv4 } = require('uuid');
 
-exports.getPersonalUserData = async (req, res, next) => {
-	const { userId } = req;
-
-	try {
-		const user = await User.findById(userId).select(User.publicProps().join(' ') + ' privateKey email').lean();
-
-		if (!user) sendError('User is not found', 404);
-
-		res.status(200).json({ user });
-	} catch (error) {
-		if (!error.statusCode) error.statusCode = 500;
-		next(error);
-	}
-};
 exports.editPersonalData = async (req, res, next) => {
 	// this api edit the personalData (editing the )
 	const { userId, file } = req;
@@ -115,7 +102,40 @@ exports.editBugDetails = async (req, res, next) => {
 	}
 };
 
+exports.regeneratePrivateKey = async (req, res, next) => {
+	const { userId } = req;
+
+	try {
+		const user = await User.findById(userId);
+
+		if (!user) sendError('User is not found', 404);
+
+		user.privateKey = uuidv4();
+
+		const { privateKey: newPrivateKey } = await user.save();
+
+		res.status(200).json({ newPrivateKey });
+	} catch (error) {
+		if (!error.statusCode) error.statusCode = 500;
+		next(error);
+	}
+};
 // ____________________________________GET APIS_______________________________________
+
+exports.getPersonalUserData = async (req, res, next) => {
+	const { userId } = req;
+
+	try {
+		const user = await User.findById(userId).select(User.publicProps().join(' ') + ' privateKey email').lean();
+
+		if (!user) sendError('User is not found', 404);
+
+		res.status(200).json({ user });
+	} catch (error) {
+		if (!error.statusCode) error.statusCode = 500;
+		next(error);
+	}
+};
 
 exports.getUserWithPrivateKey = async (req, res, next) => {
 	const { privateKey } = req.params;

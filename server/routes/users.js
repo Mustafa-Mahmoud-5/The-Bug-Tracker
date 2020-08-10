@@ -46,4 +46,7 @@ router.patch('/closeOrReOpenProject', isAuth, usersApis.closeOrReOpenProject);
 router.get('/bugDetails/:bugId', isAuth, usersApis.getBugDetails);
 
 router.get('/personalProjects', isAuth, usersApis.getPersonalProjects);
+
+router.patch('/regeneratePrivateKey', isAuth, usersApis.regeneratePrivateKey);
+
 module.exports = router;
