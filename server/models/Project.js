@@ -1,11 +1,10 @@
 const mongoose = require('mongoose'),
 	Team = require('./Team'),
-	User = require('./User'),
 	Bug = require('./Bug'),
 	Timeline = require('./Timeline');
 const sendError = require('../helpers/sendError');
 
-const { Schema } = mongoose;
+const Schema = mongoose.Schema;
 
 const projectSchema = new Schema(
 	{
@@ -159,7 +158,8 @@ class ProjectClass {
 		await project.save();
 	}
 
-	static analyzeProjectStatistics = project => {
+	static analyzeProjectStatistics(project) {
+		console.log('project(N)', project);
 		// bug status 0 is buggy, 1 is fixed
 		const bugs = { total: 0, fixed: 0, buggy: 0 };
 
@@ -170,7 +170,7 @@ class ProjectClass {
 		});
 
 		return bugs;
-	};
+	}
 }
 
 projectSchema.loadClass(ProjectClass);

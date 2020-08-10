@@ -121,7 +121,7 @@ exports.regeneratePrivateKey = async (req, res, next) => {
 		next(error);
 	}
 };
-// ____________________________________GET APIS_______________________________________
+// GET APIS & POPULATION(Aggregation)
 
 exports.getPersonalUserData = async (req, res, next) => {
 	const { userId } = req;
@@ -191,7 +191,8 @@ exports.getProjectDetails = async (req, res, next) => {
 		const project = await Project.findById(projectId)
 			.select('-timeline')
 			.populate({ path: 'bugs', populate: { path: 'creator', select: User.publicProps().join(' ') } })
-			.populate({ path: 'owner', select: User.publicProps().join(' ') });
+			.populate({ path: 'owner', select: User.publicProps().join(' ') })
+			.lean();
 
 		// time line will have its own api
 		if (!project) sendError('Project is not founbd', 404);
@@ -208,7 +209,7 @@ exports.getProjectTimeline = async (req, res, next) => {
 	const { projectId } = req.params;
 	console.log('exports.getProjectTimeline -> projectId', projectId);
 	try {
-		const project = await Project.findById(projectId);
+		const project = await Project.findById(projectId).lean();
 
 		if (!project) sendError('Project is not found', 404);
 

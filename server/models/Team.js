@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
-const sendError = require('../helpers/sendError');
-const Notification = require('./Notification');
+const mongoose = require('mongoose'),
+	sendError = require('../helpers/sendError'),
+	Notification = require('./Notification');
 
 const { Schema } = mongoose;
 
@@ -86,6 +86,37 @@ class TeamClass {
 
 		// always save in the outer function in order to take advantage of promise.all
 	}
+
+	static analyzeTeamStatistics = (ProjectModal, team) => {
+		/*
+			Requiring the ProjectModal is because of the circular dependency issue
+			
+			THIS ISSUE IS NOT RELATED TO JS OR NODEJS, IT CAN HAPPEN IN ANY LANGUAGE.
+			this issue sometimes happen if you have two modules, and you import the first in the second and vice versa(imported the second in the first)
+			one of the returned values will be empty object :(
+			hence i had to pass the second module dynamically as a prameter..
+			YOU CAN GOOGLE THIS ISSUE IF YOU ARE INTERESTED >> CIRCULAR DEPENDANCY <<
+		*/
+
+		const projects = { total: 0, closed: 0, opened: 0 };
+		const bugs = { total: 0, fixed: 0, buggy: 0 };
+
+		team.projects.forEach(project => {
+			console.log('project', project);
+			projects.total++;
+
+			if (project.status === 0) projects.opened++;
+			if (project.status === 1) projects.closed++;
+
+			const projectBugs = ProjectModal.analyzeProjectStatistics(project);
+
+			bugs.total += projectBugs.total;
+			bugs.fixed += projectBugs.fixed;
+			bugs.buggy += projectBugs.buggy;
+		});
+
+		return { projects: projects, bugs: bugs };
+	};
 }
 
 teamSchema.loadClass(TeamClass);

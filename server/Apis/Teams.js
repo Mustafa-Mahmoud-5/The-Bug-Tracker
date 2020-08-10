@@ -31,11 +31,14 @@ exports.getTeam = async (req, res, next) => {
 	const { teamId } = req.params;
 
 	try {
+		// unfortunately, i will populate(aggregate) the project bugs in order to fetch the bug status which is mandatory for manipulating the team statistics
+
 		const team = await Team.findById(teamId)
 			.populate({
 				path: 'projects',
 				select: Project.publicProps().join(' ') + ' bugs',
-				populate: { path: 'owner', select: User.publicProps().join(' ') }
+				populate: { path: 'owner', select: User.publicProps().join(' ') },
+				populate: { path: 'bugs', select: 'status' }
 			})
 			.populate({ path: 'leader', select: User.publicProps().join(' ') })
 			.select('-notifications -members')
@@ -44,7 +47,9 @@ exports.getTeam = async (req, res, next) => {
 
 		if (!team) sendError('Team not found', 404);
 
-		res.status(200).json({ team });
+		const teamStatistics = Team.analyzeTeamStatistics(Project, team);
+
+		res.status(200).json({ team, teamStatistics });
 	} catch (error) {
 		if (!error.statusCode) error.statusCode = 500;
 		next(error);

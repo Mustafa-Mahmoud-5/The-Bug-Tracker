@@ -6,8 +6,6 @@ const mongoose = require('mongoose'),
 	cloudinary = require('../helpers/cloudinary'),
 	fs = require('fs');
 
-const Proj = require('./Project');
-const Team = require('./Team');
 const { v4: uuidv4 } = require('uuid');
 
 const userSchema = new Schema(
