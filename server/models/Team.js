@@ -1,7 +1,9 @@
 const mongoose = require('mongoose'),
 	sendError = require('../helpers/sendError'),
-	Notification = require('./Notification');
+	Notification = require('./Notification'),
+	User = require('./User');
 
+console.log(User);
 const { Schema } = mongoose;
 
 const teamSchema = new Schema(
@@ -49,6 +51,7 @@ class TeamClass {
 			team.members.push(member);
 
 			await this.newNotification(team, 'memberManipulation', 'has added', leaderId, null, member);
+			await User.newNotification(member, leaderId, 'has added you to his team.');
 		}
 
 		return team.save();

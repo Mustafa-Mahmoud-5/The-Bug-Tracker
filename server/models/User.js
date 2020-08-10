@@ -6,7 +6,9 @@ const mongoose = require('mongoose'),
 	cloudinary = require('../helpers/cloudinary'),
 	fs = require('fs');
 
+const { throws } = require('assert');
 const { v4: uuidv4 } = require('uuid');
+const { updateOne } = require('./Notification');
 
 const userSchema = new Schema(
 	{
@@ -123,6 +125,12 @@ class UserClass {
 		user.lastName = lastName;
 
 		return user.save();
+	}
+
+	static async newNotification(toId, fromId, content) {
+		const notificationObject = { from: fromId, content };
+
+		await this.updateOne({ _id: toId }, { $addToSet: { notifications: notificationObject } });
 	}
 }
 
