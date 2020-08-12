@@ -7,7 +7,8 @@ const fs = require('fs'),
 	helmet = require('helmet'),
 	authRoutes = require('./routes/auth'),
 	usersRoutes = require('./routes/users'),
-	teamsRoutes = require('./routes/teams');
+	teamsRoutes = require('./routes/teams'),
+	initIo = require('./helpers/socket').initIo;
 
 const app = express(),
 	accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'));
@@ -53,9 +54,15 @@ const mongoURL = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cl
 
 mongoose
 	.connect(mongoURL, mongoConfigs)
-	.then(client => {
+	.then(() => {
 		console.log('Connected...');
-		app.listen(process.env.PORT || port);
+		const httpServer = app.listen(process.env.PORT || port);
+
+		const io = initIo(httpServer);
+
+		io.on('connection', socket => {
+			console.log(socket.id);
+		});
 	})
 	.catch(err => {
 		console.log('Failed To Connect...', err);

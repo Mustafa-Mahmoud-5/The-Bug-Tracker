@@ -3,7 +3,8 @@ const mongoose = require('mongoose'),
 	Notification = require('./Notification'),
 	User = require('./User');
 
-console.log(User);
+const getIo = require('../helpers/socket').getIo;
+
 const { Schema } = mongoose;
 
 const teamSchema = new Schema(
@@ -26,39 +27,86 @@ const teamSchema = new Schema(
 );
 
 class TeamClass {
-	static async addNewProject({ ownerId, teamId, projectId }) {
+	static async addNewProject({ ownerId, teamId, projectId, name }) {
 		const team = await this.findById(teamId);
 
-		if (!team) sendError('Team with given id is not found', 404);
+		const owner = await User.findById(ownerId).select(User.publicProps().join(' '));
+
+		const socketObject = {
+			teamMembers: team.members,
+			project: { _id: projectId, owner, status: 0, name, bugs: [], createdAt: new Date() }
+		};
 
 		team.projects.push(projectId);
 
-		await this.newNotification(team, 'projectCreation', 'has added a new project', ownerId, projectId, null);
+		const content = 'has added a new project',
+			notificationType = 'projectCreation';
+
+		const notificationId = await this.newNotification(team, notificationType, content, ownerId, projectId, null);
+
+		socketObject.newTeamNotification = {
+			_id: notificationId,
+			createdAt: Date.now(),
+			content,
+			notificationType,
+			from: owner
+		};
+
+		getIo().emit('newTeamProject', socketObject);
 
 		return team.save();
 	}
 
 	static async addMembers(leaderId, { teamId, members }) {
-		const team = await this.findById(teamId);
+		const team = await this.findById(teamId).populate({ path: 'leader', select: User.publicProps().join(' ') });
 
 		if (!team) sendError('Team is not found', 404);
 
-		if (team.leader.toString() !== leaderId) sendError('User is not team leader', 401);
+		if (team.leader._id.toString() !== leaderId) sendError('User is not team leader', 401);
 
 		if (members.length === 0) sendError('Please select members', 403);
+
+		const usersToAdd = await User.find({ _id: { $in: members } }).select(User.publicProps().join(' ')).lean();
+
+		const socketObject = {
+			teamMembers: team.members,
+			team: { _id: team._id, name: team.name },
+			newTeamNotifications: [],
+			usersToAdd
+		};
+
+		const notificationType = 'memberManipulation',
+			content = 'has added';
 
 		for (const member of members) {
 			team.members.push(member);
 
-			await this.newNotification(team, 'memberManipulation', 'has added', leaderId, null, member);
+			const notificationId = await this.newNotification(team, notificationType, content, leaderId, null, member);
+
 			await User.newNotification(member, leaderId, 'has added you to his team.');
+
+			const to = usersToAdd.find(user => user._id.toString() === member.toString());
+
+			const teamNotificationForSocket = {
+				_id: notificationId,
+				from: team.leader,
+				content,
+				to,
+				notificationType,
+				createdAt: new Date()
+			};
+
+			// :( , i know. unshift is bad in terms of bigO, but i have to.
+			socketObject.newTeamNotifications.unshift(teamNotificationForSocket);
 		}
+
+		getIo().emit('newMembersForTeam', socketObject);
 
 		return team.save();
 	}
 
 	static async kickMember(leaderId, { teamId, memberId }) {
-		const team = await this.findById(teamId);
+		const team = await this.findById(teamId).populate({ path: 'leader', select: User.publicProps().join(' ') });
 
 		if (!team) sendError('Team is not found', 404);
 
@@ -66,12 +114,32 @@ class TeamClass {
 
 		if (teamLeader.toString() !== leaderId) sendError('User is not team leader', 401);
 
+		const kickedUser = await User.findById(memberId).select(User.publicProps().join(' ')).lean();
+
+		const socketObject = { team: { teamId: team._id }, kickedUser, teamMembers: team.members };
+
 		team.members.pull(memberId);
 
-		await Promise.all([
-			this.newNotification(team, 'memberManipulation', 'has Kicked', leaderId, null, memberId),
+		const content = 'has kicked',
+			notificationType = 'memberManipulation';
+
+		const result = await Promise.all([
+			this.newNotification(team, notificationType, content, leaderId, null, memberId),
 			User.newNotification(memberId, leaderId, 'has kicked you out of his team.')
 		]);
+
+		const newTeamNotificationId = result[0];
+
+		socketObject.newTeamNotification = {
+			_id: newTeamNotificationId,
+			from: team.leader,
+			to: kickedUser,
+			content,
+			notificationType,
+			createdAt: new Date()
+		};
+
+		getIo().emit('userHasKicked', socketObject);
 
 		await team.save();
 	}
@@ -90,6 +158,7 @@ class TeamClass {
 
 		team.notifications.unshift(notificationId);
 
+		return notificationId;
 		// always save in the outer function in order to take advantage of promise.all
 	}
 

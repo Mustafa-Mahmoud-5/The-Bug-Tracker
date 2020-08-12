@@ -41,7 +41,8 @@ exports.getTeam = async (req, res, next) => {
 				populate: { path: 'bugs', select: 'status' }
 			})
 			.populate({ path: 'leader', select: User.publicProps().join(' ') })
-			.select('-notifications -members')
+			.populate({ path: 'members', select: User.publicProps().join(' ') })
+			.select('-notifications')
 			.lean();
 		console.log('exports.getTeam -> team', team);
 

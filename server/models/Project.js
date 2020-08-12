@@ -3,6 +3,8 @@ const mongoose = require('mongoose'),
 	Bug = require('./Bug'),
 	Timeline = require('./Timeline');
 const sendError = require('../helpers/sendError');
+const { getIo } = require('../helpers/socket');
+const User = require('./User');
 
 const Schema = mongoose.Schema;
 
@@ -48,12 +50,10 @@ class ProjectClass {
 	};
 
 	static async createProject(ownerId, { name, type, teamId }) {
-		const addedProject = await this.create({ name, owner: ownerId, type });
+		const { _id: projectId } = await this.create({ name, owner: ownerId, type });
 
 		if (type === 'public') {
-			const projectId = addedProject._id;
-
-			const addingResult = await Team.addNewProject({ ownerId, teamId, projectId });
+			const addingResult = await Team.addNewProject({ ownerId, teamId, projectId, name });
 
 			console.log('ProjectClass -> createProject -> addingResult', addingResult);
 		}
@@ -61,8 +61,12 @@ class ProjectClass {
 		return addedProject;
 	}
 
-	static async addBug(userId, { projectId, name, description }) {
+	static async addBug(userId, { projectId, name, description, teamId }) {
+		// teamId will be passed if its project is of public type.
+
 		const project = await this.findById(projectId);
+
+		const creator = await User.findById(userId).select(User.publicProps().join(' ')).lean();
 
 		if (!project) sendError('Project with given id is not found', 403);
 
@@ -70,48 +74,127 @@ class ProjectClass {
 
 		project.bugs.unshift(addedBugId);
 
-		const timeLineObj = { from: userId, content: 'has added a new bug', bug: addedBugId };
+		const bugContent = 'has added a new bug';
+
+		const timeLineObj = { from: userId, content: bugContent, bug: addedBugId };
 
 		const { _id: addedTimeLineId } = await Timeline.create(timeLineObj);
 
 		project.timeline.unshift(addedTimeLineId);
 
+		if (project.type === 'public') {
+			const socketObject = {
+				teamId,
+				projectId,
+				bug: {
+					_id: addedBugId,
+					fixer: null,
+					status: 0,
+					name,
+					description,
+					createdAt: new Date(),
+					creator
+				},
+				newTimeLine: {
+					from: creator,
+					content: bugContent,
+					date: new Date(),
+					bug: {
+						_id: addedBugId,
+						name,
+						createdAt: new Date()
+					}
+				},
+				createdAt: new Date()
+			};
+
+			getIo().emit('newPublicBug', socketObject);
+		}
+
 		return project.save();
 	}
 
 	// i should have made one function as i did for closeOrReOpenProject :(
-	static async fixBug(userId, { bugId, projectId }) {
+	static async fixBug(userId, { bugId, projectId, teamId }) {
 		const bug = await Bug.findById(bugId);
+
+		const fixer = await User.findById(userId).select(User.publicProps().join()).lean();
 
 		if (!bug) sendError('Bug is not found', 404);
 
 		bug.status = 1; // 1 is fixed 0 is buggy in bugs, 0 is closed 1 is opened in projects
 		bug.fixer = userId;
 
-		const timeLineObj = { from: userId, content: 'has fixed a bug', bug: bugId };
+		const bugContent = 'has fixed a bug';
+
+		const timeLineObj = { from: userId, content: bugContent, bug: bugId };
 
 		const { _id: addedTimeLineId } = await Timeline.create(timeLineObj);
 
 		const project = await this.findById(projectId);
+
 		project.timeline.unshift(addedTimeLineId);
+
+		if (project.type === 'public') {
+			const socketObject = {
+				teamId,
+				projectId,
+				bugId,
+				newTimeLine: {
+					from: fixer,
+					content: bugContent,
+					date: new Date(),
+					bug: {
+						_id: bugId,
+						name: bug.name
+					}
+				}
+			};
+
+			getIo().emit('publicBugFixed', socketObject);
+		}
 
 		await Promise.all([ bug.save(), project.save() ]);
 	}
 
-	static async reOpenBug(userId, { bugId, projectId }) {
+	static async reOpenBug(userId, { bugId, projectId, teamId }) {
 		const bug = await Bug.findById(bugId);
+
+		const reOpener = await User.findById(userId).select(User.publicProps().join(' ')).lean();
 
 		if (!bug) sendError('Bug is not found');
 
 		bug.status = 0;
 		bug.fixer = null;
 
-		const timeLineObj = { from: userId, content: 'has reopened a bug', bug: bugId };
+		const bugContent = 'has reopened a bug';
+
+		const timeLineObj = { from: userId, content: bugContent, bug: bugId };
 
 		const { _id: addedTimeLineId } = await Timeline.create(timeLineObj);
 
 		const project = await this.findById(projectId);
+
 		project.timeline.unshift(addedTimeLineId);
+
+		if (project.type === 'public') {
+			const socketObject = {
+				teamId,
+				projectId,
+				bugId,
+				newTimeLine: {
+					from: reOpener,
+					content: bugContent,
+					date: new Date(),
+					bug: {
+						_id: bugId,
+						name: bug.name
+					}
+				}
+			};
+
+			getIo().emit('publicBugFixed', socketObject);
+		}
 
 		await Promise.all([ bug.save(), project.save() ]);
 	}

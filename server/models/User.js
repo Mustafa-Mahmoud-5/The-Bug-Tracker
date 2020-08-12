@@ -6,9 +6,7 @@ const mongoose = require('mongoose'),
 	cloudinary = require('../helpers/cloudinary'),
 	fs = require('fs');
 
-const { throws } = require('assert');
 const { v4: uuidv4 } = require('uuid');
-const { updateOne } = require('./Notification');
 
 const userSchema = new Schema(
 	{
