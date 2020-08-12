@@ -272,6 +272,7 @@ class ProjectClass {
 
 		if (team) {
 			await team.save();
+			getIo().emit('projectClosingOrReopening', socketObject);
 		}
 		await project.save();
 	}
