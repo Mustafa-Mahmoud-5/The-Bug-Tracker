@@ -216,20 +216,57 @@ class ProjectClass {
 			team = await Team.findById(teamId);
 			if (!team) sendError('Team is not found', 404);
 		}
+		const notificationType = 'projectCreation';
+
+		const socketObject = {
+			teamId,
+			projectId,
+			newTeamNotification: {
+				from: project.owner,
+				createdAt: new Date(),
+				notificationType
+			}
+		};
 
 		if (project.status === 0) {
 			// close this opened project
 			project.status = 1;
 			if (team) {
-				console.log('5555555');
-				await Team.newNotification(team, 'projectCreation', 'has been closed', userId, projectId, null);
+				const notificationContent = 'has been closed';
+
+				const notificationId = await Team.newNotification(
+					team,
+					notificationType,
+					notificationContent,
+					userId,
+					projectId,
+					null
+				);
+
+				socketObject.newTeamNotification._id = notificationId;
+				socketObject.newTeamNotification.content = notificationContent;
+				socketObject.updatedStatus = 1;
 			}
 		} else {
 			// open this closed project
 			project.status = 0;
 			// if the projec is public, send a notification for this team
 			if (team) {
-				await Team.newNotification(team, 'projectCreation', 'has been reOpened', userId, projectId, null);
+				const notificationContent = 'has been re opened';
+
+				const notificationId = await Team.newNotification(
+					team,
+					notificationType,
+					notificationContent,
+					userId,
+					projectId,
+					null
+				);
+
+				// changing the new quick notification data for socket
+				socketObject.newTeamNotification._id = notificationId;
+				socketObject.newTeamNotification.content = notificationContentl;
+				socketObject.updatedStatus = 0;
 			}
 		}
 
