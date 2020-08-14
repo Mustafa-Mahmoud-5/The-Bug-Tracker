@@ -1,0 +1,72 @@
+@import '../variables.scss';
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+
+}
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+
+.App {
+  overflow-x: hidden;
+
+}
+.primaryColor {
+  color :$primaryColor;
+}
+
+
+.text-md {
+  font-size: 1.3rem;
+}
+
+.italic {
+  font-style: italic;
+}
+
+  img {
+    width:100%;
+    height: 100%;
+  }
+
+.bold {
+  font-weight: bold;
+}
+
+@media only screen and (max-width: 667px) {
+
+  .text-md {
+    font-size: 1.1rem;
+  }
+  h1 {
+    font-size: 1.5rem;
+  }
+
+}
+#particles{
+  position: absolute;
+  top: 5%;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  .parti {
+    color: red !important;
+  }
+  #tsparticles{
+    height: 100% !important;
+  }
+}
