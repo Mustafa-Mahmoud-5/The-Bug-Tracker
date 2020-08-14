@@ -1,12 +1,19 @@
 import React from 'react';
+import { Switch, Route } from 'react-router-dom';
 import Outer from './components/Outer/Outer';
 import { Component } from 'react';
 import AOS from 'aos';
+import SignUp from './components/SignUp/SignUp';
+import SignIn, { signIn } from './components/SignIn/signIn';
 class App extends Component {
 	render() {
 		return (
 			<div className='App'>
-				<Outer />
+				<Switch>
+					<Route path='/' exact component={Outer} />
+					<Route path='/signup' exact component={SignUp} />
+					<Route path='/signin' exact component={signIn} />
+				</Switch>
 			</div>
 		);
 	}

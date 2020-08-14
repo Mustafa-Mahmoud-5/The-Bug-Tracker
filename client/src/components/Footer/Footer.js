@@ -8,7 +8,6 @@ function Footer() {
 			<h2> &#169; All Rights Reserved to Mustafa Mahmoud</h2>
 			<div>
 				<a
-					data-aos='fade-right'
 					href='https://www.linkedin.com/in/mustafa-mahmoud-a80a221b4/'
 					rel='noopener noreferrer'
 					target='_blank'
@@ -16,12 +15,7 @@ function Footer() {
 					<LinkedInIcon style={{ color: '#0077B5', fontSize: '50px' }} />
 				</a>
 
-				<a
-					data-aos='fade-left'
-					href='https://github.com/Mustafa-Mahmoud-5'
-					rel='noopener noreferrer'
-					target='_blank'
-				>
+				<a href='https://github.com/Mustafa-Mahmoud-5' rel='noopener noreferrer' target='_blank'>
 					<GitHubIcon style={{ color: 'black', fontSize: '50px' }} />
 				</a>
 			</div>

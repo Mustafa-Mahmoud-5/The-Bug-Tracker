@@ -3,8 +3,13 @@ import Button from '@material-ui/core/Button';
 import Particles from '../particles';
 import './Header.scss';
 import OuterNav from '../OuterNav/OuterNav';
+import { withRouter } from 'react-router-dom';
 import { Fragment } from 'react';
-function header() {
+function header(props) {
+	const goToAuth = route => {
+		props.history.push(route);
+	};
+
 	return (
 		<Fragment>
 			<OuterNav />
@@ -27,10 +32,16 @@ function header() {
 					<p className='text-md bold'>Every thing happens while working with your team is realtime.</p>
 					<p className='text-md italic'>Sign up and start tracking your application bugs now.</p>
 					<div className='authBox'>
-						<Button color='primary' variant='outlined' style={{ marginRight: '10px' }} size='large'>
+						<Button
+							color='primary'
+							variant='outlined'
+							style={{ marginRight: '10px' }}
+							size='large'
+							onClick={() => goToAuth('/signup')}
+						>
 							Sign Up
 						</Button>
-						<Button color='primary' variant='outlined' size='large'>
+						<Button color='primary' variant='outlined' size='large' onClick={() => goToAuth('/signin')}>
 							Sign In
 						</Button>
 					</div>
@@ -40,4 +51,4 @@ function header() {
 	);
 }
 
-export default header;
+export default withRouter(header);
