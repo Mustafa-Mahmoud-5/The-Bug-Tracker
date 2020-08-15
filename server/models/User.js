@@ -30,7 +30,7 @@ const userSchema = new Schema(
 		},
 		privateKey: {
 			type: String,
-			default: uuidv4()
+			default: `${Math.random() * 0.123}-${uuidv4()}`
 		},
 		image: {
 			// will be object
@@ -71,6 +71,7 @@ class UserClass {
 	}
 
 	static async signIn({ email, password }) {
+		console.log('signIn -> email', email);
 		const user = await this.findOne({ email: email })
 			.lean()
 			.select(this.publicProps().join(' ') + ' password email');

@@ -5,7 +5,7 @@ exports.signUp = async (req, res, next) => {
 	try {
 		const { _id } = await User.signUp(req.body);
 
-		res.status(201).json({ message: 'User Added Successfully', userId: _id });
+		res.status(201).json({ message: 'User Signed Up Successfully', userId: _id });
 	} catch (error) {
 		if (!error.statusCode) error.statusCode = 500;
 		next(error);
@@ -13,8 +13,6 @@ exports.signUp = async (req, res, next) => {
 };
 
 exports.signIn = async (req, res, next) => {
-	const { email, password } = req.body;
-
 	try {
 		const token = await User.signIn(req.body);
 

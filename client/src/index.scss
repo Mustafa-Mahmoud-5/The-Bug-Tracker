@@ -8,6 +8,17 @@ body {
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
   scroll-behavior: smooth;
+  #nprogress {
+    z-index: 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    .bar {
+      background-color: $primaryColor;
+      height: 5px;
+    }
+  }
 }
 html {
   scroll-behavior: smooth;

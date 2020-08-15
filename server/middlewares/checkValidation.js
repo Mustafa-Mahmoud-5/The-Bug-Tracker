@@ -8,7 +8,7 @@ module.exports = checkValidation = (req, res, next) => {
 	if (!errors.isEmpty()) {
 		const errorMessage = errors.array()[0].msg;
 		console.log('errorMessage', errorMessage);
-		return sendError(errorMessage + 'h5h5hh5', 422);
+		return sendError(errorMessage, 422);
 	}
 
 	next();

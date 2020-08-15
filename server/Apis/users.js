@@ -156,7 +156,7 @@ exports.regeneratePrivateKey = async (req, res, next) => {
 
 		if (!user) sendError('User is not found', 404);
 
-		user.privateKey = uuidv4();
+		user.privateKey = `${Math.random() * 0.123}-${uuidv4()}`;
 
 		const { privateKey: newPrivateKey } = await user.save();
 

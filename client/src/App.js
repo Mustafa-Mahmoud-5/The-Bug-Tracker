@@ -4,7 +4,7 @@ import Outer from './components/Outer/Outer';
 import { Component } from 'react';
 import AOS from 'aos';
 import SignUp from './components/SignUp/SignUp';
-import SignIn, { signIn } from './components/SignIn/signIn';
+import SignIn from './components/SignIn/signIn';
 class App extends Component {
 	render() {
 		return (
@@ -12,7 +12,7 @@ class App extends Component {
 				<Switch>
 					<Route path='/' exact component={Outer} />
 					<Route path='/signup' exact component={SignUp} />
-					<Route path='/signin' exact component={signIn} />
+					<Route path='/signin' exact component={SignIn} />
 				</Switch>
 			</div>
 		);
