@@ -1,9 +1,9 @@
 import React, { Component, Fragment } from 'react';
 import TextField from '@material-ui/core/TextField';
-import AuthForm from '../AuthForm/AuthForm';
+import AuthForm from '../../components/AuthForm/AuthForm';
 import { signup } from '../../Apis/auth';
 import { withSnackbar } from 'notistack';
-import LoadingBtn from '../Btn/LoadingBtn';
+import LoadingBtn from '../../components/Btn/LoadingBtn';
 
 export class SignUp extends Component {
 	state = {

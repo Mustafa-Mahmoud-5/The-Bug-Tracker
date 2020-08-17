@@ -3,19 +3,27 @@ import { Switch, Route } from 'react-router-dom';
 import Outer from './components/Outer/Outer';
 import { Component } from 'react';
 import AOS from 'aos';
-import SignUp from './components/SignUp/SignUp';
-import SignIn from './components/SignIn/signIn';
+import SignUp from './containers/SignUp/SignUp';
+import SignIn from './containers/SignIn/signIn';
+import BugTracker from './containers/bugTracker/BugTracker';
 class App extends Component {
 	render() {
-		return (
-			<div className='App'>
+		const userToken = localStorage.getItem('token');
+
+		const routes =
+			userToken === null ? (
 				<Switch>
 					<Route path='/' exact component={Outer} />
 					<Route path='/signup' exact component={SignUp} />
 					<Route path='/signin' exact component={SignIn} />
 				</Switch>
-			</div>
-		);
+			) : (
+				<Switch>
+					<Route path='/dashboard' exact component={BugTracker} />
+				</Switch>
+			);
+
+		return <div className='App'>{routes}</div>;
 	}
 
 	componentDidMount() {

@@ -8,6 +8,8 @@ const { body } = require('express-validator');
 
 router.get('/personalData', isAuth, usersApis.getPersonalUserData);
 
+router.get('/userNotifications', isAuth, usersApis.getUserNotifications);
+
 router.patch(
 	'/editPersonalData',
 	isAuth,

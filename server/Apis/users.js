@@ -173,16 +173,29 @@ exports.getPersonalUserData = async (req, res, next) => {
 	const { userId } = req;
 
 	try {
-		const user = await User.findById(userId)
-			.select(User.publicProps().join(' ') + ' privateKey email notifications')
-			.populate({ path: 'notifications.from', select: User.publicProps().join(' ') })
-			.lean();
+		const user = await User.findById(userId).select(User.publicProps().join(' ') + ' privateKey email').lean();
 
 		if (!user) sendError('User is not found', 404);
 
 		res.status(200).json({ user });
 	} catch (error) {
 		if (!error.statusCode) error.statusCode = 500;
+		next(error);
+	}
+};
+
+// i made an isolated api for getting the notifications to make working with sockets easier as i will just resend another request if something happens that requiring notifiying the user
+exports.getUserNotifications = async (req, res, next) => {
+	const { userId } = req;
+	try {
+		const user = await User.findById(userId)
+			.select('notifications')
+			.populate({ path: 'notifications.from', select: User.publicProps().join(' ') })
+			.lean();
+
+		res.status(200).json({ user });
+	} catch (error) {
+		error.statusCode = error.statusCode || 500;
 		next(error);
 	}
 };

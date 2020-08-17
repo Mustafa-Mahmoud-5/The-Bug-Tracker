@@ -48,6 +48,10 @@ const userSchema = new Schema(
 				date: {
 					type: Date,
 					default: new Date()
+				},
+				seen: {
+					type: Schema.Types.Boolean,
+					default: false
 				}
 			}
 		]

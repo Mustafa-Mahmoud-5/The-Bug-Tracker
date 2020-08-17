@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import TextField from '@material-ui/core/TextField';
-import AuthForm from '../AuthForm/AuthForm';
-import LoadingBtn from '../Btn/LoadingBtn';
+import AuthForm from '../../components/AuthForm/AuthForm';
+import LoadingBtn from '../../components/Btn/LoadingBtn';
 import { withSnackbar } from 'notistack';
 import { signin } from '../../Apis/auth';
 export class SignIn extends Component {
@@ -24,6 +24,8 @@ export class SignIn extends Component {
 
 			this.setState({ loading: false });
 
+			this.props.history.push('/dashboard');
+
 			this.props.enqueueSnackbar(response.data.message, { variant: 'success' });
 
 			localStorage.setItem('token', response.data.token);
@@ -43,6 +45,7 @@ export class SignIn extends Component {
 				<form onSubmit={this.submitHandler}>
 					<div className='inpWrapper'>
 						<TextField
+							type='email'
 							id='outlined-basic'
 							name='email'
 							value={this.state.email}
@@ -55,6 +58,7 @@ export class SignIn extends Component {
 					</div>
 					<div className='inpWrapper'>
 						<TextField
+							type='password'
 							id='outlined-basic'
 							name='password'
 							label='Password'
