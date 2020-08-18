@@ -10,6 +10,7 @@ import {editPersonalData} from '../../Apis/user'
 import {updateUserData, newKey}from '../../store/actions'
 import {withSnackbar} from 'notistack'
 import {regeneratePrivateKey} from '../../Apis/user'
+import NProgress from 'nprogress'
 
 export class Profile extends PureComponent {
   
@@ -19,26 +20,58 @@ export class Profile extends PureComponent {
   
 
   wirteHandler = e => {
-    this.setState({[e.target.name] : e.target.value}, this.checkVariety)
+    this.setState({[e.target.name] : e.target.value})
   }
 
-
-  // check if the initialState has changed so we can enable editing
-  checkVariety = () => {
-    const { user } = this.props;
-
-    const {firstName, lastName} = this.state;
-
-
-    if(firstName === '' || lastName === '' ) {
-      this.setState({btnDisabled: true})
-    } else if(user.firstName !== firstName || user.lastName !== lastName ) {
-      this.setState({btnDisabled: false})
-    } else{
-      this.setState({btnDisabled: true})
-    } 
-  }
   
+
+
+
+
+  newImageHandler = async e => {
+  
+    e.preventDefault();
+    
+    NProgress.start()
+    
+
+    const imageObj = e.target.files[0]
+
+    console.log("EditProfile -> imageObj", imageObj)
+
+
+
+    const {firstName, lastName, image} = this.props.user;
+
+    const oldImagePublicKey = image?.publicId;
+
+
+    const fd = new FormData()
+
+    fd.set("firstName", firstName)
+    fd.set("lastName", lastName)
+    fd.set("oldImagePublicKey", oldImagePublicKey);
+    fd.append('image',imageObj, imageObj.name);
+
+
+    try {
+      const response = await editPersonalData(fd);
+
+      this.props.updateUser(response.data.user);
+
+      NProgress.done()
+
+			this.props.enqueueSnackbar('Image Uploaded Successfully', { variant: 'success' });
+      
+
+    } catch (error) {
+			this.props.enqueueSnackbar(error.response.data.message, { variant: 'error' });
+      NProgress.done()
+    }
+  }
+
+
+
   newKey = async () => {
     this.setState({loading: true})
     
@@ -63,27 +96,6 @@ export class Profile extends PureComponent {
     
   }
 
-  updateNames = async e => {
-    e.preventDefault();
-
-    this.setState({loading: true})
-    
-    const {firstName, lastName}  = this.state;
-
-    const body = {firstName, lastName, oldImagePublicId: null};
-
-    try {
-      const response = await editPersonalData(body)
-      this.props.updateUser(response.data.user);
-      this.props.enqueueSnackbar(response.data.message, { variant: 'success' });
-      this.setState({loading: false, btnDisabled: true})
-      
-    } catch (error) {
-			this.props.enqueueSnackbar(error.response.data.message, { variant: 'error' });
-      this.setState({loading: false})
-      
-    }
-  }
 
 
 	render() {
@@ -97,7 +109,7 @@ export class Profile extends PureComponent {
           <div id='profilePicWrapper'>
 							{/* EDIT ICON */}
 							<div className='editProfilePic'>
-								<input accept='image/*' style={{ display: 'none' }} id='icon-button-file' type='file' />
+								<input accept='image/*' style={{ display: 'none' }} id='icon-button-file' type='file' onChange={this.newImageHandler} />
 								<label htmlFor='icon-button-file'>
 									<IconButton color='primary' aria-label='upload picture' component='span'>
 										<PhotoCamera />

@@ -10,7 +10,7 @@ export class EditProfile extends Component {
 	state = {
 		loading: false,
 		firstName: this.props.user?.firstName,
-		lastName: this.props.user?.lastName
+    lastName: this.props.user?.lastName,
 	};
 
 	writeHandler = e => {
@@ -20,6 +20,9 @@ export class EditProfile extends Component {
 	goToProfile = () => {
 		this.props.history.push('/bugtracker/profile');
 	};
+
+
+
 
 	submitHandler = async e => {
 		e.preventDefault();

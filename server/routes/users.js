@@ -72,8 +72,6 @@ router.patch('/regeneratePrivateKey', isAuth, usersApis.regeneratePrivateKey);
 
 router.get('/projectDetails/:projectId', isAuth, usersApis.getProjectDetails);
 
-router.get('/projectTimeline/:projectId', isAuth, usersApis.getProjectTimeline);
-
 router.get('/userTeams', isAuth, usersApis.getUserTeams);
 
 module.exports = router;
