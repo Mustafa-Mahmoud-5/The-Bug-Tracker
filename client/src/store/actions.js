@@ -19,16 +19,25 @@ const storeUserData = user => ({
 	}
 });
 
+
+export const updateUserData  = updatedUser => ({
+	type: actionTypes.updateUserData,
+	payload: {
+		updatedUser
+	}
+})
+
+export const newKey = (updatedKey) => ({type: actionTypes.newKey, payload: {updatedKey}})
+
 export const fetchUser = () => {
 	return async dispatch => {
 		dispatch(start());
 		try {
 			const response = await personalData();
-			console.log('fetchUser -> response', response.data.user);
 
 			dispatch(storeUserData(response.data.user));
 		} catch (error) {
-			dispatch(errorOccured(error.response.data.error));
+			dispatch(errorOccured(error.response?.data?.error));
 		}
 	};
 };

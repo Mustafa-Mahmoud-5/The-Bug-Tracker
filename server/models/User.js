@@ -98,7 +98,7 @@ class UserClass {
 	}
 
 	static async editPersonalData(userId, file, { firstName, lastName, oldImagePublicKey }) {
-		const user = await User.findById(userId).select(this.publicProps().join(' '));
+		const user = await User.findById(userId);
 
 		if (file) {
 			if (user.image) {

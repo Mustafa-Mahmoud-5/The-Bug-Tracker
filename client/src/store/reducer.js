@@ -27,6 +27,22 @@ const reducer = (state = initialState, action) => {
 				currentUser: action.payload.user
 			};
 
+		case actionTypes.updateUserData:
+			console.log('ACTION =>>>', action);
+			return {
+				...state,
+				currentUser: action.payload.updatedUser
+			};
+
+		case actionTypes.newKey:
+			const updatedUser = { ...state.currentUser };
+
+			updatedUser.privateKey = action.payload.updatedKey;
+
+			return {
+				...state,
+				currentUser: updatedUser
+			};
 		default:
 			return state;
 	}

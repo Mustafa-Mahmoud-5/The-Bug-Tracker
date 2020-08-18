@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import Layout from '../../components/Layout/Layout';
 import { fetchUser } from '../../store/actions';
 import Nprogress from 'nprogress';
-
+import { Switch, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
+import Profile from '../Profile/Profile';
+import EditProfile from '../Profile/EditProfile';
 export class BugTracker extends Component {
 	componentDidMount() {
 		try {
@@ -18,12 +20,16 @@ export class BugTracker extends Component {
 			Nprogress.start();
 		} else {
 			Nprogress.done();
+			// we are done, userData are there, navigate to his profile
 		}
 
 		return (
 			<div>
 				<Layout>
-					<h1>app body</h1>
+					<Switch>
+						<Route exact path='/bugtracker/profile' component={Profile} />
+						<Route exact path='/bugtracker/profile/edit' component={EditProfile} />
+					</Switch>
 				</Layout>
 			</div>
 		);

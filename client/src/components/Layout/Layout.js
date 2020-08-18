@@ -11,7 +11,6 @@ class Layout extends Component {
 
     try {
       const response = await userNotifications()
-      console.log("Layout -> componentDidMount -> response", response)
       this.setState({userNotifications: response.data.user})
       
     } catch (error) {

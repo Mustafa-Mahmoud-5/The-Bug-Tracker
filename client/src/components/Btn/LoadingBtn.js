@@ -6,7 +6,8 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 REQUIRED PROPS
   name
   type
-  loading
+	loading
+	disabled
 */
 
 function LoadingBtn(props) {
@@ -16,8 +17,24 @@ function LoadingBtn(props) {
 		btnData = <CircularProgress variant='indeterminate' disableShrink color='primary' size={25} thickness={4} />;
 	}
 
-	return (
-		<Button variant='contained' color='primary' fullWidth type={props.type} disabled={props.loading}>
+	return props.type === 'submit' ? (
+		<Button
+			variant='contained'
+			color='primary'
+			fullWidth={props.fullWidth}
+			type={props.type}
+			disabled={props.loading || props.disabled}
+		>
+			{btnData}
+		</Button>
+	) : (
+		<Button
+			variant='contained'
+			color='primary'
+			fullWidth={props.fullWidth}
+			disabled={props.loading || props.disabled}
+			onClick={props.func}
+		>
 			{btnData}
 		</Button>
 	);

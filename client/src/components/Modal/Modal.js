@@ -9,7 +9,8 @@ const useStyles = makeStyles(theme => ({
 		display: 'flex',
 		justifyContent: 'center',
 		paddingTop: '5%',
-		border: 'none'
+		border: 'none',
+		color: 'inherit'
 	},
 	modalPaper: {
 		padding: '20px',
@@ -18,7 +19,7 @@ const useStyles = makeStyles(theme => ({
 		height: '80%',
 		border: 'none',
 		outline: 'none',
-		color: 'white',
+		color: 'inherit',
 		overflowY: 'scroll'
 	}
 }));

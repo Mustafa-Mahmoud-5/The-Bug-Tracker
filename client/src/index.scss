@@ -1,5 +1,7 @@
 @import '../variables.scss';
-
+#App {
+  height: 100% !important;
+}
 body {
   margin: 0;
   padding: 0;
@@ -8,6 +10,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
   scroll-behavior: smooth;
+  height: 100%;
   #nprogress {
     z-index: 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999;
     position: fixed;
@@ -23,6 +26,7 @@ body {
 html {
   scroll-behavior: smooth;
   overflow-x: hidden;
+  height: 100%;
 
 }
 code {
@@ -31,10 +35,6 @@ code {
 }
 
 
-.App {
-  overflow-x: hidden;
-
-}
 .primaryColor {
   color :$primaryColor;
 }
@@ -85,4 +85,17 @@ code {
 button{
   color: white !important;
   font-size: 1.1rem !important;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.capitalize {
+  text-transform: capitalize;
+
+}
+
+.secondary {
+  color: grey;
 }

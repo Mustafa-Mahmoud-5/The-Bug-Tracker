@@ -19,11 +19,11 @@ class App extends Component {
 				</Switch>
 			) : (
 				<Switch>
-					<Route path='/dashboard' exact component={BugTracker} />
+					<Route path='/bugtracker' component={BugTracker} />
 				</Switch>
 			);
 
-		return <div className='App'>{routes}</div>;
+		return <div id='App'>{routes}</div>;
 	}
 
 	componentDidMount() {

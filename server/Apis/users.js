@@ -20,7 +20,7 @@ exports.editPersonalData = async (req, res, next) => {
 				})
 			: null;
 
-		res.status(200).json({ message: 'User updated successfully', userId: userId, result: user });
+		res.status(200).json({ message: 'Profile updated successfully', userId: userId, user });
 	} catch (error) {
 		if (!error.statusCode) error.statusCode = 500;
 		next(error);
@@ -160,7 +160,7 @@ exports.regeneratePrivateKey = async (req, res, next) => {
 
 		const { privateKey: newPrivateKey } = await user.save();
 
-		res.status(200).json({ newPrivateKey });
+		res.status(200).json({ newPrivateKey, message: 'New private key regenerated successfully.' });
 	} catch (error) {
 		if (!error.statusCode) error.statusCode = 500;
 		next(error);
@@ -281,12 +281,34 @@ exports.getProjectTimeline = async (req, res, next) => {
 			return res.status(200).json({ timelines: [] });
 		}
 
-		const timelines = await Timeline.find({ _id: { $in: projectTimelines } })
+		const timeline = await Timeline.find({ _id: { $in: projectTimelines } })
 			.populate({ path: 'from', select: User.publicProps().join(' ') })
 			.populate({ path: 'bug', select: 'name createdAt' })
 			.lean();
 
-		res.status(200).json({ timelines });
+		res.status(200).json({ timeline });
+	} catch (error) {
+		error.statusCode = error.statusCode || 500;
+		next(error);
+	}
+};
+
+exports.getUserTeams = async (req, res, next) => {
+	const { userId } = req;
+	const { forTeamSelecting } = req.query;
+
+	try {
+		const query = { members: userId };
+
+		const teams =
+			forTeamSelecting === true
+				? await Team.find(query).select('name').lean()
+				: await Team.find(query)
+						.populate({ path: 'leader', select: 'firstName lastName' })
+						.select('name createdAt leader')
+						.lean();
+
+		res.status(200).json({ teams });
 	} catch (error) {
 		error.statusCode = error.statusCode || 500;
 		next(error);

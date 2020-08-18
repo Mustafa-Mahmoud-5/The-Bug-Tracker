@@ -1,9 +1,9 @@
 import React from 'react';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-import './AuthForm.scss';
+import './Form.scss';
 
-function AuthForm(props) {
+function Form(props) {
 	return (
 		<div id='authPage'>
 			<Paper id='authForm' elevation={3}>
@@ -22,4 +22,4 @@ function AuthForm(props) {
 	);
 }
 
-export default AuthForm;
+export default Form;

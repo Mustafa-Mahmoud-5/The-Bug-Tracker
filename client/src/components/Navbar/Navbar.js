@@ -30,9 +30,13 @@ import {NavLink}from 'react-router-dom'
 const drawerWidth = 240;
 
 const useStyles = makeStyles(theme => ({
-	root: {
-		display: 'flex'
-	},
+  root: {
+		display: 'flex',
+		height: '100%',
+		position: 'relative',
+    width: '100%',
+
+  },
 	appBar: {
 		backgroundColor: '#11161a',
 		color: '#03a9f4',
@@ -73,27 +77,28 @@ const useStyles = makeStyles(theme => ({
 		...theme.mixins.toolbar,
 		justifyContent: 'flex-end'
 	},
-	content: {
-		flexGrow: 1,
-		padding: theme.spacing(3),
-		transition: theme.transitions.create('margin', {
-			easing: theme.transitions.easing.sharp,
-			duration: theme.transitions.duration.leavingScreen
-		}),
-		marginLeft: -drawerWidth
-	},
-	contentShift: {
-		transition: theme.transitions.create('margin', {
-			easing: theme.transitions.easing.easeOut,
-			duration: theme.transitions.duration.enteringScreen
-		}),
-		marginLeft: 0
+  content: {
+    flexGrow: 1,
+    padding: theme.spacing(3),
+    transition: theme.transitions.create('margin', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+		marginLeft: -drawerWidth,
+		height: '100%',
   },
-  navLink: {
+	contentShift: {
+    transition: theme.transitions.create('margin', {
+      easing: theme.transitions.easing.easeOut,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+    marginLeft: 0,
+  },  navLink: {
     color: 'inherit',
     textDecoration: 'none',
     display: 'inline-block',
-    width: '100%'
+		width: '100%',
+		// height: '100%'
 
   },
   navActive: {
@@ -124,7 +129,6 @@ export default function PersistentDrawerLeft(props) {
     setNotificationOpen(false)
   }
 
-  console.log(props)
 
 	return (
 		<div className={classes.root}>
@@ -186,7 +190,7 @@ export default function PersistentDrawerLeft(props) {
 				<Divider />
 				<List>
 					{[ 'Profile', 'Dashboard', 'Teams' ].map((text, index) => (
-            <NavLink key = {index} to = {`/${text.toLowerCase()}`} activeClassName = {classes.navActive} className = {classes.navLink}>
+            <NavLink key = {index} to = {`/bugtracker/${text.toLowerCase()}`} activeClassName = {classes.navActive} className = {classes.navLink}>
 
 						<ListItem button key={text}>
 							<ListItemIcon>
@@ -248,7 +252,14 @@ export default function PersistentDrawerLeft(props) {
 
 
         {/* Outer APP */}
+
+
+			<div style={{height: '100%'}}>
+
 				{props.children}
+
+			</div>
+
 			</main>
 		</div>
 	);

@@ -9,7 +9,7 @@ exports.createTeam = async (req, res, next) => {
 
 	const { name } = req.body;
 
-	const team = await Team.create({ leader: userId, name });
+	const team = await Team.create({ leader: userId, name, members: [ userId ] });
 
 	res.status(201).json({ message: 'Team Added Successfully', team: team });
 };
@@ -40,7 +40,6 @@ exports.getTeam = async (req, res, next) => {
 				populate: { path: 'owner', select: User.publicProps().join(' ') },
 				populate: { path: 'bugs', select: 'status' }
 			})
-			.populate({ path: 'leader', select: User.publicProps().join(' ') })
 			.populate({ path: 'members', select: User.publicProps().join(' ') })
 			.select('-notifications')
 			.lean();

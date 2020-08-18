@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import TextField from '@material-ui/core/TextField';
-import AuthForm from '../../components/AuthForm/AuthForm';
+import Form from '../../components/Form/Form';
 import { signup } from '../../Apis/auth';
 import { withSnackbar } from 'notistack';
 import LoadingBtn from '../../components/Btn/LoadingBtn';
@@ -50,7 +50,7 @@ export class SignUp extends Component {
 
 	render() {
 		return (
-			<AuthForm type='Sign Up'>
+			<Form type='Sign Up'>
 				<form onSubmit={this.submitHandler}>
 					<div className='inpWrapper'>
 						<TextField
@@ -101,10 +101,10 @@ export class SignUp extends Component {
 						/>
 					</div>
 					<div className='inpWrapper'>
-						<LoadingBtn type='submit' name='sign up' loading={this.state.loading} />
+						<LoadingBtn type='submit' name='sign up' loading={this.state.loading} fullWidth={false} />
 					</div>
 				</form>
-			</AuthForm>
+			</Form>
 		);
 	}
 }
