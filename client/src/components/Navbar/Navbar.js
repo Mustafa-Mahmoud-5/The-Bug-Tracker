@@ -159,15 +159,21 @@ export default function PersistentDrawerLeft(props) {
           </Tooltip>
 					{/* NOTIFIATIONS */}
 					<div style={{ marginLeft: 'auto' }}>
+						<Tooltip title = 'Notifications'>
+
 						<IconButton color='primary' onClick = {handleNotificationOpen}>
 							<Badge color='secondary' badgeContent={props.userNotifications?.notifications.length} >
 								<NotificationsActiveIcon color='primary' />
 							</Badge>
               
 						</IconButton>
+						</Tooltip>
+						<Tooltip title = 'Log out'>
+
 						<IconButton color='primary'>
 							<ExitToAppIcon color='primary' />
 						</IconButton>
+						</Tooltip>
 					</div>
 				</Toolbar>
 			</AppBar>

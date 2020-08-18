@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
-import Layout from '../../components/Layout/Layout';
 import { fetchUser } from '../../store/actions';
 import Nprogress from 'nprogress';
 import { Switch, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
+
+// COMPONENTS
+import Layout from '../../components/Layout/Layout';
 import Profile from '../Profile/Profile';
 import EditProfile from '../Profile/EditProfile';
+import PersonalProjects from '../Projects/PersonalProjects';
+import ProjectDetails from '../ProjectDetails/ProjectDetails';
 export class BugTracker extends Component {
 	componentDidMount() {
 		try {
@@ -29,6 +33,8 @@ export class BugTracker extends Component {
 					<Switch>
 						<Route exact path='/bugtracker/profile' component={Profile} />
 						<Route exact path='/bugtracker/profile/edit' component={EditProfile} />
+						<Route exact path='/bugtracker/dashboard' component={PersonalProjects} />
+						<Route exact path='/bugtracker/dashboard/project/:projectId' component={ProjectDetails} />
 					</Switch>
 				</Layout>
 			</div>

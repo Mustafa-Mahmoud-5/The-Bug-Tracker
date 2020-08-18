@@ -13,8 +13,8 @@ export function editProject(body) {
 	return sendRequest('PATCH', '/users/editProject', body);
 }
 
-export function projectTimeline(projectId) {
-	return sendRequest('GET', `/users/projectTimeline/${projectId}`);
+export function projectTimeline(projectId, page) {
+	return sendRequest('GET', `/users/projectTimeline/${projectId}?page=${page}`);
 }
 
 export function closeOrReOpenProject(body) {

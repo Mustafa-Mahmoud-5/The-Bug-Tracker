@@ -5,7 +5,8 @@ const sendError = require('../helpers/sendError'),
 	Bug = require('../models/Bug'),
 	Timeline = require('../models/Timeline'),
 	fs = require('fs'),
-	{ v4: uuidv4 } = require('uuid');
+	{ v4: uuidv4 } = require('uuid'),
+	paginationItems = require('../helpers/paginationItems').paginationItems;
 
 exports.editPersonalData = async (req, res, next) => {
 	// this api edit the personalData (editing the )
@@ -251,20 +252,57 @@ exports.getProjectDetails = async (req, res, next) => {
 
 	try {
 		const project = await Project.findById(projectId)
+			.select('-timeline')
 			.populate({ path: 'bugs', populate: { path: 'creator', select: User.publicProps().join(' ') } })
 			.populate({ path: 'owner', select: User.publicProps().join(' ') })
-			.populate({
-				path: 'timeline',
-				populate: [ { path: 'from', select: User.publicProps().join(' ') }, { path: 'bug', select: 'name' } ]
-			})
 			.lean();
 
+		// time line will have its own api
 		if (!project) sendError('Project is not founbd', 404);
 
 		const projectStatistics = Project.analyzeProjectStatistics(project);
 		res.status(200).json({ project, projectStatistics });
 	} catch (error) {
 		if (!error.statusCode) error.statusCode = 500;
+		next(error);
+	}
+};
+
+exports.getProjectTimeline = async (req, res, next) => {
+	const { projectId } = req.params;
+
+	let { page } = req.query;
+
+	page = parseInt(page); // make sure its number
+
+	const PER_PAGE = 5;
+
+	const SKIP = (page - 1) * PER_PAGE;
+
+	console.log('exports.getProjectTimeline -> projectId', projectId);
+	try {
+		const project = await Project.findById(projectId).lean();
+
+		if (!project) sendError('Project is not found', 404);
+
+		const projectTimelines = project.timeline; // [ObjectId, ObjectId]
+
+		if (projectTimelines.length === 0) {
+			return res.status(200).json({ timeline: [], total: 0 });
+		}
+
+		const timeline = await Timeline.find({ _id: { $in: projectTimelines } })
+			.populate({ path: 'from', select: User.publicProps().join(' ') })
+			.populate({ path: 'bug', select: 'name createdAt' })
+			.lean()
+			.skip(SKIP)
+			.limit(PER_PAGE);
+
+		const paginationItemsCount = paginationItems(projectTimelines.length, PER_PAGE);
+
+		res.status(200).json({ timeline, paginationItemsCount });
+	} catch (error) {
+		error.statusCode = error.statusCode || 500;
 		next(error);
 	}
 };
