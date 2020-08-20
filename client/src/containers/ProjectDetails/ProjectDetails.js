@@ -6,9 +6,10 @@ import Statistics from '../../components/Statistics/Statistics'
 import './ProjectDetails.scss'
 import Bugs from '../../components/Bugs/Bugs';
 import Modal from '../../components/Modal/Modal';
-import Avatar from '@material-ui/core/Avatar'
 import { toDate } from '../../helpers';
 import LoadingBtn from '../../components/Btn/LoadingBtn';
+import BugDetails from '../../components/Bugs/BugDetails';
+
 import {withSnackbar} from 'notistack'
 import {fixBug, reOpenBug} from '../../Apis/bug'
 export class ProjectDetails extends Component {
@@ -21,9 +22,10 @@ export class ProjectDetails extends Component {
     projectStatistics: null,
     projectTimeline: null,
     paginationItemsCount: 0,
-    bugModalOpen: false,
+    modalOpen: false,
     selectedBug: null,
-    loading: false
+    loading: false,
+    modalType: ''
   }
 
 
@@ -117,7 +119,7 @@ export class ProjectDetails extends Component {
       await this.getProjectDetails(false);
 
 
-      this.setState({loading: false, bugModalOpen: false})
+      this.setState({loading: false, modalOpen: false})
 
     } catch (error) {
       this.props.enqueueSnackbar(error.response.data.error, { variant: 'error' });
@@ -140,31 +142,23 @@ export class ProjectDetails extends Component {
 
 
     this.setState({ selectedBug })
-    this.openModal('bug')
+    this.openModal('bugDetails')
   }
 
-  openModal = type => {
-    type === 'bug' ? this.setState({bugModalOpen: true}) : this.setState({addModalOpen: true})
+  openModal = modalType => {
+ 
+    this.setState({modalOpen: true, modalType})
   }
 
-  closeModal = type => {
-    type === 'bug' ? this.setState({bugModalOpen: false}) : this.setState({addModalOpen: false})
-
+  closeModal = () => {
+   this.setState({modalOpen: false})
   }
 
 
 
   
   render() {
-    const {project, projectStatistics, projectTimeline, paginationItemsCount, bugModalOpen, selectedBug, loading} = this.state
-
-    let selectedBugStatus;
-    let selectedBugStatusColor;
-    if(bugModalOpen && selectedBug) {
-
-      selectedBugStatus = selectedBug.status === 1 ? 'Fixed': 'Buggy';
-      selectedBugStatusColor = selectedBug.status === 1 ? '#5cb85c' : '#d9534f'
-    }
+    const {project, projectStatistics, projectTimeline, paginationItemsCount, modalOpen, selectedBug, loading, modalType} = this.state
 
     return (
       
@@ -195,25 +189,14 @@ export class ProjectDetails extends Component {
 
 
 
+      {/* Modal, will include addBug, bugDetails, editBug */}
+      {modalOpen && <Modal  modalOpen = {modalOpen} header = {`${selectedBug.name}`}closeModal = {() => this.closeModal()}>
 
-      {/* Bug Details modal */}
-      {bugModalOpen && <Modal  modalOpen = {bugModalOpen} header = {`${selectedBug.name}`}closeModal = {() => this.closeModal('bug')}>
+       {modalType === 'bugDetails' &&
 
-        <div style={{textAlign:'center'}}>
-          <p style={{color: selectedBugStatusColor}}>({selectedBugStatus})</p>
+        <BugDetails updateBugStatus = {this.updateBugStatus} projectType = {project.type} selectedBug ={selectedBug} loading ={loading}/>
+      }
 
-          {/* show only if the project type is public */}
-          {project.type !=='public' && <p className='italic secondary'>
-          Reported By {`${selectedBug.creator.firstName}  ${selectedBug.creator.lastName} at ${toDate(selectedBug.createdAt)}`}
-          </p>}
-
-
-          <div style={{color:'white', backgroundColor: '#11161A'}}>{selectedBug.description}</div>
-
-
-          <LoadingBtn loading = {loading} name = {selectedBug.status === 1 ? 'Re open' : 'Fix'} func = {this.updateBugStatus}/>
-        </div>
-        
       </Modal>}
       </Fragment>
       )}
