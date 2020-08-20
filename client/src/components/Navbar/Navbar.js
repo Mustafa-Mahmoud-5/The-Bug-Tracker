@@ -86,6 +86,10 @@ const useStyles = makeStyles(theme => ({
     }),
 		marginLeft: -drawerWidth,
 		height: '100%',
+		[theme.breakpoints.down("sm")]: {
+      width: `calc(100% - ${drawerWidth}px)`
+    }
+
   },
 	contentShift: {
     transition: theme.transitions.create('margin', {

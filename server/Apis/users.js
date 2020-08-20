@@ -292,11 +292,13 @@ exports.getProjectTimeline = async (req, res, next) => {
 		}
 
 		const timeline = await Timeline.find({ _id: { $in: projectTimelines } })
+			.sort('-date')
 			.populate({ path: 'from', select: User.publicProps().join(' ') })
 			.populate({ path: 'bug', select: 'name createdAt' })
-			.lean()
 			.skip(SKIP)
-			.limit(PER_PAGE);
+			.limit(PER_PAGE)
+			.lean();
+		console.log('exports.getProjectTimeline -> timeline', timeline);
 
 		const paginationItemsCount = paginationItems(projectTimelines.length, PER_PAGE);
 

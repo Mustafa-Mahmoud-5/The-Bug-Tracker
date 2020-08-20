@@ -13,41 +13,34 @@ import Pagination from '@material-ui/lab/Pagination';
 function ProjectTimeline(props) {
 	const { timeline, paginationItemsCount } = props;
 
-	let sortedTimeline = <h2 className='secondary text-center'>Timeline is Empty.</h2>;
+	let projectTimeline = <h2 className='secondary text-center'>Timeline is Empty.</h2>;
 
 	// if the array has some data, sort them and map them to HTML markup or jsx.
 	if (timeline.length > 0) {
-		sortedTimeline = timeline
-			.sort((a, b) => {
-				return new Date(b.date) - new Date(a.date);
-			})
-			.map((tl, i) => {
-				let from = `${tl.from.firstName} ${tl.from.lastName}`;
+		projectTimeline = timeline.map((tl, i) => {
+			let from = `${tl.from.firstName} ${tl.from.lastName}`;
 
-				if (tl.from._id === props.currentUserId) from = 'you';
+			if (tl.from._id === props.currentUserId) from = 'you';
 
-				return (
-					<ListItem key={i}>
-						<ListItemAvatar>
-							<Avatar src={tl.from.image.url} />
-						</ListItemAvatar>
-						<ListItemText
-							primary={`${from} ${tl.content} (${tl.bug.name})`}
-							secondary={`${toDate(tl.date)}`}
-						/>
-					</ListItem>
-				);
-			});
+			return (
+				<ListItem key={i}>
+					<ListItemAvatar>
+						<Avatar src={tl.from.image.url} />
+					</ListItemAvatar>
+					<ListItemText primary={`${from} ${tl.content} (${tl.bug.name})`} secondary={`${toDate(tl.date)}`} />
+				</ListItem>
+			);
+		});
 	}
 
 	return (
-		<div className='col-md-3'>
+		<div style={{ wordBreak: 'break-word' }}>
 			<Paper elevation={3}>
 				<Typography variant='h6' className='text-center'>
-					Project Timeline
+					Timeline
 				</Typography>
 				<div id='TimelineContainer'>
-					<List>{sortedTimeline}</List>
+					<List>{projectTimeline}</List>
 				</div>
 				<div
 					className='paginator'
@@ -57,8 +50,8 @@ function ProjectTimeline(props) {
 				>
 					{timeline.length > 0 && (
 						<Pagination
-							count={1}
-							disabled={paginationItemsCount === 1}
+							count={paginationItemsCount}
+							disabled={paginationItemsCount < 2}
 							color='primary'
 							onChange={(e, newPage) => props.getProjectTimeLine(true, newPage)}
 						/>

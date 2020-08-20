@@ -50,7 +50,7 @@ const mongoURL = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cl
 		useNewUrlParser: true,
 		useCreateIndex: true
 	},
-	port = 2200;
+	port = 2300;
 
 mongoose
 	.connect(mongoURL, mongoConfigs)

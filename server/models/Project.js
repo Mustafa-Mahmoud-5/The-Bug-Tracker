@@ -76,7 +76,7 @@ class ProjectClass {
 
 		const bugContent = 'has added a new bug';
 
-		const timeLineObj = { from: userId, content: bugContent, bug: addedBugId };
+		const timeLineObj = { from: userId, content: bugContent, bug: addedBugId, date: new Date() };
 
 		const { _id: addedTimeLineId } = await Timeline.create(timeLineObj);
 
@@ -127,7 +127,7 @@ class ProjectClass {
 
 		const bugContent = 'has fixed a bug';
 
-		const timeLineObj = { from: userId, content: bugContent, bug: bugId };
+		const timeLineObj = { from: userId, content: bugContent, bug: bugId, date: new Date() };
 
 		const { _id: addedTimeLineId } = await Timeline.create(timeLineObj);
 
@@ -169,7 +169,7 @@ class ProjectClass {
 
 		const bugContent = 'has reopened a bug';
 
-		const timeLineObj = { from: userId, content: bugContent, bug: bugId };
+		const timeLineObj = { from: userId, content: bugContent, bug: bugId, date: new Date() };
 
 		const { _id: addedTimeLineId } = await Timeline.create(timeLineObj);
 

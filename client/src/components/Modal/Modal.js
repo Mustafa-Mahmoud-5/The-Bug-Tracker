@@ -14,8 +14,8 @@ const useStyles = makeStyles(theme => ({
 	},
 	modalPaper: {
 		padding: '20px',
-		backgroundColor: '#11161A',
-		width: '80%',
+		// backgroundColor: '#11161A',
+		width: '60%',
 		height: '80%',
 		border: 'none',
 		outline: 'none',

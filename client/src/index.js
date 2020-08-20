@@ -28,7 +28,7 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const store = createStore(reducer, composeEnhancers(applyMiddleware(thunk)));
 
-axios.defaults.baseURL = 'http://localhost:2200';
+axios.defaults.baseURL = 'http://localhost:2300';
 
 ReactDOM.render(
 	<React.StrictMode>

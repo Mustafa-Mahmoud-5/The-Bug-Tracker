@@ -13,7 +13,7 @@ const timeLineSchema = new Schema({
 	},
 	date: {
 		type: Date,
-		default: new Date()
+		required: true
 	},
 	bug: {
 		type: Schema.Types.ObjectId,
