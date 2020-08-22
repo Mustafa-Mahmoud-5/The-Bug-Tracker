@@ -183,10 +183,10 @@ export class ProjectDetails extends Component {
     this.setState({loading: true});
 
     try {
-
-      const {selectedBug} = this.state
+ 
+      const {selectedBug, project} = this.state
       
-      const body = {newName, newDescription, bugId: selectedBug._id};
+      const body = {newName, newDescription, bugId: selectedBug._id, projectId: project._id};
 
       const response = await editBug(body);
 

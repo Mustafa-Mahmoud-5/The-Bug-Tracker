@@ -97,11 +97,15 @@ exports.closeOrReOpenProject = async (req, res, next) => {
 
 exports.editBugDetails = async (req, res, next) => {
 	const { userId } = req;
-	const { bugId, newName, newDescription } = req.body;
+	const { bugId, newName, newDescription, projectId } = req.body;
 	console.log('exports.editBugDetails -> bugId', bugId);
 
 	try {
 		const bug = await Bug.findById(bugId);
+
+		const project = await Project.findById(projectId).select('status').lean();
+
+		if (project.status === 1) sendError('You can`t work on a closed Project.', 403);
 
 		if (!bug) sendError('Bug is not found', 404);
 

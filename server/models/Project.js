@@ -66,6 +66,8 @@ class ProjectClass {
 
 		const project = await this.findById(projectId);
 
+		if (project.status === 1) sendError('You can`t work on a closed Project.', 403);
+
 		const creator = await User.findById(userId).select(User.publicProps().join(' ')).lean();
 
 		if (!project && project.type === 'public') sendError('Project with given id is not found', 403);
@@ -118,6 +120,10 @@ class ProjectClass {
 	static async fixBug(userId, { bugId, projectId, teamId }) {
 		const bug = await Bug.findById(bugId);
 
+		const project = await this.findById(projectId);
+
+		if (project.status === 1) sendError('You can`t work on a closed Project.', 403);
+
 		const fixer = await User.findById(userId).select(User.publicProps().join()).lean();
 
 		if (!bug) sendError('Bug is not found', 404);
@@ -130,8 +136,6 @@ class ProjectClass {
 		const timeLineObj = { from: userId, content: bugContent, bug: bugId, date: new Date() };
 
 		const { _id: addedTimeLineId } = await Timeline.create(timeLineObj);
-
-		const project = await this.findById(projectId);
 
 		project.timeline.unshift(addedTimeLineId);
 
@@ -160,6 +164,10 @@ class ProjectClass {
 	static async reOpenBug(userId, { bugId, projectId, teamId }) {
 		const bug = await Bug.findById(bugId);
 
+		const project = await this.findById(projectId);
+
+		if (project.status === 1) sendError('You can`t work on a closed Project.', 403);
+
 		const reOpener = await User.findById(userId).select(User.publicProps().join(' ')).lean();
 
 		if (!bug) sendError('Bug is not found');
@@ -172,8 +180,6 @@ class ProjectClass {
 		const timeLineObj = { from: userId, content: bugContent, bug: bugId, date: new Date() };
 
 		const { _id: addedTimeLineId } = await Timeline.create(timeLineObj);
-
-		const project = await this.findById(projectId);
 
 		project.timeline.unshift(addedTimeLineId);
 
