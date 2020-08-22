@@ -11,6 +11,11 @@ import AddBug from '../../components/Bugs/AddBug';
 import EditBug from '../../components/Bugs/EditBug';
 import {withSnackbar} from 'notistack'
 import {fixBug, reOpenBug, newBug, editBug} from '../../Apis/bug'
+import {closeOrReOpenProject} from '../../Apis/project'
+import { Avatar, Paper } from '@material-ui/core';
+import ToolTip from '@material-ui/core/Tooltip';
+import LoadingBtn from '../../components/Btn/LoadingBtn';
+import {connect} from 'react-redux'
 export class ProjectDetails extends Component {
   
   
@@ -24,7 +29,8 @@ export class ProjectDetails extends Component {
     modalOpen: false,
     selectedBug: null,
     loading: false,
-    modalType: ''
+    modalType: '',
+  // 0 is opened, 0 is opened
   }
 
 
@@ -78,6 +84,30 @@ export class ProjectDetails extends Component {
       await Promise.all([this.getProject(), this.getProjectTimeLine(false)])
   }
 
+  updateProjectStatus = async () => {
+    const project = {...this.state.project};
+    
+    this.setState({loading:true})
+    
+    const body = {projectId: project._id, teamId: null}
+    try {
+      const response = await closeOrReOpenProject(body)  
+      console.log("ProjectDetails -> updateProjectStatus -> response", response)
+      
+      this.props.enqueueSnackbar(response.data.message || 'Something went wrong', {variant: 'success'})
+      
+      const updatedStatus = response.data.status;
+
+      project.status = updatedStatus;
+
+      this.setState({loading: false, project})
+
+    } catch (error) {
+      this.setState({loading:false})
+
+      this.props.enqueueSnackbar(error.response.data.error || 'Something went wrong', {variant: 'error'})
+    }
+  }
 
 
   // BUGS FUNCTIONS
@@ -158,10 +188,10 @@ export class ProjectDetails extends Component {
       
       const body = {newName, newDescription, bugId: selectedBug._id};
 
-      const result = await editBug(body);
+      const response = await editBug(body);
 
 
-      this.props.enqueueSnackbar(result.data.message, {variant:'success'})
+      this.props.enqueueSnackbar(response.data.message, {variant:'success'})
 
       this.setState({loading: false, modalOpen: false})
 
@@ -204,7 +234,29 @@ export class ProjectDetails extends Component {
     return (
       
       <Fragment>
+
+
+
+
       {(project && projectStatistics && projectTimeline) &&
+      
+      <Fragment>
+      <Paper id='ProjectIntro' elevation={3}>
+      
+        <h2 > 
+          {project.name} | <span style={{color: project.status === 0 ? '#d9534f' : '#5cb85c'}}>  ({project.status === 0 ? 'Opened' : 'Closed'}) </span>  
+        </h2>
+
+        <ToolTip title = {<Avatar src={project.owner.image.url} />} >
+          <h2 id='ownerH2'>Owner: {`${project.owner.firstName} ${project.owner.lastName}`}</h2>
+        </ToolTip>
+        {
+          project.owner._id === this.props.userId &&
+          <LoadingBtn name = {project.status === 0 ? 'close' : 're open'} loading ={loading} func={this.updateProjectStatus}/>
+        }
+
+      </Paper>
+
       <div>
 
         <div className="row">
@@ -226,6 +278,8 @@ export class ProjectDetails extends Component {
         </div>
       </div>
       </div>
+
+      </Fragment>
       }
 
 
@@ -242,8 +296,12 @@ export class ProjectDetails extends Component {
       }
 
       </Modal>}
+
+
       </Fragment>
-      )}
+  )}
 }
 
-export default withSnackbar(ProjectDetails)
+const mapStateToProps = state => ({userId: state.currentUser?._id})
+
+export default connect(mapStateToProps)(withSnackbar(ProjectDetails))

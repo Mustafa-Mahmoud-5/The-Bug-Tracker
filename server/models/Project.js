@@ -232,6 +232,7 @@ class ProjectClass {
 			// close this opened project
 			project.status = 1;
 			if (team) {
+				// project is public
 				const notificationContent = 'has been closed';
 
 				const notificationId = await Team.newNotification(
@@ -274,7 +275,7 @@ class ProjectClass {
 			await team.save();
 			getIo().emit('projectClosingOrReopening', socketObject);
 		}
-		await project.save();
+		return project.save();
 	}
 
 	static analyzeProjectStatistics(project) {

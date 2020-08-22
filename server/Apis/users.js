@@ -84,9 +84,11 @@ exports.bugReopen = async (req, res, next) => {
 exports.closeOrReOpenProject = async (req, res, next) => {
 	const { userId } = req;
 	try {
-		await Project.closeOrReOpenProject(userId, req.body);
+		const { status } = await Project.closeOrReOpenProject(userId, req.body);
 
-		res.status(200).json({ status: true });
+		status === 1
+			? res.status(200).json({ message: 'Project has been closed successfully', status })
+			: res.status(200).json({ message: 'Project has been re opened successfully', status });
 	} catch (error) {
 		if (!error.statusCode) error.statusCode = 500;
 		next(error);

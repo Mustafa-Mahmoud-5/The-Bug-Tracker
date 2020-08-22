@@ -13,7 +13,7 @@ function BugDetails(props) {
 			<p style={{ color: selectedBugStatusColor }}>({selectedBugStatus})</p>
 
 			{/* show only if the project type is public */}
-			{projectType !== 'public' && (
+			{projectType === 'public' && (
 				<p className='italic secondary'>
 					Reported By{' '}
 					{`${selectedBug.creator.firstName}  ${selectedBug.creator.lastName} at ${toDate(

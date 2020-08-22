@@ -2,9 +2,9 @@ import React from 'react';
 import './ProjectBox.scss';
 import Paper from '@material-ui/core/Paper';
 import { toDate } from '../../helpers';
-import { DeleteForever } from '@material-ui/icons';
+import { DeleteForever, LockOutlined } from '@material-ui/icons';
 import { IconButton } from '@material-ui/core';
-import { LockOpen, LockOpenOutlined } from '@material-ui/icons';
+import { LockOpenOutlined } from '@material-ui/icons';
 import { withRouter } from 'react-router-dom';
 import Tooltip from '@material-ui/core/Tooltip';
 function ProjectBox(props) {
@@ -36,12 +36,12 @@ function ProjectBox(props) {
 				</div>
 				<div className='status'>
 					{project.status === 1 ? (
-						<Tooltip title='Status: Opened'>
-							<LockOpen />
+						<Tooltip title='Status: Closed'>
+							<LockOutlined style={{ color: '#5cb85c' }} />
 						</Tooltip>
 					) : (
-						<Tooltip title='Status: Closed'>
-							<LockOpenOutlined />
+						<Tooltip title='Status: Opened'>
+							<LockOpenOutlined color='secondary' />
 						</Tooltip>
 					)}
 				</div>
