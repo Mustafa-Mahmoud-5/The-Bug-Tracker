@@ -3,7 +3,7 @@
 .pnp.js
 # testing
 /coverage
-
+server/access.log
 
 !node_modules/
 

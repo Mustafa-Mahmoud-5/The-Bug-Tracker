@@ -62,13 +62,13 @@ class ProjectClass {
 	}
 
 	static async addBug(userId, { projectId, name, description, teamId }) {
-		// teamId will be passed if its project is of public type.
+		// teamId will be passed if its project is of public type. which is required for socket emiting
 
 		const project = await this.findById(projectId);
 
 		const creator = await User.findById(userId).select(User.publicProps().join(' ')).lean();
 
-		if (!project) sendError('Project with given id is not found', 403);
+		if (!project && project.type === 'public') sendError('Project with given id is not found', 403);
 
 		const { _id: addedBugId } = await Bug.create({ creator: userId, name, description });
 

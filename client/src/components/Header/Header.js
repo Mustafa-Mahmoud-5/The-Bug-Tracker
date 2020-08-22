@@ -11,7 +11,7 @@ function header(props) {
 	};
 
 	return (
-		<Fragment>
+		<header>
 			<OuterNav />
 			<div id='About'>
 				<Particles />
@@ -47,7 +47,7 @@ function header(props) {
 					</div>
 				</div>
 			</div>
-		</Fragment>
+		</header>
 	);
 }
 

@@ -4,7 +4,7 @@ import LinkedInIcon from '@material-ui/icons/LinkedIn';
 import GitHubIcon from '@material-ui/icons/GitHub';
 function Footer() {
 	return (
-		<div id='Author'>
+		<footer id='Author'>
 			<h2> &#169; All Rights Reserved to Mustafa Mahmoud</h2>
 			<div>
 				<a
@@ -19,7 +19,7 @@ function Footer() {
 					<GitHubIcon style={{ color: 'black', fontSize: '50px' }} />
 				</a>
 			</div>
-		</div>
+		</footer>
 	);
 }
 

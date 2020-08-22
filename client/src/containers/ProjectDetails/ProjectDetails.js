@@ -6,12 +6,11 @@ import Statistics from '../../components/Statistics/Statistics'
 import './ProjectDetails.scss'
 import Bugs from '../../components/Bugs/Bugs';
 import Modal from '../../components/Modal/Modal';
-import { toDate } from '../../helpers';
-import LoadingBtn from '../../components/Btn/LoadingBtn';
 import BugDetails from '../../components/Bugs/BugDetails';
-
+import AddBug from '../../components/Bugs/AddBug';
+import EditBug from '../../components/Bugs/EditBug';
 import {withSnackbar} from 'notistack'
-import {fixBug, reOpenBug} from '../../Apis/bug'
+import {fixBug, reOpenBug, newBug, editBug} from '../../Apis/bug'
 export class ProjectDetails extends Component {
   
   
@@ -31,16 +30,17 @@ export class ProjectDetails extends Component {
 
 
   async componentDidMount() {
-
+    Nprogress.start();
     try {
-      await this.getProjectDetails();  
+      await this.getProjectDetails();
+      Nprogress.done()
     } catch (error) {
       Nprogress.done()
       alert(error.response?.data?.error || 'Something Went Wrong, please try again later')
     }
   }
 
-
+  // PROJECTS FUNCTIONS
   getProjectTimeLine = async (withLoading = true, page = 1) => {
     // try&catch because i will also use this function individually
     withLoading && Nprogress.start();
@@ -62,8 +62,6 @@ export class ProjectDetails extends Component {
 
   }
 
-
-
   getProject = async () => {
     //  no try&catch because this func will be called by other func
     await this.getProjectTimeLine(false);
@@ -75,22 +73,14 @@ export class ProjectDetails extends Component {
     this.setState({project, projectStatistics})
   }
 
-
-  getProjectDetails = async (withLoading = true) => {
-    // try&catch because i will call this func individualy after updating
-    withLoading && Nprogress.start()
-
-    try {
+  // for getting all data
+  getProjectDetails = async () => {
       await Promise.all([this.getProject(), this.getProjectTimeLine(false)])
-      withLoading && Nprogress.done()
-      
-    } catch (error) {
-      Nprogress.done()
-      alert(error.response?.data?.error || 'Something Went Wrong, please try again later')
-      
-    } 
   }
 
+
+
+  // BUGS FUNCTIONS
   updateBugStatus = async () => {
     const {project, selectedBug} = this.state;
   
@@ -127,14 +117,64 @@ export class ProjectDetails extends Component {
       this.setState({loading: false})
 
     }
+    
+  }
+  
+  addBug = async (e,{name, description}) => {
+    e.preventDefault();
 
+    this.setState({loading: true})
+    
+    const { project } = this.state;
+
+    const body = {name, description, projectId: project._id, teamId: null};
+
+    try {
+      const response = await newBug(body);
+
+      await this.getProjectDetails();
+
+
+      this.props.enqueueSnackbar(response.data.message || 'Something went Wrong', {variant: 'success'})
+    this.setState({loading: false, modalOpen: false})
+
+    } catch (error) {
+    this.setState({loading: false})
+
+      this.props.enqueueSnackbar(error.response.data.error || 'Something went Wrong', {variant: 'error'})
+    }
   }
 
-  
+
+  editBugDetails = async (e, {newName, newDescription}) => {
+
+    e.preventDefault();
+
+    this.setState({loading: true});
+
+    try {
+
+      const {selectedBug} = this.state
+      
+      const body = {newName, newDescription, bugId: selectedBug._id};
+
+      const result = await editBug(body);
 
 
+      this.props.enqueueSnackbar(result.data.message, {variant:'success'})
 
-  openBugDetails = bugId => {
+      this.setState({loading: false, modalOpen: false})
+
+
+    } catch (error) {
+      console.log("editBugDetails -> error", error.response)
+      this.props.enqueueSnackbar(error.response.data.error || 'Something Went Wrong', {variant:'error'})
+      this.setState({loading: false})
+    }
+  }
+
+  // MODAL FUNCTIONS
+  openBug = (bugId, modalType) => {
 
     const {project} = this.state;
     
@@ -142,12 +182,13 @@ export class ProjectDetails extends Component {
 
 
     this.setState({ selectedBug })
-    this.openModal('bugDetails')
+
+    this.openModal(modalType)
   }
 
   openModal = modalType => {
  
-    this.setState({modalOpen: true, modalType})
+    this.setState({ modalType, modalOpen: true})
   }
 
   closeModal = () => {
@@ -172,7 +213,7 @@ export class ProjectDetails extends Component {
 
         </div>
         <div className="col-md-8" id = 'separator'>
-          <div className style= {{width: '100%'}}>
+          <div style= {{width: '100%'}}>
             <Statistics statistics = {projectStatistics}  />
 
           </div>
@@ -181,7 +222,7 @@ export class ProjectDetails extends Component {
         </div>
       <div className="row" style={{marginTop: '20px'}}>
         <div className="col-md-12">
-          <Bugs bugs = {project.bugs} openBugDetails  = {this.openBugDetails}/>
+          <Bugs openModal = {this.openModal} bugs = {project.bugs} openBug  = {this.openBug}/>
         </div>
       </div>
       </div>
@@ -190,11 +231,14 @@ export class ProjectDetails extends Component {
 
 
       {/* Modal, will include addBug, bugDetails, editBug */}
-      {modalOpen && <Modal  modalOpen = {modalOpen} header = {`${selectedBug.name}`}closeModal = {() => this.closeModal()}>
+      {modalOpen && <Modal  modalOpen = {modalOpen} header = { modalType=== ('bugDetails' || modalType === 'editBug')? `${selectedBug.name}`: modalType ==='addBug' ? 'Add Bug': null}closeModal = {() => this.closeModal()}>
 
-       {modalType === 'bugDetails' &&
-
-        <BugDetails updateBugStatus = {this.updateBugStatus} projectType = {project.type} selectedBug ={selectedBug} loading ={loading}/>
+       {modalType === 'bugDetails' ?
+        <BugDetails updateBugStatus = {this.updateBugStatus} projectType = {project.type} selectedBug ={selectedBug} loading = {loading} />
+      
+        : modalType === 'addBug' ? <AddBug loading ={loading} addBug = {this.addBug}/>
+        
+        : modalType === 'editBug' ? <EditBug loading = {loading} selectedBug = {selectedBug}  editBugDetails = {this.editBugDetails} /> : null
       }
 
       </Modal>}

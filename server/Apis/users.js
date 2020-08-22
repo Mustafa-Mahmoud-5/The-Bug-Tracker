@@ -99,10 +99,6 @@ exports.editBugDetails = async (req, res, next) => {
 	console.log('exports.editBugDetails -> bugId', bugId);
 
 	try {
-		const user = await User.findById(userId).lean();
-
-		if (!user) sendError('User is not found', 404);
-
 		const bug = await Bug.findById(bugId);
 
 		if (!bug) sendError('Bug is not found', 404);
@@ -112,9 +108,9 @@ exports.editBugDetails = async (req, res, next) => {
 		bug.name = newName;
 		bug.description = newDescription;
 
-		const { name, description } = await bug.save();
+		await bug.save();
 
-		res.status(200).json({ status: 1, name, description });
+		res.status(200).json({ message: 'Bug Edited Successfully' });
 	} catch (error) {
 		if (!error.statusCode) error.statusCode = 500;
 		next(error);

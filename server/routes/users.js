@@ -32,8 +32,8 @@ router.post(
 	'/addBug',
 	isAuth,
 	[
-		body('newName', 'Name must be not empty, ').isLength({ max: 100 }).notEmpty(),
-		body('newDescription', 'Description is required, at most 100 characters').notEmpty()
+		body('name', 'Name must be not empty, ').trim().isLength({ max: 100 }).notEmpty(),
+		body('description', 'Description is required, at most 100 characters').notEmpty()
 	],
 	checkValidation,
 	usersApis.addNewBug

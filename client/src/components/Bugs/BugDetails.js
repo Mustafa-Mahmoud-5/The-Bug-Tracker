@@ -22,7 +22,9 @@ function BugDetails(props) {
 				</p>
 			)}
 
-			<div style={{ color: 'white', backgroundColor: '#11161A' }}>{selectedBug.description}</div>
+			<div style={{ color: 'white', backgroundColor: '#11161A', marginBottom: '20px', padding: '10px' }}>
+				{selectedBug.description}
+			</div>
 
 			<LoadingBtn
 				loading={loading}

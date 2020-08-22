@@ -45,7 +45,10 @@ function ProjectTimeline(props) {
 				<div
 					className='paginator'
 					style={{
-						backgroundColor: '#11161A'
+						backgroundColor: '#11161A',
+						display: 'flex',
+						justifyContent: 'center',
+						padding: '0.2rem'
 					}}
 				>
 					{timeline.length > 0 && (
