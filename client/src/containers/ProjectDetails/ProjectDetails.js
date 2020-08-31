@@ -16,6 +16,7 @@ import { Avatar, Paper } from '@material-ui/core';
 import ToolTip from '@material-ui/core/Tooltip';
 import LoadingBtn from '../../components/Btn/LoadingBtn';
 import {connect} from 'react-redux'
+import Alert from '@material-ui/lab/Alert';
 export class ProjectDetails extends Component {
   
   
@@ -232,8 +233,8 @@ export class ProjectDetails extends Component {
     const {project, projectStatistics, projectTimeline, paginationItemsCount, modalOpen, selectedBug, loading, modalType} = this.state
 
     return (
-      
       <Fragment>
+
 
 
 
@@ -241,6 +242,10 @@ export class ProjectDetails extends Component {
       {(project && projectStatistics && projectTimeline) &&
       
       <Fragment>
+        {
+          project.status === 1 &&
+          <Alert severity="info">This project has been closed, you can`t work on it anymore, well done.</Alert>
+        }
       <Paper id='ProjectIntro' elevation={3}>
       
         <h2 > 

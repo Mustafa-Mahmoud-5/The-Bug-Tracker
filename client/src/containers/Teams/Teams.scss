@@ -1,0 +1,36 @@
+@import '../../../variables.scss';
+#TeamHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#teamContHeader {
+  display: flex;
+  justify-content:space-between ;
+  align-items: center;
+  .teamH {
+    span {
+      text-transform: capitalize;
+    }
+  }
+  .teamMembers {
+    text-decoration: underline;
+    cursor: pointer;
+    color: $primaryColor;
+    margin-left: 0.5rem;
+    &:hover {
+      opacity: .8;
+    }
+  }
+}
+
+#teamIntro {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#teamProjects {
+  margin: 40px 0;
+}

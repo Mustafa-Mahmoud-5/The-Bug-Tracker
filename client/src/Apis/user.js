@@ -24,3 +24,7 @@ export function findUserWithPrivateKey(privateKey) {
 export function regeneratePrivateKey() {
 	return sendRequest('PATCH', '/users/regeneratePrivateKey');
 }
+
+export function userTeams(forTeamSelecting) {
+	return sendRequest('GET', `/users/userTeams?forTeamSelecting=${forTeamSelecting}`);
+}

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { withSnackbar } from 'notistack';
 import Nprogress from 'nprogress';
 import { personalProjects } from '../../Apis/user';
-import ProjectBox from '../../components/ProjectBox/ProjectBox';
+import ProjectBox from '../../components/Boxes/ProjectBox';
 import Alert from '@material-ui/lab/Alert';
 export class PersonalProjects extends Component {
 	state = {

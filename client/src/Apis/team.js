@@ -13,8 +13,8 @@ export function teamDetails(teamId) {
 	return sendRequest('GET', `/teams/getTeam/${teamId}`);
 }
 
-export function teamNotifications(teamId) {
-	return sendRequest('GET', `/teams/teamNotifications/${teamId}`);
+export function teamNotifications(teamId, page) {
+	return sendRequest('GET', `/teams/teamNotifications/${teamId}?page=${page}`);
 }
 
 export function kickMember(body) {

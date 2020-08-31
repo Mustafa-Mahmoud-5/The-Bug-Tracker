@@ -41,3 +41,11 @@ export const fetchUser = () => {
 		}
 	};
 };
+
+
+export const saveCurrentTeamId = currentTeamId => ({
+	type: actionTypes.saveCurrentTeam,
+	payload: {
+		currentTeamId
+	}
+})

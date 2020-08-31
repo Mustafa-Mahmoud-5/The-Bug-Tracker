@@ -323,7 +323,7 @@ exports.getUserTeams = async (req, res, next) => {
 				? await Team.find(query).select('name').lean()
 				: await Team.find(query)
 						.populate({ path: 'leader', select: 'firstName lastName' })
-						.select('name createdAt leader')
+						.select('name leader members projects')
 						.lean();
 
 		res.status(200).json({ teams });

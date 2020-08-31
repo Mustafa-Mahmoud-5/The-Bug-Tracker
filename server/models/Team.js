@@ -173,21 +173,21 @@ class TeamClass {
 			YOU CAN GOOGLE THIS ISSUE IF YOU ARE INTERESTED >> CIRCULAR DEPENDANCY <<
 		*/
 
-		const projects = { total: 0, closed: 0, opened: 0 };
-		const bugs = { total: 0, fixed: 0, buggy: 0 };
+		const projects = { totalProjects: 0, closedProjects: 0, openedProjects: 0 };
+		const bugs = { totalBugs: 0, fixedBugs: 0, buggyBugs: 0 };
 
 		team.projects.forEach(project => {
 			console.log('project', project);
-			projects.total++;
+			projects.totalProjects++;
 
-			if (project.status === 0) projects.opened++;
-			if (project.status === 1) projects.closed++;
+			if (project.status === 0) projects.openedProjects++;
+			if (project.status === 1) projects.closedProjects++;
 
 			const projectBugs = ProjectModal.analyzeProjectStatistics(project);
 
-			bugs.total += projectBugs.total;
-			bugs.fixed += projectBugs.fixed;
-			bugs.buggy += projectBugs.buggy;
+			bugs.totalBugs += projectBugs.total;
+			bugs.fixedBugs += projectBugs.fixed;
+			bugs.buggyBugs += projectBugs.buggy;
 		});
 
 		return { projects: projects, bugs: bugs };

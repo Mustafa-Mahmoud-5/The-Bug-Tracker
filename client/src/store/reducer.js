@@ -3,7 +3,8 @@ import * as actionTypes from './actionTypes';
 const initialState = {
 	currentUser: null,
 	currentUserNotifications: [],
-	loading: false
+	loading: false,
+	currentTeamId: null
 };
 
 const reducer = (state = initialState, action) => {
@@ -28,7 +29,6 @@ const reducer = (state = initialState, action) => {
 			};
 
 		case actionTypes.updateUserData:
-			console.log('ACTION =>>>', action);
 			return {
 				...state,
 				currentUser: action.payload.updatedUser
@@ -42,6 +42,13 @@ const reducer = (state = initialState, action) => {
 			return {
 				...state,
 				currentUser: updatedUser
+			};
+
+		case actionTypes.saveCurrentTeam:
+			const currentTeamId = action.payload.currentTeamId;
+			return {
+				...state,
+				currentTeamId
 			};
 		default:
 			return state;

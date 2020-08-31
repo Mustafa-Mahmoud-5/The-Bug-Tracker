@@ -10,6 +10,8 @@ import Profile from '../Profile/Profile';
 import EditProfile from '../Profile/EditProfile';
 import PersonalProjects from '../Projects/PersonalProjects';
 import ProjectDetails from '../ProjectDetails/ProjectDetails';
+import Teams from '../Teams/Teams';
+import TeamDetails from '../Teams/TeamDetails';
 export class BugTracker extends Component {
 	componentDidMount() {
 		try {
@@ -31,10 +33,17 @@ export class BugTracker extends Component {
 			<div>
 				<Layout>
 					<Switch>
+						{/* PROFILE */}
 						<Route exact path='/bugtracker/profile' component={Profile} />
 						<Route exact path='/bugtracker/profile/edit' component={EditProfile} />
+
+						{/* PERSONAL DASHBOARD */}
 						<Route exact path='/bugtracker/dashboard' component={PersonalProjects} />
 						<Route exact path='/bugtracker/dashboard/project/:projectId' component={ProjectDetails} />
+
+						{/* TEAMS */}
+						<Route exact path='/bugtracker/teams' component={Teams} />
+						<Route exact path='/bugtracker/teams/:teamId' component={TeamDetails} />
 					</Switch>
 				</Layout>
 			</div>
