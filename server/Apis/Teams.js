@@ -2,7 +2,8 @@ const sendError = require('../helpers/sendError');
 const Team = require('../models/Team'),
 	User = require('../models/User'),
 	Project = require('../models/Project'),
-	Notification = require('../models/Notification');
+	Notification = require('../models/Notification'),
+	paginationItems = require('../helpers/paginationItems').paginationItems;
 
 exports.createTeam = async (req, res, next) => {
 	const { userId } = req;
@@ -58,7 +59,9 @@ exports.getTeam = async (req, res, next) => {
 
 exports.getTeamNotifications = async (req, res, next) => {
 	const { teamId } = req.params;
-
+	const { page } = req.query;
+	const PER_PAGE = 5;
+	const SKIP = (page - 1) * PER_PAGE;
 	try {
 		const team = await Team.findById(teamId).lean();
 
@@ -68,12 +71,17 @@ exports.getTeamNotifications = async (req, res, next) => {
 
 		if (teamNotifications.length > 0) {
 			const notifications = await Notification.find({ _id: { $in: teamNotifications } })
+				.sort('-createdAt')
 				.populate({ path: 'from', select: User.publicProps().join(' ') })
 				.populate({ path: 'to', select: User.publicProps().join(' ') })
 				.populate({ path: 'Project', select: Project.publicProps().join(' ') })
+				.skip(SKIP)
+				.limit(PER_PAGE)
 				.lean();
+			const paginationItemsCount = paginationItems(teamNotifications.length, PER_PAGE);
+			console.log('exports.getTeamNotifications -> paginationItemsCount', paginationItemsCount);
 
-			res.status(200).json({ notifications });
+			res.status(200).json({ notifications, paginationItemsCount });
 		} else {
 			res.status(200).json({ notifications: [] });
 		}

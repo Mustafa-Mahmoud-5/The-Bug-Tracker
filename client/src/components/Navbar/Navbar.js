@@ -161,7 +161,7 @@ export default function PersistentDrawerLeft(props) {
 					</Button>
 
           </Tooltip>
-					{/* NOTIFIATIONS */}
+					{/* NOTIFIATIONS ICON*/}
 					<div style={{ marginLeft: 'auto' }}>
 						<Tooltip title = 'Notifications'>
 
@@ -261,7 +261,7 @@ export default function PersistentDrawerLeft(props) {
 
 
 
-        {/* Outer APP */}
+        {/* APP */}
 
 
 			<div style={{height: '100%'}}>

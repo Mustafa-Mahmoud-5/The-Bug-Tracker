@@ -209,7 +209,7 @@ exports.getUserWithPrivateKey = async (req, res, next) => {
 	try {
 		const user = await User.findOne({ privateKey }).lean().select(User.publicProps().join(' '));
 		if (!user) sendError('No Results', 404);
-		res.status(200).json({ user });
+		res.status(200).json({ user, message: 'User is found successfully' });
 	} catch (error) {
 		if (!error.statusCode) error.statusCode = 500;
 		next(error);

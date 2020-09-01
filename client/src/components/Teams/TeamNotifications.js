@@ -11,16 +11,17 @@ import Avatar from '@material-ui/core/Avatar';
 import ListItemText from '@material-ui/core/ListItemText';
 
 function TeamNotifications(props) {
-	const { teamNotifications, teamProjects } = props;
+	const { teamNotifications, teamProjects, userId, paginationItemsCount } = props;
 
+	console.log('PROPS', props);
 	let notifications = <h2 className='secondary text-center'>Notifications Are Empty.</h2>;
 
 	if (teamNotifications.length > 0) {
 		notifications = teamNotifications.map((n, i) => {
-			const from = n.from._id === props.userId ? 'You' : `${n.from.firstName} ${n.from.lastName}`;
+			const from = n.from._id === userId ? 'You' : `${n.from.firstName} ${n.from.lastName}`;
 
 			if (n.notificationType === 'memberManipulation') {
-				const to = n.to._id === props.userId ? 'you' : `${n.to.firstName} ${n.to.lastName}`;
+				const to = n.to._id === userId ? 'you' : `${n.to.firstName} ${n.to.lastName}`;
 
 				return (
 					<ListItem key={i}>
@@ -72,8 +73,10 @@ function TeamNotifications(props) {
 				>
 					{teamNotifications.length > 0 && (
 						<Pagination
+							count={paginationItemsCount}
+							disabled={paginationItemsCount < 2}
 							color='primary'
-							onChange={(e, newPage) => props.paginateTeamNotifications(e, newPage)}
+							onChange={(e, newPage) => props.paginateTeamNotifiactions(newPage)}
 						/>
 					)}
 				</div>

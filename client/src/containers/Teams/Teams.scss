@@ -34,3 +34,21 @@
 #teamProjects {
   margin: 40px 0;
 }
+
+#addMembers {
+  display: flex;
+
+  height: 100%;
+  .membersListSection {
+    width: 50%;
+    // height: 100%;
+    border-right: 1px solid grey;
+    padding: 5px;
+  }
+  .findSection {
+    width: 50%;
+    // height: 100%;
+    padding: 5px;
+  }
+
+}

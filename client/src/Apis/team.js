@@ -6,7 +6,7 @@ export function newTeam(body) {
 }
 
 export function addMembers(body) {
-	return sendRequest('POST', '/teams/addMembers');
+	return sendRequest('POST', '/teams/addMembers', body);
 }
 
 export function teamDetails(teamId) {

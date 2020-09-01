@@ -58,7 +58,9 @@ class TeamClass {
 	}
 
 	static async addMembers(leaderId, { teamId, members }) {
+		console.log('addMembers -> teamId', teamId);
 		const team = await this.findById(teamId).populate({ path: 'leader', select: User.publicProps().join(' ') });
+		console.log('addMembers -> team', team);
 
 		if (!team) sendError('Team is not found', 404);
 
@@ -110,9 +112,7 @@ class TeamClass {
 
 		if (!team) sendError('Team is not found', 404);
 
-		const teamLeader = team.leader;
-
-		if (teamLeader.toString() !== leaderId) sendError('User is not team leader', 401);
+		if (team.leader._id.toString() !== leaderId) sendError('User is not team leader', 401);
 
 		const kickedUser = await User.findById(memberId).select(User.publicProps().join(' ')).lean();
 
