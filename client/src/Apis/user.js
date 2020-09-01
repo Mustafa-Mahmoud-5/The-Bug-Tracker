@@ -17,8 +17,8 @@ export function personalProjects() {
 	return sendRequest('GET', '/users/personalProjects');
 }
 
-export function findUserWithPrivateKey(privateKey) {
-	return sendRequest('GET', `/users/getUserWithPrivateKey/${privateKey}`);
+export function findUserWithPrivateKey(privateKey, teamId) {
+	return sendRequest('GET', `/users/getUserWithPrivateKey/${privateKey}?teamId=${teamId}`);
 }
 
 export function regeneratePrivateKey() {

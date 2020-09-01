@@ -231,7 +231,11 @@ export class TeamDetails extends Component {
 										leader={leader}
 									/>
 								) : modalType === 'addMembers' ? (
-									<AddMembers outerLoading={loading} addMembersToTeam={this.addMembersToTeam} />
+									<AddMembers
+										teamId={this.teamId}
+										outerLoading={loading}
+										addMembersToTeam={this.addMembersToTeam}
+									/>
 								) : null}
 							</Modal>
 						)}

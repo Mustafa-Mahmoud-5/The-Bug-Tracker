@@ -8,7 +8,7 @@ import {
 	ListItemText,
 	TextField
 } from '@material-ui/core';
-import React, { Component,Suspense } from 'react';
+import React, { Component, Suspense } from 'react';
 import { findUserWithPrivateKey } from '../../Apis/user';
 import { withSnackbar } from 'notistack';
 import './Teams.scss';
@@ -28,7 +28,7 @@ export class AddMembers extends Component {
 		try {
 			const { userKey } = this.state;
 
-			const response = await findUserWithPrivateKey(userKey);
+			const response = await findUserWithPrivateKey(userKey, this.props.teamId);
 
 			this.setState({ loading: false, foundUser: response.data.user, userKey: '' });
 
@@ -70,11 +70,9 @@ export class AddMembers extends Component {
 	};
 
 	render() {
-    console.log(${as}, ${})
 		// we will have outerLoading and innerLoading
 		const { loading, foundUser, userKey, membersToAdd } = this.state;
-    const { outerLoading } = this.props;
-    React.cloneElement('h1',)
+		const { outerLoading } = this.props;
 		return (
 			<div>
 				<div id='addMembers'>
@@ -127,7 +125,6 @@ export class AddMembers extends Component {
 							disabled={userKey.trim() === ''}
 							func={this.getMember}
 						/>
-            <input type="text" defaultValue/>
 						{foundUser && (
 							<div className='foundUser'>
 								<ListItem>

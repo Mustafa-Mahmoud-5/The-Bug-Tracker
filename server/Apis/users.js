@@ -204,11 +204,27 @@ exports.getUserNotifications = async (req, res, next) => {
 };
 
 exports.getUserWithPrivateKey = async (req, res, next) => {
-	const { privateKey } = req.params;
+	const { privateKey } = req.params,
+		{ teamId } = req.query;
 
 	try {
-		const user = await User.findOne({ privateKey }).lean().select(User.publicProps().join(' '));
+		const [ user, team ] = await Promise.all([
+			User.findOne({ privateKey }).lean().select(User.publicProps().join(' ')),
+			Team.findById(teamId).select('members').lean()
+		]);
+
 		if (!user) sendError('No Results', 404);
+
+		if (!team) sendError('Team is not found', 404);
+
+		const teamMembers = team.members;
+
+		console.log(user._id, teamMembers[0]._id);
+
+		const foundUser = teamMembers.find(member => member.toString() === user._id.toString());
+
+		if (foundUser) sendError('User is already in your team', 403);
+
 		res.status(200).json({ user, message: 'User is found successfully' });
 	} catch (error) {
 		if (!error.statusCode) error.statusCode = 500;
