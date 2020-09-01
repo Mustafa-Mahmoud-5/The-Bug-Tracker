@@ -4,6 +4,7 @@ import Typography from '@material-ui/core/Typography';
 import './Form.scss';
 
 function Form(props) {
+	const { type } = props;
 	return (
 		<div id='authPage'>
 			<Paper id='authForm' elevation={3}>
@@ -12,7 +13,7 @@ function Form(props) {
 					color='primary'
 					style={{ marginBottom: '20px', textAlign: 'center', textTransform: 'capitalize' }}
 				>
-					{props.type}
+					{type}
 				</Typography>
 
 				{/* form */}

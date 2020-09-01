@@ -26,7 +26,7 @@ import Modal from '../Modal/Modal';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import {NavLink}from 'react-router-dom'
+import {NavLink, withRouter}from 'react-router-dom'
 const drawerWidth = 240;
 
 const useStyles = makeStyles(theme => ({
@@ -111,7 +111,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function PersistentDrawerLeft(props) {
+function PersistentDrawerLeft(props) {
 	const classes = useStyles();
 	const theme = useTheme();
 	const [ open, setOpen ] = React.useState(!(window.innerWidth < 700));
@@ -133,6 +133,9 @@ export default function PersistentDrawerLeft(props) {
     setNotificationOpen(false)
   }
 
+	const goToAddProject = () => {
+		props.history.push('/bugtracker/newProject');
+	}
 
 	return (
 		<div className={classes.root}>
@@ -156,7 +159,7 @@ export default function PersistentDrawerLeft(props) {
 					</IconButton>
 					{/* NEW PROJECT */}
           <Tooltip title = 'New Project'>
-					<Button color='primary' size='small' variant='contained' >
+					<Button color='primary' size='small' variant='contained' onClick = {goToAddProject}>
 						+
 					</Button>
 
@@ -274,3 +277,5 @@ export default function PersistentDrawerLeft(props) {
 		</div>
 	);
 }
+
+export default withRouter(PersistentDrawerLeft);

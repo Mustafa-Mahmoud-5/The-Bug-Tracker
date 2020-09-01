@@ -57,8 +57,6 @@ class ProjectClass {
 
 			console.log('ProjectClass -> createProject -> addingResult', addingResult);
 		}
-
-		return addedProject;
 	}
 
 	static async addBug(userId, { projectId, name, description, teamId }) {

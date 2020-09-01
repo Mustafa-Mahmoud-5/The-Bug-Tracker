@@ -12,6 +12,7 @@ import PersonalProjects from '../Projects/PersonalProjects';
 import ProjectDetails from '../ProjectDetails/ProjectDetails';
 import Teams from '../Teams/Teams';
 import TeamDetails from '../Teams/TeamDetails';
+import AddProject from '../Projects/AddProject';
 export class BugTracker extends Component {
 	componentDidMount() {
 		try {
@@ -44,6 +45,9 @@ export class BugTracker extends Component {
 						{/* TEAMS */}
 						<Route exact path='/bugtracker/teams' component={Teams} />
 						<Route exact path='/bugtracker/teams/:teamId' component={TeamDetails} />
+
+						{/* NewProject */}
+						<Route exact path='/bugtracker/newProject' component={AddProject} />
 					</Switch>
 				</Layout>
 			</div>

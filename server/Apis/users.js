@@ -34,9 +34,9 @@ exports.createNewProject = async (req, res, next) => {
 	console.log('exports.createNewProject -> ownerId', ownerId);
 
 	try {
-		const { _id } = await Project.createProject(ownerId, req.body);
+		await Project.createProject(ownerId, req.body);
 
-		res.status(200).json({ message: 'Project added successfully', projectId: _id });
+		res.status(200).json({ message: 'Project added successfully' });
 	} catch (error) {
 		if (!error.statusCode) error.statusCode = 500;
 		next(error);
@@ -330,12 +330,13 @@ exports.getProjectTimeline = async (req, res, next) => {
 exports.getUserTeams = async (req, res, next) => {
 	const { userId } = req;
 	const { forTeamSelecting } = req.query;
+	console.log('exports.getUserTeams -> forTeamSelecting', typeof forTeamSelecting);
 
 	try {
 		const query = { members: userId };
 
 		const teams =
-			forTeamSelecting === true
+			forTeamSelecting === 'yes'
 				? await Team.find(query).select('name').lean()
 				: await Team.find(query)
 						.populate({ path: 'leader', select: 'firstName lastName' })

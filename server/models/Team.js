@@ -30,7 +30,7 @@ class TeamClass {
 	static async addNewProject({ ownerId, teamId, projectId, name }) {
 		const team = await this.findById(teamId);
 
-		const owner = await User.findById(ownerId).select(User.publicProps().join(' '));
+		const owner = await User.findById(ownerId).select(User.publicProps().join(' ')).lean();
 
 		const socketObject = {
 			teamMembers: team.members,
