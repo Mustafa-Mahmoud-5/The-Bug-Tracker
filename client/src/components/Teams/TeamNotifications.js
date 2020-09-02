@@ -26,7 +26,7 @@ function TeamNotifications(props) {
 				return (
 					<ListItem key={i}>
 						<ListItemAvatar>
-							<Avatar src={n.from.image.url} />
+							<Avatar src={n.from?.image?.url} />
 						</ListItemAvatar>
 						<ListItemText primary={`${from} ${n.content} (${to})`} secondary={`${toDate(n.createdAt)}`} />
 					</ListItem>
@@ -44,7 +44,7 @@ function TeamNotifications(props) {
 			return (
 				<ListItem key={i}>
 					<ListItemAvatar>
-						<Avatar src={n.from.image.url} />
+						<Avatar src={n.from?.image?.url} />
 					</ListItemAvatar>
 					<ListItemText
 						primary={`${from} ${n.content} (${project.name})`}

@@ -39,7 +39,7 @@ class TeamClass {
 
 		team.projects.push(projectId);
 
-		const content = 'has added a new project',
+		const content = 'added a new project',
 			notificationType = 'projectCreation';
 
 		const notificationId = await this.newNotification(team, notificationType, content, ownerId, projectId, null);
@@ -78,7 +78,7 @@ class TeamClass {
 		};
 
 		const notificationType = 'memberManipulation',
-			content = 'has added';
+			content = 'added';
 
 		for (const member of members) {
 			team.members.push(member);
@@ -120,12 +120,12 @@ class TeamClass {
 
 		team.members.pull(memberId);
 
-		const content = 'has kicked',
+		const content = 'kicked',
 			notificationType = 'memberManipulation';
 
 		const result = await Promise.all([
 			this.newNotification(team, notificationType, content, leaderId, null, memberId),
-			User.newNotification(memberId, leaderId, 'has kicked you out of his team.')
+			User.newNotification(memberId, leaderId, 'kicked you out of his team.')
 		]);
 
 		const newTeamNotificationId = result[0];

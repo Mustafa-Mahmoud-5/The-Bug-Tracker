@@ -170,6 +170,18 @@ exports.regeneratePrivateKey = async (req, res, next) => {
 	}
 };
 
+exports.seeNotifications = async (req, res, next) => {
+	const { userId } = req;
+	try {
+		await User.seeNotifications(userId);
+
+		res.status(200).json({ seen: true });
+	} catch (error) {
+		error.statusCode = error.statusCode || 500;
+
+		next(error);
+	}
+};
 // _____________________GET APIS & POPULATION(Aggregation)______________________
 
 exports.getPersonalUserData = async (req, res, next) => {
@@ -191,12 +203,16 @@ exports.getPersonalUserData = async (req, res, next) => {
 exports.getUserNotifications = async (req, res, next) => {
 	const { userId } = req;
 	try {
-		const user = await User.findById(userId)
+		let user = await User.findById(userId)
 			.select('notifications')
 			.populate({ path: 'notifications.from', select: User.publicProps().join(' ') })
 			.lean();
 
-		res.status(200).json({ user });
+		if (user.notifications.length > 0) {
+			user.notifications = user.notifications.sort((a, b) => b.date - a.date);
+		}
+		console.log('exports.getUserNotifications -> user', user);
+		res.status(200).json({ notifications: user.notifications });
 	} catch (error) {
 		error.statusCode = error.statusCode || 500;
 		next(error);
@@ -306,7 +322,7 @@ exports.getProjectTimeline = async (req, res, next) => {
 		const projectTimelines = project.timeline; // [ObjectId, ObjectId]
 
 		if (projectTimelines.length === 0) {
-			return res.status(200).json({ timeline: [], total: 0 });
+			return res.status(200).json({ timeline: [] });
 		}
 
 		const timeline = await Timeline.find({ _id: { $in: projectTimelines } })

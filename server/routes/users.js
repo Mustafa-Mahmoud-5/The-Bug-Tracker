@@ -60,6 +60,8 @@ router.patch(
 
 router.patch('/fixBug', isAuth, usersApis.fixBug);
 
+router.patch('/seenNotifications', isAuth, usersApis.seeNotifications);
+
 router.patch('/bugReopen', isAuth, usersApis.bugReopen);
 
 router.patch('/closeOrReOpenProject', isAuth, usersApis.closeOrReOpenProject);

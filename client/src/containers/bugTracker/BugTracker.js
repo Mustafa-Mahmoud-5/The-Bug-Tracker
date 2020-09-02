@@ -30,6 +30,9 @@ export class BugTracker extends Component {
 			// we are done, userData are there, navigate to his profile
 		}
 
+		// const token = localStorage.getItem('token');
+
+		// if (!token) this.props.history.push('/');
 		return (
 			<div>
 				<Layout>

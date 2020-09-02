@@ -2,7 +2,6 @@ import * as actionTypes from './actionTypes';
 
 const initialState = {
 	currentUser: null,
-	currentUserNotifications: [],
 	loading: false,
 	currentTeamId: null
 };

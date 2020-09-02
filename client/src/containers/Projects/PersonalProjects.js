@@ -1,5 +1,4 @@
-import React, { Component } from 'react';
-import { withSnackbar } from 'notistack';
+import React, { Component, Fragment } from 'react';
 import Nprogress from 'nprogress';
 import { personalProjects } from '../../Apis/user';
 import ProjectBox from '../../components/Boxes/ProjectBox';
@@ -47,7 +46,13 @@ export class PersonalProjects extends Component {
 			}
 		}
 
-		return <div id='personalProjects'>{personalProjects}</div>;
+		return (
+			<Fragment>
+				<div style={{ fontSize: '1.6rem', fontWeight: 'bold' }}>Your Personal Projects.</div>
+				<hr />
+				<div id='personalProjects'>{personalProjects}</div>
+			</Fragment>
+		);
 	}
 }
 

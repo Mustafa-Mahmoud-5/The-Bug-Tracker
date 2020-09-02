@@ -129,7 +129,7 @@ export class TeamDetails extends Component {
 			this.setState({ loading: false });
 			this.closeModal();
 		} catch (error) {
-			this.props.enqueueSnackbar(error.response.data.error || 'Something Went wring', { variant: 'error' });
+			this.props.enqueueSnackbar(error.response?.data?.error || 'Something Went wring', { variant: 'error' });
 			this.setState({ loading: false });
 		}
 	};

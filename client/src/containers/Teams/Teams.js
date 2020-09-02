@@ -72,7 +72,7 @@ export class Teams extends Component {
 				{teams && (
 					<div>
 						<div id='TeamHeader'>
-							<h1>Your Teams.</h1>
+							<div style={{ fontSize: '1.6rem', fontWeight: 'bold' }}>Your Teams.</div>
 							<Tooltip title='New Team'>
 								<Button color='primary' variant='contained' onClick={this.openModal}>
 									<Add />

@@ -275,7 +275,7 @@ export class ProjectDetails extends Component {
           {project.name} | <span style={{color: project.status === 0 ? '#d9534f' : '#5cb85c'}}>  ({project.status === 0 ? 'Opened' : 'Closed'}) </span>  
         </h2>
 
-        <ToolTip title = {<Avatar src={project.owner.image.url} />} >
+        <ToolTip title = {<Avatar src={project.owner?.image?.url} />} >
           <h2 id='ownerH2'>Owner: {`${project.owner.firstName} ${project.owner.lastName}`}</h2>
         </ToolTip>
         {

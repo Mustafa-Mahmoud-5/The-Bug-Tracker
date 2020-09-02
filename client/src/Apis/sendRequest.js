@@ -1,8 +1,7 @@
 import axios from 'axios';
 
-const userToken = localStorage.getItem('token');
-
 const sendRequest = (type, url, body, sendToken = true) => {
+	const userToken = localStorage.getItem('token');
 	const req =
 		type === 'GET' ? axios.get : type === 'POST' ? axios.post : type === 'PATCH' ? axios.patch : axios.delete;
 

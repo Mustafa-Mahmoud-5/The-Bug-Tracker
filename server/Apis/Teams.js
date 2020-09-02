@@ -59,9 +59,15 @@ exports.getTeam = async (req, res, next) => {
 
 exports.getTeamNotifications = async (req, res, next) => {
 	const { teamId } = req.params;
-	const { page } = req.query;
+
+	let { page } = req.query;
+
 	const PER_PAGE = 5;
+
+	page = parseInt(page);
+
 	const SKIP = (page - 1) * PER_PAGE;
+
 	try {
 		const team = await Team.findById(teamId).lean();
 
@@ -78,8 +84,8 @@ exports.getTeamNotifications = async (req, res, next) => {
 				.skip(SKIP)
 				.limit(PER_PAGE)
 				.lean();
+
 			const paginationItemsCount = paginationItems(teamNotifications.length, PER_PAGE);
-			console.log('exports.getTeamNotifications -> paginationItemsCount', paginationItemsCount);
 
 			res.status(200).json({ notifications, paginationItemsCount });
 		} else {

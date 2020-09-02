@@ -11,7 +11,10 @@ export class SignIn extends Component {
 		loading: false
 	};
 
-	submitHandler = async e => {
+	gotToProfile = () => {
+		this.props.history.push('/bugtracker/profile')
+	}
+	submitHandler = async (e, cb) => {
 		e.preventDefault();
 
 		this.setState({ loading: true });
@@ -24,14 +27,14 @@ export class SignIn extends Component {
 
 			this.setState({ loading: false });
 
-			this.props.history.push('/bugtracker');
-
 			this.props.enqueueSnackbar(response.data.message, { variant: 'success' });
 
 			localStorage.setItem('token', response.data.token);
+
+			cb();
 		} catch (error) {
 			this.setState({ loading: false });
-			this.props.enqueueSnackbar(error.response.data.error, { variant: 'error' });
+			this.props.enqueueSnackbar(error.response?.data?.error, { variant: 'error' });
 		}
 	};
 
@@ -42,7 +45,11 @@ export class SignIn extends Component {
 	render() {
 		return (
 			<Form type='Sign In'>
-				<form onSubmit={this.submitHandler}>
+				<form
+					onSubmit={e => {
+						this.submitHandler(e, this.gotToProfile);
+					}}
+				>
 					<div className='inpWrapper'>
 						<TextField
 							type='email'

@@ -27,6 +27,7 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import {NavLink, withRouter}from 'react-router-dom'
+import { toDate } from '../../helpers';
 const drawerWidth = 240;
 
 const useStyles = makeStyles(theme => ({
@@ -125,8 +126,9 @@ function PersistentDrawerLeft(props) {
 		setOpen(false);
   };
   
-  const handleNotificationOpen = () => {
+  const handleNotificationOpen = async() => {
     setNotificationOpen(true)
+		await props.seeNewNotifications();
   }
 
   const handleNotificationClose = () =>{
@@ -137,7 +139,26 @@ function PersistentDrawerLeft(props) {
 		props.history.push('/bugtracker/newProject');
 	}
 
-	return (
+
+
+	let unseen = 0;
+
+	if(props.userNotifications?.length > 0) {
+		
+		console.log('asdasdasdasdasdasdasdasd')
+		
+		props.userNotifications.forEach(n => {
+			console.log("PersistentDrawerLeft -> n", n)
+			
+			if(n.seen === false) unseen+=1
+		})
+		
+	}
+	console.log("PersistentDrawerLeft -> props.userNotifications", props.userNotifications)
+	
+	console.log("UNSEEN", unseen);
+		
+		return (
 		<div className={classes.root}>
 			<CssBaseline />
 			<AppBar
@@ -169,7 +190,7 @@ function PersistentDrawerLeft(props) {
 						<Tooltip title = 'Notifications'>
 
 						<IconButton color='primary' onClick = {handleNotificationOpen}>
-							<Badge color='secondary' badgeContent={props.userNotifications?.notifications.length} >
+							<Badge color='secondary' badgeContent={unseen} >
 								<NotificationsActiveIcon color='primary' />
 							</Badge>
               
@@ -237,16 +258,17 @@ function PersistentDrawerLeft(props) {
         <Modal modalOpen = {notificationOpen} closeModal = {handleNotificationClose} header = 'Notifications'>
 
             
-          {props.userNotifications?.notifications.length === 0 ? <h2 style={{textAlign:'center'}}>You have no notifications.</h2> : <List>
-          {props.userNotifications?.notifications.map((notification, i) => {
+          {props.userNotifications?.length === 0 ? <h2 style={{textAlign:'center'}}>You have no notifications.</h2> : <List>
+          {props.userNotifications?.map((n, i) => {
                 return (
 
                   <ListItem key = {i}>
                   <ListItemAvatar>
-                    <Avatar/>
+                    <Avatar src={n.from.image?.url}/>
                   </ListItemAvatar>
                   <ListItemText
-                    primary={notification}
+										primary={`${n.from.firstName} ${n.from.lastName} ${n.content}`}
+										secondary={`${toDate(n.date)}`}
                     />
                   <ListItemSecondaryAction>
                     <IconButton edge="end" aria-label="delete">

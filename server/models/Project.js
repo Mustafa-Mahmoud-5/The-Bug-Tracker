@@ -74,7 +74,7 @@ class ProjectClass {
 
 		project.bugs.unshift(addedBugId);
 
-		const bugContent = 'has added a new bug';
+		const bugContent = 'added a new bug';
 
 		const timeLineObj = { from: userId, content: bugContent, bug: addedBugId, date: new Date() };
 
@@ -129,7 +129,7 @@ class ProjectClass {
 		bug.status = 1; // 1 is fixed 0 is buggy in bugs, 0 is closed 1 is opened in projects
 		bug.fixer = userId;
 
-		const bugContent = 'has fixed a bug';
+		const bugContent = 'fixed a bug';
 
 		const timeLineObj = { from: userId, content: bugContent, bug: bugId, date: new Date() };
 
@@ -173,7 +173,7 @@ class ProjectClass {
 		bug.status = 0;
 		bug.fixer = null;
 
-		const bugContent = 'has reopened a bug';
+		const bugContent = 'reopened a bug';
 
 		const timeLineObj = { from: userId, content: bugContent, bug: bugId, date: new Date() };
 
@@ -237,7 +237,7 @@ class ProjectClass {
 			project.status = 1;
 			if (team) {
 				// project is public
-				const notificationContent = 'has been closed';
+				const notificationContent = 'closed a project';
 
 				const notificationId = await Team.newNotification(
 					team,
@@ -257,7 +257,7 @@ class ProjectClass {
 			project.status = 0;
 			// if the projec is public, send a notification for this team
 			if (team) {
-				const notificationContent = 'has been re opened';
+				const notificationContent = 're opened a project';
 
 				const notificationId = await Team.newNotification(
 					team,

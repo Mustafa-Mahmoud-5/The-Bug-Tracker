@@ -47,7 +47,7 @@ const userSchema = new Schema(
 				content: String,
 				date: {
 					type: Date,
-					default: new Date()
+					required: true
 				},
 				seen: {
 					type: Schema.Types.Boolean,
@@ -132,9 +132,19 @@ class UserClass {
 	}
 
 	static async newNotification(toId, fromId, content) {
-		const notificationObject = { from: fromId, content };
+		const notificationObject = { from: fromId, content, date: new Date() };
 
 		await this.updateOne({ _id: toId }, { $addToSet: { notifications: notificationObject } });
+	}
+
+	static async seeNotifications(userId) {
+		const user = await this.findById(userId);
+
+		if (!user) sendError('User is not found', 404);
+
+		user.notifications.forEach(notification => (notification.seen = true));
+
+		return user.save();
 	}
 }
 

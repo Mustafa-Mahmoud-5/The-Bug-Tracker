@@ -28,3 +28,7 @@ export function regeneratePrivateKey() {
 export function userTeams(forTeamSelecting) {
 	return sendRequest('GET', `/users/userTeams?forTeamSelecting=${forTeamSelecting}`);
 }
+
+export function seenNotifications() {
+	return sendRequest('PATCH', '/users/seenNotifications');
+}
