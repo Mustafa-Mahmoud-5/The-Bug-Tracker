@@ -21,6 +21,8 @@ export class ProjectDetails extends Component {
   
   
   projectId = this.props.match.params.projectId;
+  currentTeamId = this.props.currentTeamId
+  userId = this.props.userId
 
   state = {
     project: null,
@@ -36,7 +38,16 @@ export class ProjectDetails extends Component {
 
 
 
+
+
+
   async componentDidMount() {
+
+    // make sure he gets the current teamId as it will be lost if the page is refreshed
+    const {project} = this.state;
+
+    if(!this.currentTeamId && project?.type === 'public') this.goBack();
+    
     Nprogress.start();
     try {
       await this.getProjectDetails();
@@ -91,6 +102,9 @@ export class ProjectDetails extends Component {
     this.setState({loading:true})
     
     const body = {projectId: project._id, teamId: null}
+    
+    if(project.type === 'public') body.teamId = this.currentTeamId;
+
     try {
       const response = await closeOrReOpenProject(body)  
       console.log("ProjectDetails -> updateProjectStatus -> response", response)
@@ -118,6 +132,8 @@ export class ProjectDetails extends Component {
     this.setState({loading: true})
     
     const body =  {teamId: null, bugId: selectedBug._id, projectId: project._id }
+
+    if(project.type === 'public') body.teamId = this.currentTeamId;
     
     try {
 
@@ -159,6 +175,8 @@ export class ProjectDetails extends Component {
     const { project } = this.state;
 
     const body = {name, description, projectId: project._id, teamId: null};
+
+    if(project.type === 'public') body.teamId = this.currentTeamId;
 
     try {
       const response = await newBug(body);
@@ -227,6 +245,11 @@ export class ProjectDetails extends Component {
   }
 
 
+  goBack = () => {
+    this.props.history.goBack();
+  }
+
+
 
   
   render() {
@@ -256,7 +279,7 @@ export class ProjectDetails extends Component {
           <h2 id='ownerH2'>Owner: {`${project.owner.firstName} ${project.owner.lastName}`}</h2>
         </ToolTip>
         {
-          project.owner._id === this.props.userId &&
+          project.owner._id === this.userId &&
           <LoadingBtn name = {project.status === 0 ? 'close' : 're open'} loading ={loading} func={this.updateProjectStatus}/>
         }
 
@@ -307,6 +330,6 @@ export class ProjectDetails extends Component {
   )}
 }
 
-const mapStateToProps = state => ({userId: state.currentUser?._id})
+const mapStateToProps = state => ({userId: state.currentUser?._id, currentTeamId: state.currentTeamId})
 
 export default connect(mapStateToProps)(withSnackbar(ProjectDetails))

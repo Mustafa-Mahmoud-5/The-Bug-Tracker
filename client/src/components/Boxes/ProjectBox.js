@@ -14,7 +14,7 @@ function ProjectBox(props) {
 	let bugText = project.bugs.length === 1 ? 'Bug' : 'Bugs';
 
 	const goToDetails = () => {
-		props.history.push(`/bugtracker/dashboard/project/${project._id}`);
+		props.history.push(`/bugtracker/project/${project._id}`);
 	};
 
 	return (

@@ -40,7 +40,7 @@ export class BugTracker extends Component {
 
 						{/* PERSONAL DASHBOARD */}
 						<Route exact path='/bugtracker/dashboard' component={PersonalProjects} />
-						<Route exact path='/bugtracker/dashboard/project/:projectId' component={ProjectDetails} />
+						<Route exact path='/bugtracker/project/:projectId' component={ProjectDetails} />
 
 						{/* TEAMS */}
 						<Route exact path='/bugtracker/teams' component={Teams} />
