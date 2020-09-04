@@ -35,24 +35,26 @@ export class BugTracker extends Component {
 		// if (!token) this.props.history.push('/');
 		return (
 			<div>
-				<Layout>
-					<Switch>
-						{/* PROFILE */}
-						<Route exact path='/bugtracker/profile' component={Profile} />
-						<Route exact path='/bugtracker/profile/edit' component={EditProfile} />
+				{this.props.user && (
+					<Layout>
+						<Switch>
+							{/* PROFILE */}
+							<Route exact path='/bugtracker/profile' component={Profile} />
+							<Route exact path='/bugtracker/profile/edit' component={EditProfile} />
 
-						{/* PERSONAL DASHBOARD */}
-						<Route exact path='/bugtracker/dashboard' component={PersonalProjects} />
-						<Route exact path='/bugtracker/project/:projectId' component={ProjectDetails} />
+							{/* PERSONAL DASHBOARD */}
+							<Route exact path='/bugtracker/dashboard' component={PersonalProjects} />
+							<Route exact path='/bugtracker/project/:projectId' component={ProjectDetails} />
 
-						{/* TEAMS */}
-						<Route exact path='/bugtracker/teams' component={Teams} />
-						<Route exact path='/bugtracker/teams/:teamId' component={TeamDetails} />
+							{/* TEAMS */}
+							<Route exact path='/bugtracker/teams' component={Teams} />
+							<Route exact path='/bugtracker/teams/:teamId' component={TeamDetails} />
 
-						{/* NewProject */}
-						<Route exact path='/bugtracker/newProject' component={AddProject} />
-					</Switch>
-				</Layout>
+							{/* NewProject */}
+							<Route exact path='/bugtracker/newProject' component={AddProject} />
+						</Switch>
+					</Layout>
+				)}
 			</div>
 		);
 	}

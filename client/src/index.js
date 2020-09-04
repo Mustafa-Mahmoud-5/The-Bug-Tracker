@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.scss';
 import App from './App';
+import io from 'socket.io-client';
 import * as serviceWorker from './serviceWorker';
 import { BrowserRouter } from 'react-router-dom';
 
@@ -28,7 +29,11 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const store = createStore(reducer, composeEnhancers(applyMiddleware(thunk)));
 
-axios.defaults.baseURL = 'http://localhost:2300';
+const baseUrl = 'http://localhost:2300';
+
+axios.defaults.baseURL = baseUrl;
+
+export const socket = io(`${baseUrl}/`);
 
 ReactDOM.render(
 	<React.StrictMode>

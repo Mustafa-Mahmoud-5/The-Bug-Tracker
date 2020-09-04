@@ -58,7 +58,7 @@ class ProjectClass {
 			console.log('ProjectClass -> createProject -> addingResult', addingResult);
 		}
 	}
-
+	// SOCKET
 	static async addBug(userId, { projectId, name, description, teamId }) {
 		// teamId will be passed if its project is of public type. which is required for socket emiting
 
@@ -115,6 +115,7 @@ class ProjectClass {
 	}
 
 	// i should have made one function as i did for closeOrReOpenProject :(
+	// SOCKET
 	static async fixBug(userId, { bugId, projectId, teamId }) {
 		const bug = await Bug.findById(bugId);
 
@@ -158,7 +159,7 @@ class ProjectClass {
 
 		await Promise.all([ bug.save(), project.save() ]);
 	}
-
+	// SOCKET
 	static async reOpenBug(userId, { bugId, projectId, teamId }) {
 		const bug = await Bug.findById(bugId);
 
@@ -197,12 +198,12 @@ class ProjectClass {
 				}
 			};
 
-			getIo().emit('publicBugFixed', socketObject);
+			getIo().emit('publicBugReopened', socketObject);
 		}
 
 		await Promise.all([ bug.save(), project.save() ]);
 	}
-
+	// SOCKET
 	static async closeOrReOpenProject(userId, { projectId, teamId }) {
 		// HOW THIS FUNC WORK ?
 		// if the project is closed, open it, if it is opened close it

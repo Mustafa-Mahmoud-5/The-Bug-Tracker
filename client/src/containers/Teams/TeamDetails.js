@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import { saveCurrentTeamId } from '../../store/actions';
 import TeamMembers from '../../components/Teams/TeamMembers';
 import AddMembers from './AddMembers';
+import {socket} from '../../index'
 export class TeamDetails extends Component {
 	state = {
 		loading: false,
@@ -24,8 +25,73 @@ export class TeamDetails extends Component {
 	};
 
 	teamId = this.props.match.params.teamId;
+	userId = this.props.userId
+
+
+	socketListeners = ['newMembersForTeam', 'userHasKicked', 'newPublicBug', 'publicBugFixed', 'publicBugReopened']
 
 	async componentDidMount() {
+
+		const teamLeader = this.state.team?.leader;
+    console.log("TeamDetails -> componentDidMount -> teamLeader", teamLeader)
+
+		socket.on('newMembersForTeam', data => {
+
+			const {teamMembers,team,newTeamNotifications,usersToAdd, leaderId } = data;
+			
+
+			if(teamMembers.includes(this.userId) && this.teamId === team._id && this.userId !== leaderId) {
+				this.increaseTeamMembers(usersToAdd);
+				this.updateTeamNotifications(newTeamNotifications, 'add');
+			}
+
+		})
+
+
+		socket.on('userHasKicked', data => {
+			
+			const {newTeamNotification, team, kickedUser, leaderId} = data;
+			
+			
+			if(team._id === this.teamId && leaderId !== this.userId ) {
+				
+				console.log("TeamDetails -> componentDidMount -> this.teamId", this.teamId)
+				console.log("TeamDetails -> componentDidMount -> kickedUser", kickedUser)
+				console.log("COMPARISON", typeof this.teamId === typeof kickedUser, this.teamId, kickedUser);
+				
+				if(this.userId === kickedUser) return this.props.history.push('/bugTracker/teams');
+
+				this.updateTeamNotifications(newTeamNotification, 'remove');
+
+				this.decreaseTeamMembers(kickedUser);
+
+			}
+		})
+
+		socket.on('newPublicBug', data => {
+
+			const {teamId, projectId} = data;
+			
+			if(this.teamId === teamId) { 
+				this.updateBugStatistics('newPublicBug', projectId)
+			}
+		})
+
+		socket.on('publicBugFixed', data => {
+			const {teamId} = data;
+			if(this.teamId === teamId) {
+				this.updateBugStatistics('publicBugFixed')
+			}
+		})
+
+		socket.on('publicBugReopened', data => {
+			const {teamId} = data;
+
+			if(teamId === this.teamId)  {
+				this.updateBugStatistics('publicBugReopened')
+			}
+		})
+
 		Nprogrss.start();
 
 		try {
@@ -39,6 +105,110 @@ export class TeamDetails extends Component {
 				error.response && (error.response.data.error || 'Something went wrong', { variant: 'error' })
 			);
 		}
+	}
+
+
+
+	updateTeamNotifications = (newNotifications, type) => {
+
+		const teamNotifications  = [...this.state.teamNotifications]
+
+		if(type === 'add') {
+
+			
+			newNotifications.forEach(notification => {
+				
+				teamNotifications.unshift(notification);
+				
+			})
+			
+		}
+
+
+		if(type === 'remove') {
+			teamNotifications.unshift(newNotifications); // at this case its only an object
+		}
+		
+		this.setState({teamNotifications: teamNotifications});
+	}
+
+
+
+	increaseTeamMembers = (newMembers) => {
+		const updatedTeam = {...this.state.team};
+
+		const teamMembers = [...updatedTeam.members]
+		
+		const updatedMembers = teamMembers.concat(newMembers);
+
+		updatedTeam.members = updatedMembers;
+	
+		this.setState({team: updatedTeam});
+
+	}
+
+	decreaseTeamMembers = (kickedUser) => {
+		const updatedTeam = {...this.state.team};
+
+		const teamMembers = [...updatedTeam.members];
+
+		const updatedTeamMembers = teamMembers.filter(mem => mem._id !== kickedUser)
+
+		updatedTeam.members = updatedTeamMembers;
+
+		this.setState({team: updatedTeam})
+
+	}
+
+
+
+	updateBugStatistics = async (type, projectId) => {
+		const teamStatistics = {...this.state.teamStatistics}
+
+		const bugs = {...teamStatistics.bugs};
+
+		if(type === 'newPublicBug') {
+			
+			bugs.totalBugs+=1
+			bugs.buggyBugs+=1
+
+			const team = {...this.state.team};
+
+			const projects = [...team.projects];
+
+
+			const bugProjectIndex = projects.findIndex(project => project._id === projectId);
+
+			const bugProject = {...projects[bugProjectIndex]};
+
+			const bugProjectBugs = [...bugProject.bugs];
+
+			bugProjectBugs.push({_id: '11111111111111', status: 0})
+
+			bugProject.bugs = bugProjectBugs;
+
+			projects[bugProjectIndex] = bugProject
+
+			team.projects = projects;
+
+			this.setState({team})
+		}
+
+		if( type === 'publicBugFixed') {
+			bugs.buggyBugs -= 1
+			bugs.fixedBugs =+1
+		}
+
+		if(type === 'publicBugReopened') {
+			bugs.buggyBugs +=1
+			bugs.fixedBugs -=1
+
+		}
+
+		teamStatistics.bugs = bugs;
+
+		this.setState({teamStatistics});
+
 	}
 
 	getTeamData = async () => {
@@ -66,7 +236,6 @@ export class TeamDetails extends Component {
 		Nprogrss.start();
 		try {
 			const response = await teamNotifications(this.teamId, page);
-			console.log('TeamDetails -> paginateTeamNotifiactions -> response', response);
 
 			this.setState({
 				teamNotifications: response.data.notifications,
@@ -120,7 +289,6 @@ export class TeamDetails extends Component {
 
 			const body = { teamId, members };
 
-			console.log('TeamDetails -> body', body);
 			const response = await addMembers(body);
 
 			await this.getTeamData();
@@ -133,7 +301,16 @@ export class TeamDetails extends Component {
 			this.setState({ loading: false });
 		}
 	};
+
+
+	componentWillUnmount() {
+		this.socketListeners.forEach(eventName => socket.removeEventListener(eventName))
+	}
+
 	render() {
+		console.log(this.state.team?.projects[0].bugs.length)
+		if(!this.userId) this.userId = this.props.userId;
+
 		const {
 			team,
 			teamNotifications,
@@ -141,10 +318,10 @@ export class TeamDetails extends Component {
 			teamStatistics,
 			loading,
 			modalOpen,
-			modalType
+			modalType,
 		} = this.state;
 
-		const { userId } = this.props;
+		const userId = this.userId;
 
 		let leader;
 

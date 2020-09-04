@@ -57,6 +57,7 @@ class TeamClass {
 		return team.save();
 	}
 
+	// SOCKET
 	static async addMembers(leaderId, { teamId, members }) {
 		console.log('addMembers -> teamId', teamId);
 		const team = await this.findById(teamId).populate({ path: 'leader', select: User.publicProps().join(' ') });
@@ -74,7 +75,8 @@ class TeamClass {
 			teamMembers: team.members,
 			team: { _id: team._id, name: team.name },
 			newTeamNotifications: [],
-			usersToAdd
+			usersToAdd,
+			leaderId
 		};
 
 		const notificationType = 'memberManipulation',
@@ -107,6 +109,7 @@ class TeamClass {
 		return team.save();
 	}
 
+	// SOCKET
 	static async kickMember(leaderId, { teamId, memberId }) {
 		const team = await this.findById(teamId).populate({ path: 'leader', select: User.publicProps().join(' ') });
 
@@ -114,9 +117,7 @@ class TeamClass {
 
 		if (team.leader._id.toString() !== leaderId) sendError('User is not team leader', 401);
 
-		const kickedUser = await User.findById(memberId).select(User.publicProps().join(' ')).lean();
-
-		const socketObject = { team: { teamId: team._id }, kickedUser, teamMembers: team.members };
+		const socketObject = { team: { _id: team._id }, kickedUser: memberId, leaderId };
 
 		team.members.pull(memberId);
 
@@ -125,7 +126,8 @@ class TeamClass {
 
 		const result = await Promise.all([
 			this.newNotification(team, notificationType, content, leaderId, null, memberId),
-			User.newNotification(memberId, leaderId, 'kicked you out of his team.')
+			User.newNotification(memberId, leaderId, 'kicked you out of his team.'),
+			User.findById(memberId).select(User.publicProps().join(' ')).lean()
 		]);
 
 		const newTeamNotificationId = result[0];
@@ -133,7 +135,7 @@ class TeamClass {
 		socketObject.newTeamNotification = {
 			_id: newTeamNotificationId,
 			from: team.leader,
-			to: kickedUser,
+			to: result[2],
 			content,
 			notificationType,
 			createdAt: new Date()

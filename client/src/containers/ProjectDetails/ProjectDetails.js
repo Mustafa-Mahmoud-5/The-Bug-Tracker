@@ -44,9 +44,6 @@ export class ProjectDetails extends Component {
   async componentDidMount() {
 
     // make sure he gets the current teamId as it will be lost if the page is refreshed
-    const {project} = this.state;
-
-    if(!this.currentTeamId && project?.type === 'public') this.goBack();
     
     Nprogress.start();
     try {
@@ -253,6 +250,9 @@ export class ProjectDetails extends Component {
 
   
   render() {
+    
+    if(!this.currentTeamId && this.state.project?.type === 'public') this.goBack()
+
     const {project, projectStatistics, projectTimeline, paginationItemsCount, modalOpen, selectedBug, loading, modalType} = this.state
 
     return (

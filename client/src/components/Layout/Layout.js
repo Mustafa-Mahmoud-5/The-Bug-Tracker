@@ -2,15 +2,47 @@ import React, { Component } from 'react';
 import Navbar from '../Navbar/Navbar';
 import { connect } from 'react-redux';
 import {userNotifications, seenNotifications} from '../../Apis/user'
-
+import {socket} from '../../index';
 
 class Layout extends Component {
 
   state = {
     userNotifications: null
   }
+
+
+  userId = this.props.userId
+
   async componentDidMount() {
 
+    await this.getUserNotifications();
+
+    
+    socket.on('newMembersForTeam', async data => {
+      const {usersToAdd} = data;
+    
+      const userIds = usersToAdd.map(user => user._id.toString());
+
+      if(userIds.includes(this.userId)) {
+    
+        await this.getUserNotifications()
+    
+      }
+
+    })
+
+
+    socket.on('userHasKicked', async data => {
+      const {kickedUser} = data;
+    
+      if(this.userId === kickedUser) await this.getUserNotifications()
+    })
+
+
+  }
+
+
+  getUserNotifications = async  () => {
     try {
       const response = await userNotifications()
       this.setState({userNotifications: response.data.notifications})
@@ -18,9 +50,8 @@ class Layout extends Component {
     } catch (error) {
       console.error(error)
     }
+
   }
-
-
   seeNewNotifications = async () => {
 
     try {
@@ -69,7 +100,9 @@ class Layout extends Component {
   }
 
 	render() {
-		return (
+    if(!this.userId) this.userId = this.props.userId;
+    
+    return (
 			<div>
 				<Navbar userImg={this.props.userImg} userNotifications = {this.state.userNotifications} seeNewNotifications = {this.seeNewNotifications}>
 					{this.props.children}
@@ -80,6 +113,6 @@ class Layout extends Component {
 }
 
 const mapStateToProps = state => {
-	return { userImg: state.currentUser?.image };
+	return { userImg: state.currentUser?.image, userId: state.currentUser?._id };
 };
 export default connect(mapStateToProps)(Layout);

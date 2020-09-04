@@ -10,6 +10,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import { connect } from 'react-redux';
 function ProjectBox(props) {
 	const { project, userId } = props;
+	console.log('ProjectBox -> project', project);
 
 	let bugText = project.bugs.length === 1 ? 'Bug' : 'Bugs';
 

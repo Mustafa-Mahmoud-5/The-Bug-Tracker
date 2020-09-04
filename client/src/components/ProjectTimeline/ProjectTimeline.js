@@ -25,7 +25,7 @@ function ProjectTimeline(props) {
 			return (
 				<ListItem key={i}>
 					<ListItemAvatar>
-						<Avatar src={tl.from.image.url} />
+						<Avatar src={tl.from.image?.url} />
 					</ListItemAvatar>
 					<ListItemText primary={`${from} ${tl.content} (${tl.bug.name})`} secondary={`${toDate(tl.date)}`} />
 				</ListItem>
