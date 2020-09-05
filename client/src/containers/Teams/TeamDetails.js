@@ -408,8 +408,6 @@ export class TeamDetails extends Component {
 	}
 
 	render() {
-		console.log(this.state.team?.projects[0].bugs.length)
-		if(!this.userId) this.userId = this.props.userId;
 
 		const {
 			team,
