@@ -210,11 +210,13 @@ class ProjectClass {
 		// if the project is a public project, then it must be in a team, get the teamId and make a newNotification for this team saying that project X has been closed
 		// this func will have alot of if statments :)
 
-		const project = await this.findById(projectId).select(this.publicProps().join(' '));
+		const project = await this.findById(projectId)
+			.populate({ path: 'owner', select: User.publicProps().join(' ') })
+			.select(this.publicProps().join(' '));
 
 		if (!project) sendError('Project is not found', 404);
 
-		if (project.owner.toString() !== userId) sendError('User is not project owner', 401);
+		if (project.owner._id.toString() !== userId) sendError('User is not project owner', 401);
 
 		let team;
 		if (project.type === 'public') {
@@ -229,7 +231,9 @@ class ProjectClass {
 			newTeamNotification: {
 				from: project.owner,
 				createdAt: new Date(),
-				notificationType
+				notificationType,
+				to: null,
+				project: projectId
 			}
 		};
 
@@ -271,7 +275,7 @@ class ProjectClass {
 
 				// changing the new quick notification data for socket
 				socketObject.newTeamNotification._id = notificationId;
-				socketObject.newTeamNotification.content = notificationContentl;
+				socketObject.newTeamNotification.content = notificationContent;
 				socketObject.updatedStatus = 0;
 			}
 		}

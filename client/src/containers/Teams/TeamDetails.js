@@ -4,7 +4,7 @@ import Modal from '../../components/Modal/Modal';
 import Nprogrss from 'nprogress';
 import Notifications from '../../components/Teams/TeamNotifications';
 import { withSnackbar } from 'notistack';
-import { Button, Paper, Tooltip } from '@material-ui/core';
+import { Button, Tooltip } from '@material-ui/core';
 import { Add } from '@material-ui/icons';
 import Statistics from '../../components/Statistics/Statistics';
 import TeamProjects from '../../components/Teams/TeamProjects';
@@ -28,12 +28,9 @@ export class TeamDetails extends Component {
 	userId = this.props.userId
 
 
-	socketListeners = ['newMembersForTeam', 'userHasKicked', 'newPublicBug', 'publicBugFixed', 'publicBugReopened', 'newTeamProject']
+	socketListeners = ['newMembersForTeam', 'userHasKicked', 'newPublicBug', 'publicBugFixed', 'publicBugReopened', 'newTeamProject', 'projectClosingOrReopening']
 
 	async componentDidMount() {
-
-		const teamLeader = this.state.team?.leader;
-    console.log("TeamDetails -> componentDidMount -> teamLeader", teamLeader)
 
 		socket.on('newMembersForTeam', data => {
 
@@ -46,7 +43,6 @@ export class TeamDetails extends Component {
 			}
 
 		})
-
 
 		socket.on('userHasKicked', data => {
 			
@@ -90,12 +86,26 @@ export class TeamDetails extends Component {
 
 		socket.on('newTeamProject', data => {
 			
-			const {newTeamNotification, project} = data;
-			this.newProjectForTeam(project);
-			this.updateTeamNotifications(newTeamNotification, 'addProject');
-
+			const {newTeamNotification, project, teamId} = data;
+			
+			if(teamId === this.teamId) {
+				this.newProjectForTeam(project);
+				this.updateTeamNotifications(newTeamNotification, 'addProjectNotification');
+				this.updateProjectsStatistics('newProject');
+			}
 		})
 		
+		socket.on('projectClosingOrReopening', data => {
+			const {teamId, newTeamNotification, updatedStatus, projectId} = data;
+			
+			if(this.teamId === teamId) {
+
+				this.updateProjectStatusForTeam(projectId, updatedStatus)
+				this.updateTeamNotifications(newTeamNotification, 'addProjectNotification')
+				this.updateProjectsStatistics('projectOpenedOrClosed', updatedStatus);
+
+			}
+		})
 		Nprogrss.start();
 
 		try {
@@ -232,7 +242,7 @@ export class TeamDetails extends Component {
 			teamNotifications.unshift(newNotifications); // at this case its only an object
 		}
 
-		if(type === 'addProject') {
+		if(type === 'addProjectNotification') {
 
 			teamNotifications.unshift(newNotifications)
 
@@ -334,6 +344,65 @@ export class TeamDetails extends Component {
 
 	}
 
+
+	updateProjectStatusForTeam = (projectId, updatedStatus) => {
+
+		const team = {...this.state.team};
+
+		const teamProjects = [...team.projects];
+
+		const projectIndex = teamProjects.findIndex(project => project._id === projectId);
+		
+		const project  = {...teamProjects[projectIndex]};
+
+		project.status = updatedStatus;
+
+		teamProjects[projectIndex] =  project;
+
+		team.projects = teamProjects;
+
+		this.setState({team})
+
+	}
+
+
+
+	updateProjectsStatistics = (type, updatedStatus) => {
+
+
+		const teamStatistics = {...this.state.teamStatistics};
+
+		const projects = {...teamStatistics.projects};
+
+		if(type === 'newProject') {
+			projects.totalProjects++
+			projects.openedProjects++
+		}
+
+		if(type === 'projectOpenedOrClosed') {
+
+			if(updatedStatus === 1) {
+				//closed
+				projects.closedProjects++
+				projects.openedProjects--
+			}
+
+			if(updatedStatus === 0) {
+
+				// opened
+				projects.openedProjects++
+				projects.closedProjects--
+
+			}
+
+		}
+
+
+		teamStatistics.projects = projects;
+
+		this.setState({teamStatistics})
+
+	}
 	componentWillUnmount() {
 		this.socketListeners.forEach(eventName => socket.removeEventListener(eventName))
 	}
