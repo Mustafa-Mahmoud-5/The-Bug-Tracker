@@ -80,7 +80,6 @@ exports.getTeamNotifications = async (req, res, next) => {
 				.sort('-createdAt')
 				.populate({ path: 'from', select: User.publicProps().join(' ') })
 				.populate({ path: 'to', select: User.publicProps().join(' ') })
-				.populate({ path: 'Project', select: Project.publicProps().join(' ') })
 				.skip(SKIP)
 				.limit(PER_PAGE)
 				.lean();

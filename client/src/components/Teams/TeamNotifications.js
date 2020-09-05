@@ -47,7 +47,7 @@ function TeamNotifications(props) {
 						<Avatar src={n.from?.image?.url} />
 					</ListItemAvatar>
 					<ListItemText
-						primary={`${from} ${n.content} (${project.name})`}
+						primary={`${from} ${n.content} (${project?.name})`}
 						secondary={`${toDate(n.createdAt)}`}
 					/>
 				</ListItem>

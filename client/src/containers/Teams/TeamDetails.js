@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { addMembers, kickMember, teamNotifications, teamDetails } from '../../Apis/team';
+import { addMembers, kickMember, teamNotifications, teamDetails, newTeam } from '../../Apis/team';
 import Modal from '../../components/Modal/Modal';
 import Nprogrss from 'nprogress';
 import Notifications from '../../components/Teams/TeamNotifications';
@@ -28,7 +28,7 @@ export class TeamDetails extends Component {
 	userId = this.props.userId
 
 
-	socketListeners = ['newMembersForTeam', 'userHasKicked', 'newPublicBug', 'publicBugFixed', 'publicBugReopened']
+	socketListeners = ['newMembersForTeam', 'userHasKicked', 'newPublicBug', 'publicBugFixed', 'publicBugReopened', 'newTeamProject']
 
 	async componentDidMount() {
 
@@ -54,10 +54,6 @@ export class TeamDetails extends Component {
 			
 			
 			if(team._id === this.teamId && leaderId !== this.userId ) {
-				
-				console.log("TeamDetails -> componentDidMount -> this.teamId", this.teamId)
-				console.log("TeamDetails -> componentDidMount -> kickedUser", kickedUser)
-				console.log("COMPARISON", typeof this.teamId === typeof kickedUser, this.teamId, kickedUser);
 				
 				if(this.userId === kickedUser) return this.props.history.push('/bugTracker/teams');
 
@@ -92,6 +88,14 @@ export class TeamDetails extends Component {
 			}
 		})
 
+		socket.on('newTeamProject', data => {
+			
+			const {newTeamNotification, project} = data;
+			this.newProjectForTeam(project);
+			this.updateTeamNotifications(newTeamNotification, 'addProject');
+
+		})
+		
 		Nprogrss.start();
 
 		try {
@@ -109,107 +113,6 @@ export class TeamDetails extends Component {
 
 
 
-	updateTeamNotifications = (newNotifications, type) => {
-
-		const teamNotifications  = [...this.state.teamNotifications]
-
-		if(type === 'add') {
-
-			
-			newNotifications.forEach(notification => {
-				
-				teamNotifications.unshift(notification);
-				
-			})
-			
-		}
-
-
-		if(type === 'remove') {
-			teamNotifications.unshift(newNotifications); // at this case its only an object
-		}
-		
-		this.setState({teamNotifications: teamNotifications});
-	}
-
-
-
-	increaseTeamMembers = (newMembers) => {
-		const updatedTeam = {...this.state.team};
-
-		const teamMembers = [...updatedTeam.members]
-		
-		const updatedMembers = teamMembers.concat(newMembers);
-
-		updatedTeam.members = updatedMembers;
-	
-		this.setState({team: updatedTeam});
-
-	}
-
-	decreaseTeamMembers = (kickedUser) => {
-		const updatedTeam = {...this.state.team};
-
-		const teamMembers = [...updatedTeam.members];
-
-		const updatedTeamMembers = teamMembers.filter(mem => mem._id !== kickedUser)
-
-		updatedTeam.members = updatedTeamMembers;
-
-		this.setState({team: updatedTeam})
-
-	}
-
-
-
-	updateBugStatistics = async (type, projectId) => {
-		const teamStatistics = {...this.state.teamStatistics}
-
-		const bugs = {...teamStatistics.bugs};
-
-		if(type === 'newPublicBug') {
-			
-			bugs.totalBugs+=1
-			bugs.buggyBugs+=1
-
-			const team = {...this.state.team};
-
-			const projects = [...team.projects];
-
-
-			const bugProjectIndex = projects.findIndex(project => project._id === projectId);
-
-			const bugProject = {...projects[bugProjectIndex]};
-
-			const bugProjectBugs = [...bugProject.bugs];
-
-			bugProjectBugs.push({_id: '11111111111111', status: 0})
-
-			bugProject.bugs = bugProjectBugs;
-
-			projects[bugProjectIndex] = bugProject
-
-			team.projects = projects;
-
-			this.setState({team})
-		}
-
-		if( type === 'publicBugFixed') {
-			bugs.buggyBugs -= 1
-			bugs.fixedBugs =+1
-		}
-
-		if(type === 'publicBugReopened') {
-			bugs.buggyBugs +=1
-			bugs.fixedBugs -=1
-
-		}
-
-		teamStatistics.bugs = bugs;
-
-		this.setState({teamStatistics});
-
-	}
 
 	getTeamData = async () => {
 		await Promise.all([ this.getTeam(), this.getTeamNotifications() ]);
@@ -302,6 +205,134 @@ export class TeamDetails extends Component {
 		}
 	};
 
+
+
+
+
+	// SOCKETS FUNCTIONS
+
+	
+	updateTeamNotifications = (newNotifications, type) => {
+
+		const teamNotifications  = [...this.state.teamNotifications]
+
+		if(type === 'add') {
+
+			
+			newNotifications.forEach(notification => {
+				
+				teamNotifications.unshift(notification);
+				
+			})
+			
+		}
+
+
+		if(type === 'remove') {
+			teamNotifications.unshift(newNotifications); // at this case its only an object
+		}
+
+		if(type === 'addProject') {
+
+			teamNotifications.unshift(newNotifications)
+
+		}
+		
+		this.setState({teamNotifications: teamNotifications});
+	}
+
+
+
+	increaseTeamMembers = (newMembers) => {
+		const updatedTeam = {...this.state.team};
+
+		const teamMembers = [...updatedTeam.members]
+		
+		const updatedMembers = teamMembers.concat(newMembers);
+
+		updatedTeam.members = updatedMembers;
+	
+		this.setState({team: updatedTeam});
+
+	}
+
+	decreaseTeamMembers = (kickedUser) => {
+		const updatedTeam = {...this.state.team};
+
+		const teamMembers = [...updatedTeam.members];
+
+		const updatedTeamMembers = teamMembers.filter(mem => mem._id !== kickedUser)
+
+		updatedTeam.members = updatedTeamMembers;
+
+		this.setState({team: updatedTeam})
+
+	}
+
+
+
+	updateBugStatistics = (type, projectId) => {
+		const teamStatistics = {...this.state.teamStatistics}
+
+		const bugs = {...teamStatistics.bugs};
+
+		if(type === 'newPublicBug') {
+			
+			bugs.totalBugs+=1
+			bugs.buggyBugs+=1
+
+			const team = {...this.state.team};
+
+			const projects = [...team.projects];
+
+
+			const bugProjectIndex = projects.findIndex(project => project._id === projectId);
+
+			const bugProject = {...projects[bugProjectIndex]};
+
+			const bugProjectBugs = [...bugProject.bugs];
+
+			bugProjectBugs.push({_id: '11111111111111', status: 0})
+
+			bugProject.bugs = bugProjectBugs;
+
+			projects[bugProjectIndex] = bugProject
+
+			team.projects = projects;
+
+			this.setState({team})
+		}
+
+		if( type === 'publicBugFixed') {
+			bugs.buggyBugs -= 1
+			bugs.fixedBugs =+1
+		}
+
+		if(type === 'publicBugReopened') {
+			bugs.buggyBugs +=1
+			bugs.fixedBugs -=1
+
+		}
+
+		teamStatistics.bugs = bugs;
+
+		this.setState({teamStatistics});
+
+	}
+
+
+	newProjectForTeam = (newProject) => {
+		const team = {...this.state.team};
+
+		const teamProjects = [...team.projects];
+
+		teamProjects.push(newProject);
+
+		team.projects = teamProjects;
+
+		this.setState({team})
+
+	}
 
 	componentWillUnmount() {
 		this.socketListeners.forEach(eventName => socket.removeEventListener(eventName))

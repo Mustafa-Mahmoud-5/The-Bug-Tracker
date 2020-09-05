@@ -33,8 +33,8 @@ class TeamClass {
 		const owner = await User.findById(ownerId).select(User.publicProps().join(' ')).lean();
 
 		const socketObject = {
-			teamMembers: team.members,
-			project: { _id: projectId, owner, status: 0, name, bugs: [], createdAt: new Date() }
+			project: { _id: projectId, owner: ownerId, status: 0, name, bugs: [], createdAt: new Date() },
+			teamId
 		};
 
 		team.projects.push(projectId);
@@ -46,10 +46,12 @@ class TeamClass {
 
 		socketObject.newTeamNotification = {
 			_id: notificationId,
-			createdAt: Date.now(),
+			createdAt: new Date(),
 			content,
 			notificationType,
-			from: owner
+			from: owner,
+			to: null,
+			project: projectId
 		};
 
 		getIo().emit('newTeamProject', socketObject);
