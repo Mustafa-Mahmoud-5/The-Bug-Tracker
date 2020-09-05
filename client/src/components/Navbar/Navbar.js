@@ -139,24 +139,24 @@ function PersistentDrawerLeft(props) {
 		props.history.push('/bugtracker/newProject');
 	}
 
+	const logOut = () => {
+		localStorage.removeItem('token');
+		props.history.push('/');
+	}
 
 
 	let unseen = 0;
 
 	if(props.userNotifications?.length > 0) {
 		
-		console.log('asdasdasdasdasdasdasdasd')
 		
 		props.userNotifications.forEach(n => {
-			console.log("PersistentDrawerLeft -> n", n)
 			
 			if(n.seen === false) unseen+=1
 		})
 		
 	}
-	console.log("PersistentDrawerLeft -> props.userNotifications", props.userNotifications)
 	
-	console.log("UNSEEN", unseen);
 		
 		return (
 		<div className={classes.root}>
@@ -198,7 +198,7 @@ function PersistentDrawerLeft(props) {
 						</Tooltip>
 						<Tooltip title = 'Log out'>
 
-						<IconButton color='primary'>
+						<IconButton color='primary' onClick = {logOut}>
 							<ExitToAppIcon color='primary' />
 						</IconButton>
 						</Tooltip>
