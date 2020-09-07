@@ -17,6 +17,7 @@ import ToolTip from '@material-ui/core/Tooltip';
 import LoadingBtn from '../../components/Btn/LoadingBtn';
 import {connect} from 'react-redux'
 import Alert from '@material-ui/lab/Alert';
+import { socket } from '../..';
 export class ProjectDetails extends Component {
   
   
@@ -36,6 +37,9 @@ export class ProjectDetails extends Component {
   // 0 is opened, 0 is opened
   }
 
+  projectId = this.props.match.params.projectId
+
+  socketEvents = ['newPublicBug', 'publicBugFixed', 'publicBugReopened', 'projectClosingOrReopening']
 
 
 
@@ -43,8 +47,56 @@ export class ProjectDetails extends Component {
 
   async componentDidMount() {
 
-    // make sure he gets the current teamId as it will be lost if the page is refreshed
+    // socket events will get emitted from the server if the project.type === 'public' only
+  
+    socket.on('newPublicBug', data => {
+
+      const { projectId, bug, newTimeLine, userId} = data;
+
+      if(this.projectId === projectId && userId !== this.userId) {
+
+        this.addNewBugForSocket(bug);
+        this.updateStatisticsForSocket('newBug');
+        this.newTimeLineForSocket(newTimeLine);
+
+      }
+    })
+
+    socket.on('publicBugFixed', data => {
+
+      const {projectId, bugId, newTimeLine, userId} = data;
+
+      if(this.projectId === projectId && this.userId !== userId) {
+        this.updateStatisticsForSocket('fixBug');
+        this.bugFixedOrReopenedForSocket(bugId, 'fixed');
+        this.newTimeLineForSocket(newTimeLine);
+      }
+
+    })
     
+
+    socket.on('publicBugReopened', data => {
+      const {bugId, projectId, newTimeLine, userId} = data;
+
+      if(this.projectId === projectId && userId !== this.userId) { 
+        this.updateStatisticsForSocket('reopenBug');
+        this.bugFixedOrReopenedForSocket(bugId, 'reopened');
+        this.newTimeLineForSocket(newTimeLine);
+      }
+    })
+
+    socket.on('projectClosingOrReopening', data => {
+      const {updatedStatus, projectId, userId} = data;
+
+      if( this.projectId ===  projectId && this.userId !== userId) {
+        this.updateProjectStatusForSocket(updatedStatus);
+      }
+
+    })
+
+
+
+
     Nprogress.start();
     try {
       await this.getProjectDetails();
@@ -248,7 +300,95 @@ export class ProjectDetails extends Component {
 
 
 
+
+
+  // ____SOCKETS FUNCTIONS____
+
+
+  addNewBugForSocket = (newBug) => {
+    const project  = {...this.state.project};
+
+    const projectBugs = [...project.bugs];
+
+    projectBugs.unshift(newBug)
+
+    project.bugs = projectBugs;
+
+    this.setState({project});
+  }
+
+  bugFixedOrReopenedForSocket = (bugId, type) => {
+    const project = {...this.state.project};
+
+    const projectBugs = [...project.bugs];
+
+    const bugIndex = projectBugs.findIndex(b => b._id === bugId);
+
+    const bug = {...projectBugs[bugIndex]};
+
+    bug.status = type === 'fixed' ? 1 : 0;
+
+    projectBugs[bugIndex] = bug;
+
+    project.bugs = projectBugs;
+
+    this.setState({project});
+  }
+
+
+  updateStatisticsForSocket = (type) => {
+    
+    const projectStatistics = {...this.state.projectStatistics};
+    
+    switch (type) {
+      case 'newBug':
+        projectStatistics.total++
+        projectStatistics.buggy++
+        break;
+
+      case 'fixBug':
+        projectStatistics.fixed++
+        projectStatistics.buggy--
+        break;
+
+      case 'reopenBug':
+        projectStatistics.buggy++
+        projectStatistics.fixed--
+        break;
+
+      default:
+        console.log('nothing special')
+    }
+
+
+
+    this.setState({projectStatistics});
+  }
+
+
+  updateProjectStatusForSocket = (updatedStatus) => {
+    const project = {...this.state.project};
+
+    project.status = updatedStatus;
+
+    this.setState({project});
+  }
+
+
+  newTimeLineForSocket = (newTimeline) => {
+    const projectTimeline = [...this.state.projectTimeline];
+
+    projectTimeline.unshift(newTimeline);
+
+    this.setState({projectTimeline});
+  }
+
   
+  componentWillUnmount() {
+    this.socketEvents.forEach(eventName => socket.removeEventListener(eventName));
+  }
+
+
   render() {
     
     if(!this.currentTeamId && this.state.project?.type === 'public') this.goBack()

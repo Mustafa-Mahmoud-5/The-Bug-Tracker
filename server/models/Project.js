@@ -84,6 +84,7 @@ class ProjectClass {
 
 		if (project.type === 'public') {
 			const socketObject = {
+				userId,
 				teamId,
 				projectId,
 				bug: {
@@ -123,7 +124,7 @@ class ProjectClass {
 
 		if (project.status === 1) sendError('You can`t work on a closed Project.', 403);
 
-		const fixer = await User.findById(userId).select(User.publicProps().join()).lean();
+		const fixer = await User.findById(userId).select(User.publicProps().join(' ')).lean();
 
 		if (!bug) sendError('Bug is not found', 404);
 
@@ -140,6 +141,7 @@ class ProjectClass {
 
 		if (project.type === 'public') {
 			const socketObject = {
+				userId,
 				teamId,
 				projectId,
 				bugId,
@@ -184,6 +186,7 @@ class ProjectClass {
 
 		if (project.type === 'public') {
 			const socketObject = {
+				userId,
 				teamId,
 				projectId,
 				bugId,
@@ -226,6 +229,7 @@ class ProjectClass {
 		const notificationType = 'projectCreation';
 
 		const socketObject = {
+			userId,
 			teamId,
 			projectId,
 			newTeamNotification: {
