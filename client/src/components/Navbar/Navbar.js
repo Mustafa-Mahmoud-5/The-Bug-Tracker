@@ -118,6 +118,18 @@ function PersistentDrawerLeft(props) {
 	const [ open, setOpen ] = React.useState(!(window.innerWidth < 700));
   const [notificationOpen, setNotificationOpen] = React.useState(false);
 
+	let device = window.innerWidth < 700 ? 'mobile' : 'desktop';
+
+	
+	window.addEventListener('resize', () => {
+		device = window.innerWidth < 700 ? 'mobile' : 'desktop';
+	})
+
+
+	const closeDrawerOnNavigation = () => {
+		if (device === 'mobile') handleDrawerClose();
+	}
+
 	const handleDrawerOpen = () => {
 		setOpen(true);
 	};
@@ -223,8 +235,9 @@ function PersistentDrawerLeft(props) {
 				</div>
 				<Divider />
 				<List>
+					{/* navigation items(sections) */}
 					{[ 'Profile', 'Dashboard', 'Teams' ].map((text, index) => (
-            <NavLink key = {index} to = {`/bugtracker/${text.toLowerCase()}`} activeClassName = {classes.navActive} className = {classes.navLink}>
+            <NavLink key = {index} to = {`/bugtracker/${text.toLowerCase()}`} activeClassName = {classes.navActive} className = {classes.navLink} onClick = {closeDrawerOnNavigation}>
 
 						<ListItem button key={text}>
 							<ListItemIcon>
