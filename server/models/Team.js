@@ -126,6 +126,7 @@ class TeamClass {
 		const content = 'kicked',
 			notificationType = 'memberManipulation';
 
+		// user is index no.2 in the result arr
 		const result = await Promise.all([
 			this.newNotification(team, notificationType, content, leaderId, null, memberId),
 			User.newNotification(memberId, leaderId, 'kicked you out of his team.'),
@@ -149,6 +150,7 @@ class TeamClass {
 	}
 
 	static async newNotification(team, notificationType, content, from, project, to) {
+		// project represents the projectId
 		let notificationsObj;
 
 		if (notificationType === 'projectCreation') {
@@ -196,6 +198,30 @@ class TeamClass {
 
 		return { projects: projects, bugs: bugs };
 	};
+
+	static async deleteTeam(leaderId, { teamId, ProjectModal }) {
+		const team = await this.findById(teamId);
+
+		if (!team) sendError('Team is not found', 404);
+
+		if (team.leader.toString() !== leaderId) sendError('User is not team leader', 403);
+
+		const teamMembers = team.members; // [id, id]
+
+		const teamProjects = team.projects; // [id, id]
+
+		const teamNotifications = team.notifications; // [id, id]
+
+		await Promise.all([
+			this.deleteOne({ _id: teamId }),
+			ProjectModal.deleteMany({ _id: { $in: teamProjects } }),
+			Notification.deleteMany({ _id: { $in: teamNotifications } })
+		]);
+
+		const socketObject = { teamId, teamMembers, teamProjects };
+
+		getIo().emit('teamIsDeleted', socketObject);
+	}
 }
 
 teamSchema.loadClass(TeamClass);

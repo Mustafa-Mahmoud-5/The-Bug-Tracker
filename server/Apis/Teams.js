@@ -107,3 +107,14 @@ exports.kickMember = async (req, res, next) => {
 		next(error);
 	}
 };
+
+exports.deleteTeam = async (req, res, next) => {
+	const { userId } = req;
+	const { teamId } = req.params;
+	try {
+		await Team.deleteTeam(userId, { Project, teamId });
+	} catch (error) {
+		error.statusCode = error.statusCode || 500;
+		next(error);
+	}
+};

@@ -66,6 +66,8 @@ router.patch('/bugReopen', isAuth, usersApis.bugReopen);
 
 router.patch('/closeOrReOpenProject', isAuth, usersApis.closeOrReOpenProject);
 
+router.delete('/deleteProject', isAuth, usersApis.deleteProject);
+
 router.get('/bugDetails/:bugId', isAuth, usersApis.getBugDetails);
 
 router.get('/personalProjects', isAuth, usersApis.getPersonalProjects);

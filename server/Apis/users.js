@@ -182,6 +182,19 @@ exports.seeNotifications = async (req, res, next) => {
 		next(error);
 	}
 };
+
+exports.deleteProject = async (req, res, next) => {
+	const { userId } = req;
+
+	try {
+		await Project.deleteProject(userId, req.body);
+
+		res.status(200).json({ message: 'Project removed successfully' });
+	} catch (error) {
+		error.statusCode = error.statusCode || 500;
+		next(error);
+	}
+};
 // _____________________GET APIS & POPULATION(Aggregation)______________________
 
 exports.getPersonalUserData = async (req, res, next) => {

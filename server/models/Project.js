@@ -304,6 +304,63 @@ class ProjectClass {
 
 		return bugs;
 	}
+
+	static async deleteProject(ownerId, { projectId, teamId }) {
+		// receive the teamId if the project type is public
+
+		const project = this.findById(projectId);
+
+		if (!project) sendError('Project is not found', 404);
+
+		if (project.owner.toString() !== ownerId) sendError('User is not project owner', 403);
+
+		const projectTimeline = project.timeline; // [id, id]
+		const projectBugs = project.bugs; // [id, id]
+
+		await Promise.all([
+			this.deleteOne({ _id: projectId }),
+			Timeline.deleteMany({ _id: { $in: projectTimeline } }),
+			Bug.deleteMany({ _id: { $in: projectBugs } })
+		]);
+
+		if (project.type === 'public') {
+			const team = await Team.findById(teamId);
+
+			if (!team) sendError('Team is not found', 403);
+
+			const content = 'deleted a team',
+				notificationType = 'projectCreation';
+
+			const notificationId = await Team.newNotification(
+				team,
+				notificationType,
+				content,
+				ownerId,
+				projectId,
+				null
+			);
+
+			const socketObject = {
+				ownerId,
+				projectId,
+				public: true,
+				teamId,
+				newTeamNotification: {
+					_id: notificationId,
+					from: team.leader,
+					createdAt: new Date(),
+					content,
+					notificationType,
+					to: null,
+					project: projectId
+				}
+			};
+
+			// save the team modal because we add a newNotification to team.notifications via the newNotification Method
+
+			await team.save();
+		}
+	}
 }
 
 projectSchema.loadClass(ProjectClass);
