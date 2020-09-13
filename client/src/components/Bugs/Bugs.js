@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Table from '@material-ui/core/Table';
@@ -9,7 +9,6 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { makeStyles } from '@material-ui/core/styles';
 import { toDate } from '../../helpers';
-import { TextField } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import { Add, Visibility, Edit } from '@material-ui/icons';
 import { connect } from 'react-redux';
@@ -32,9 +31,6 @@ function Bugs(props) {
 				className='TableControllers'
 				style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}
 			>
-				{/* SEARCH BUG */}
-				<TextField id='standard-basic' label='Search for a bug' />
-
 				<Typography variant='h6' style={{ textAlign: 'center' }}>
 					Bugs
 				</Typography>

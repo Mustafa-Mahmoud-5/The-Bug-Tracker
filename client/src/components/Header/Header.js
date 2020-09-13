@@ -4,7 +4,6 @@ import Particles from '../particles';
 import './Header.scss';
 import OuterNav from '../OuterNav/OuterNav';
 import { withRouter } from 'react-router-dom';
-import { Fragment } from 'react';
 function header(props) {
 	const goToAuth = route => {
 		props.history.push(route);

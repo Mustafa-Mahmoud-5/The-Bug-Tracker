@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import TextField from '@material-ui/core/TextField';
 import Form from '../../components/Form/Form';
 import { signup } from '../../Apis/auth';

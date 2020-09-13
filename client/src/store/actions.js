@@ -34,11 +34,9 @@ export const fetchUser = () => {
 		dispatch(start());
 		try {
 			const response = await personalData();
-      console.log("fetchUser -> response", response)
 
 			dispatch(storeUserData(response?.data?.user));
 		} catch (error) {
-      console.log("fetchUser -> error", error)
 			dispatch(errorOccured(error.response?.data?.error));
 		}
 	};

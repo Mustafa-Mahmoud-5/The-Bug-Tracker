@@ -3,12 +3,12 @@ import React from 'react';
 function Feature(props) {
 	return (
 		<div className='row' style={{ marginBottom: '1rem' }}>
-			<div className='col-md-6' data-aos='fade-up-right'>
+			<div className='col-md-6'>
 				<h2 className='primaryColor'>{props.head}</h2>
 
 				<p className='italic text-md'>{props.text}</p>
 			</div>
-			<div className='col-md-6' data-aos='fade-left'>
+			<div className='col-md-6'>
 				<img src={props.pic} alt='pic' />
 			</div>
 		</div>

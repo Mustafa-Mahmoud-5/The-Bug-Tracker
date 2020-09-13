@@ -34,7 +34,6 @@ export class AddProject extends Component {
 		const type = this.changeHandler(e);
 
 		const { teams } = this.state;
-    console.log("AddProject -> type", type)
 
 		if (type === 'public' && !teams) {
       await this.fetchteams();
@@ -44,7 +43,6 @@ export class AddProject extends Component {
 	fetchteams = async () => {
 		try {
 			const response = await userTeams('yes');
-			console.log('AddProject -> fetchteams -> response', response);
 
       const teams = response.data.teams;
 			this.setState({ teams, teamId: teams[0]?._id });

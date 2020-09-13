@@ -47,6 +47,17 @@ export class ProjectDetails extends Component {
 
   async componentDidMount() {
 
+
+    Nprogress.start();
+    try {
+      await this.getProjectDetails();
+      Nprogress.done()
+    } catch (error) {
+      Nprogress.done()
+      alert(error.response?.data?.error || 'Something Went Wrong, please try again later')
+    }
+
+
     // socket events will get emitted from the server if the project.type === 'public' only
   
     socket.on('newPublicBug', data => {
@@ -98,24 +109,13 @@ export class ProjectDetails extends Component {
     socket.on('teamIsDeleted', data => {
       
       const {teamId} = data;
-      console.log("ProjectDetails -> componentDidMount -> teamId", teamId)
       if(this.currentTeamId === teamId && this.state.project.type === 'public') this.props.history.push('/bugtracker/teams')
-      console.log("ProjectDetails -> componentDidMount -> is.state.project.type", this.state.project.type)
-      console.log("ProjectDetails -> componentDidMount -> teamId", teamId)
-      console.log("ProjectDetails -> componentDidMount -> currentTeamId", this.currentTeamId)
       this.props.enqueueSnackbar('This team has been deleted by its owner', {variant: 'info'})
     })
 
 
 
-    Nprogress.start();
-    try {
-      await this.getProjectDetails();
-      Nprogress.done()
-    } catch (error) {
-      Nprogress.done()
-      alert(error.response?.data?.error || 'Something Went Wrong, please try again later')
-    }
+    
   }
 
   // PROJECTS FUNCTIONS
@@ -167,7 +167,6 @@ export class ProjectDetails extends Component {
 
     try {
       const response = await closeOrReOpenProject(body)  
-      console.log("ProjectDetails -> updateProjectStatus -> response", response)
       
       this.props.enqueueSnackbar(response.data.message || 'Something went wrong', {variant: 'success'})
       
@@ -270,13 +269,13 @@ export class ProjectDetails extends Component {
       const response = await editBug(body);
 
 
+      await this.getProjectDetails();
       this.props.enqueueSnackbar(response.data.message, {variant:'success'})
 
       this.setState({loading: false, modalOpen: false})
 
 
     } catch (error) {
-      console.log("editBugDetails -> error", error.response)
       this.props.enqueueSnackbar(error.response.data.error || 'Something Went Wrong', {variant:'error'})
       this.setState({loading: false})
     }
@@ -453,7 +452,7 @@ export class ProjectDetails extends Component {
         </div>
       <div className="row" style={{marginTop: '20px'}}>
         <div className="col-md-12">
-          <Bugs openModal = {this.openModal} bugs = {project.bugs} openBug  = {this.openBug}/>
+          <Bugs openModal = {this.openModal}  bugs = {project.bugs} openBug  = {this.openBug}/>
         </div>
       </div>
       </div>

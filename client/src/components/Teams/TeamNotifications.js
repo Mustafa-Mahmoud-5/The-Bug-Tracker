@@ -13,7 +13,6 @@ import ListItemText from '@material-ui/core/ListItemText';
 function TeamNotifications(props) {
 	const { teamNotifications, teamProjects, userId, paginationItemsCount } = props;
 
-	console.log('PROPS', props);
 	let notifications = <h2 className='secondary text-center'>Notifications Are Empty.</h2>;
 
 	if (teamNotifications.length > 0) {
@@ -36,8 +35,6 @@ function TeamNotifications(props) {
 			// else, the notificationType === 'projectCreations'
 
 			const project = teamProjects.find(p => {
-				console.log('p', p);
-				console.log('nP', n);
 				return p._id === n.project;
 			});
 

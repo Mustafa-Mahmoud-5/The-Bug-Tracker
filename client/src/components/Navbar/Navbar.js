@@ -24,8 +24,6 @@ import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
 import Modal from '../Modal/Modal';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import DeleteIcon from '@material-ui/icons/Delete';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import {NavLink, withRouter}from 'react-router-dom'
 import { toDate } from '../../helpers';
 const drawerWidth = 240;
@@ -283,11 +281,6 @@ function PersistentDrawerLeft(props) {
 										primary={`${n.from.firstName} ${n.from.lastName} ${n.content}`}
 										secondary={`${toDate(n.date)}`}
                     />
-                  <ListItemSecondaryAction>
-                    <IconButton edge="end" aria-label="delete">
-                      <DeleteIcon />
-                    </IconButton>
-                  </ListItemSecondaryAction>
                 </ListItem>
               )
               })

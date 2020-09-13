@@ -300,7 +300,14 @@ exports.getProjectDetails = async (req, res, next) => {
 	try {
 		const project = await Project.findById(projectId)
 			.select('-timeline')
-			.populate({ path: 'bugs', populate: { path: 'creator', select: User.publicProps().join(' ') } })
+			.populate({
+				path: 'bugs',
+				populate: {
+					path: 'creator',
+					select: User.publicProps().join(' ')
+				},
+				populate: { path: 'fixer', select: User.publicProps().join(' ') }
+			})
 			.populate({ path: 'owner', select: User.publicProps().join(' ') })
 			.lean();
 

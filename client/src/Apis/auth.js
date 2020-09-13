@@ -7,6 +7,5 @@ export function signup(body) {
 
 export function signin(body) {
 	const loginResponse = sendRequest('POST', '/auth/signIn', body, false);
-	console.log('signin -> Loginresponse', loginResponse);
 	return loginResponse;
 }
