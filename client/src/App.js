@@ -7,6 +7,7 @@ import SignUp from './containers/SignUp/SignUp';
 import SignIn from './containers/SignIn/signIn';
 import BugTracker from './containers/bugTracker/BugTracker';
 import axios from 'axios';
+import ForgetPassword from './containers/ForgetPassword/ForgetPassword';
 class App extends Component {
 	componentDidMount() {
 		window.addEventListener('storage', this.detectTokenPlaying, false);
@@ -44,6 +45,7 @@ class App extends Component {
 					<Route path='/' exact component={Outer} />
 					<Route path='/signup' exact component={SignUp} />
 					<Route path='/signin' exact component={SignIn} />
+					<Route path='/forgetPassword' exact component={ForgetPassword} />
 					<Redirect to='/' />
 				</Switch>
 			) : (

@@ -44,7 +44,9 @@ export class SignUp extends Component {
 		} catch (error) {
 			this.setState({ loading: false });
 
-			this.props.enqueueSnackbar(error.response.data.error, { variant: 'error' });
+			this.props.enqueueSnackbar(error.response ? error.response.data.error : 'Something Went Wrong', {
+				variant: 'error'
+			});
 		}
 	};
 

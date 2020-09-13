@@ -4,7 +4,18 @@ const mongoose = require('mongoose'),
 	sendError = require('../helpers/sendError'),
 	bcrypt = require('bcryptjs'),
 	cloudinary = require('../helpers/cloudinary'),
-	fs = require('fs');
+	fs = require('fs'),
+	generateRandomCode = require('../helpers/forgetPassowrdCode'),
+	nodemailer = require('nodemailer'),
+	sendGridTransport = require('nodemailer-sendgrid-transport');
+
+const nodemailerTransporter = nodemailer.createTransport(
+	sendGridTransport({
+		auth: {
+			api_key: process.env.SENDGRID_KEY
+		}
+	})
+);
 
 const { v4: uuidv4 } = require('uuid');
 
@@ -71,6 +82,8 @@ class UserClass {
 
 		const hashedPassord = await bcrypt.hash(password, 12);
 
+		await this.welcomeMail({ email, firstName, lastName });
+
 		return this.create({ firstName, lastName, email, password: hashedPassord });
 	}
 
@@ -95,6 +108,25 @@ class UserClass {
 		);
 
 		return token;
+	}
+
+	static welcomeMail({ email, firstName, lastName }) {
+		// this function will return a promise
+		return nodemailerTransporter.sendMail({
+			to: email,
+			from: 'mustafaemailing21@gmail.com',
+			subject: 'Welcome To THE_BUG_TRACKER',
+			html: `
+					<h1>THE_BUG_TRACKER platform is happy to have you as one of its users.</h1>
+					
+					<h2><em>This platform is totally free, you can start use it if you want for tracking your applications so you can become more productive.</em></h2>
+					
+
+					<h3>Nice for you to hear also that this platform is open source on my github account</h3>
+
+					<h3>Dear ${firstName} ${lastName}, hope you are safe and sound. This is a direct message from the platform author 'Mustafa Mahmoud' via a dedicated mailing gmail. if you liked the platform please star/follow me on github <a href = 'https://github.com/Mustafa-Mahmoud-5'>Github</a> repo and i will be happy if we connected on <a href = 'https://www.linkedin.com/in/mustafa-mahmoud-a80a221b4/'>Linkedin</a> as well.</h3>
+			`
+		});
 	}
 
 	static async editPersonalData(userId, file, { firstName, lastName, oldImagePublicKey }) {
@@ -129,6 +161,10 @@ class UserClass {
 		user.lastName = lastName;
 
 		return user.save();
+	}
+
+	static async forgetPasswordCodeCreation(email) {
+		const code = generateRandomCode(6);
 	}
 
 	static async newNotification(toId, fromId, content) {

@@ -61,7 +61,7 @@ export class Teams extends Component {
 			this.props.enqueueSnackbar(response.data.message, { variant: 'success' });
 			this.closeModal();
 		} catch (error) {
-			this.props.enqueueSnackbar(error.response && error.data.message, { variant: 'error' });
+			this.props.enqueueSnackbar(error.response && error.response.data.error, { variant: 'error' });
 			this.setState({ loading: false });
 		}
 	};

@@ -4,6 +4,7 @@ import Form from '../../components/Form/Form';
 import LoadingBtn from '../../components/Btn/LoadingBtn';
 import { withSnackbar } from 'notistack';
 import { signin } from '../../Apis/auth';
+import { Link } from 'react-router-dom';
 export class SignIn extends Component {
 	state = {
 		email: '',
@@ -78,6 +79,11 @@ export class SignIn extends Component {
 					</div>
 					<LoadingBtn loading={this.state.loading} type='submit' name='sign up' fullWidth={true} />
 				</form>
+
+					<div style={{textAlign: 'center', marginTop: '10px'}}>
+
+				<Link to ='/forgetPassword'>Forget Password?</Link>
+					</div>
 			</Form>
 		);
 	}
