@@ -13,6 +13,7 @@ import ProjectDetails from '../ProjectDetails/ProjectDetails';
 import Teams from '../Teams/Teams';
 import TeamDetails from '../Teams/TeamDetails';
 import AddProject from '../Projects/AddProject';
+
 export class BugTracker extends Component {
 	componentDidMount() {
 		try {

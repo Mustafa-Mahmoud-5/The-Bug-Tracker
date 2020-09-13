@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { addMembers, kickMember, teamNotifications, teamDetails, newTeam } from '../../Apis/team';
+import {deleteProject} from '../../Apis/project';
 import Modal from '../../components/Modal/Modal';
 import Nprogrss from 'nprogress';
 import Notifications from '../../components/Teams/TeamNotifications';
@@ -28,22 +29,35 @@ export class TeamDetails extends Component {
 	userId = this.props.userId
 
 
-	socketListeners = ['newMembersForTeam', 'userHasKicked', 'newPublicBug', 'publicBugFixed', 'publicBugReopened', 'newTeamProject', 'projectClosingOrReopening']
+	socketListeners = ['newMembersForTeam', 'userHasKicked', 'newPublicBug', 'publicBugFixed', 'publicBugReopened', 'newTeamProject', 'projectClosingOrReopening', 'teamIsDeleted']
 
 	async componentDidMount() {
+		Nprogrss.start();
 
+		try {
+			await this.getTeamData();
+
+			Nprogrss.done();
+		} catch (error) {
+			Nprogrss.done();
+
+			this.props.enqueueSnackbar(
+				error.response && (error.response.data.error || 'Something went wrong', { variant: 'error' })
+			);
+		}
+		
 		socket.on('newMembersForTeam', data => {
-
+			
 			const {teamMembers,team,newTeamNotifications,usersToAdd, leaderId } = data;
 			
-
+			
 			if(teamMembers.includes(this.userId) && this.teamId === team._id && this.userId !== leaderId) {
 				this.increaseTeamMembers(usersToAdd);
 				this.updateTeamNotifications(newTeamNotifications, 'add');
 			}
-
+			
 		})
-
+		
 		socket.on('userHasKicked', data => {
 			
 			const {newTeamNotification, team, kickedUser, leaderId} = data;
@@ -52,38 +66,38 @@ export class TeamDetails extends Component {
 			if(team._id === this.teamId && leaderId !== this.userId ) {
 				
 				if(this.userId === kickedUser) return this.props.history.push('/bugTracker/teams');
-
+				
 				this.updateTeamNotifications(newTeamNotification, 'remove');
-
+				
 				this.decreaseTeamMembers(kickedUser);
-
+				
 			}
 		})
-
+		
 		socket.on('newPublicBug', data => {
-
+			
 			const {teamId, projectId} = data;
 			
 			if(this.teamId === teamId) { 
 				this.updateBugStatistics('newPublicBug', projectId)
 			}
 		})
-
+		
 		socket.on('publicBugFixed', data => {
 			const {teamId} = data;
 			if(this.teamId === teamId) {
 				this.updateBugStatistics('publicBugFixed')
 			}
 		})
-
+		
 		socket.on('publicBugReopened', data => {
 			const {teamId} = data;
-
+			
 			if(teamId === this.teamId)  {
 				this.updateBugStatistics('publicBugReopened')
 			}
 		})
-
+		
 		socket.on('newTeamProject', data => {
 			
 			const {newTeamNotification, project, teamId} = data;
@@ -99,50 +113,55 @@ export class TeamDetails extends Component {
 			const {teamId, newTeamNotification, updatedStatus, projectId} = data;
 			
 			if(this.teamId === teamId) {
-
+				
 				this.updateProjectStatusForTeam(projectId, updatedStatus)
 				this.updateTeamNotifications(newTeamNotification, 'addProjectNotification')
 				this.updateProjectsStatistics('projectOpenedOrClosed', updatedStatus);
-
+				
 			}
 		})
-		Nprogrss.start();
+		
+		
+		socket.on('publicProjectDeletion', async data => {
+			const {ownerId, projectId, teamId, newTeamNotification} = data;
 
-		try {
-			await this.getTeamData();
+			if(teamId === this.teamId && this.userId !== ownerId) {
 
-			Nprogrss.done();
-		} catch (error) {
-			Nprogrss.done();
+				this.removeProjectForSocket(projectId);
+				this.updateTeamNotifications(newTeamNotification, 'addProjectNotification');
+				await this.paginateTeamNotifiactions(1);
+			}
+		})
 
-			this.props.enqueueSnackbar(
-				error.response && (error.response.data.error || 'Something went wrong', { variant: 'error' })
-			);
-		}
+
+		socket.on('teamIsDeleted', data => {
+			const {teamId} = data;
+			if(teamId === this.teamId) this.props.history.push('/bugtracker/teams');
+		})
+		
 	}
-
-
-
-
-	getTeamData = async () => {
-		await Promise.all([ this.getTeam(), this.getTeamNotifications() ]);
-	};
-
-	getTeam = async () => {
-		const response = await teamDetails(this.teamId);
-
-		this.props.saveCurrentTeamId(response.data.team._id);
-
-		this.setState({ team: response.data.team, teamStatistics: response.data.teamStatistics });
-	};
-
-	getTeamNotifications = async () => {
-		const response = await teamNotifications(this.teamId, 1);
-
-		this.setState({
-			teamNotifications: response.data.notifications,
-			paginationItemsCount: response.data.paginationItemsCount
-		});
+		
+		
+		
+		getTeamData = async () => {
+			await Promise.all([ this.getTeam(), this.getTeamNotifications() ]);
+		};
+		
+		getTeam = async () => {
+			const response = await teamDetails(this.teamId);
+			
+			this.props.saveCurrentTeamId(response.data.team._id);
+			
+			this.setState({ team: response.data.team, teamStatistics: response.data.teamStatistics });
+		};
+		
+		getTeamNotifications = async () => {
+			const response = await teamNotifications(this.teamId, 1);
+			
+			this.setState({
+				teamNotifications: response.data.notifications,
+				paginationItemsCount: response.data.paginationItemsCount
+			});
 	};
 
 	paginateTeamNotifiactions = async (page = 1) => {
@@ -216,8 +235,20 @@ export class TeamDetails extends Component {
 	};
 
 
+	removeProject = async projectId => {
+		
+		Nprogrss.start();
 
+		try {
+			const response = await deleteProject(projectId,this.teamId);
+			await this.getTeam();
+			this.props.enqueueSnackbar(response.data.message, {variant: 'success'});
+			Nprogrss.done();
 
+		} catch (error) {
+			Nprogrss.done()
+		}
+	}
 
 	// SOCKETS FUNCTIONS
 
@@ -278,6 +309,7 @@ export class TeamDetails extends Component {
 		this.setState({team: updatedTeam})
 
 	}
+
 
 
 
@@ -398,11 +430,15 @@ export class TeamDetails extends Component {
 		}
 
 
+
 		teamStatistics.projects = projects;
 
 		this.setState({teamStatistics})
 
 	}
+
+
+
 	componentWillUnmount() {
 		this.socketListeners.forEach(eventName => socket.removeEventListener(eventName))
 	}
@@ -484,7 +520,7 @@ export class TeamDetails extends Component {
 								<h2>Team Projects</h2>
 								<hr />
 							</div>
-							<TeamProjects projects={team.projects} />
+							<TeamProjects projects={team.projects} removeProject = {this.removeProject}/>
 						</div>
 
 						{modalOpen && (

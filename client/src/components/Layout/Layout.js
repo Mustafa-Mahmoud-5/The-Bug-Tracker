@@ -105,6 +105,7 @@ class Layout extends Component {
     return (
 			<div>
 				<Navbar userImg={this.props.userImg} userNotifications = {this.state.userNotifications} seeNewNotifications = {this.seeNewNotifications}>
+          {/* This will be the entire Application */}
 					{this.props.children}
 				</Navbar>
 			</div>

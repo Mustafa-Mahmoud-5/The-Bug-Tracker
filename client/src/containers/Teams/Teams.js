@@ -7,8 +7,9 @@ import Modal from '../../components/Modal/Modal';
 import { Add } from '@material-ui/icons';
 import { Button, IconButton, Tooltip } from '@material-ui/core';
 import './Teams.scss';
-import { newTeam } from '../../Apis/team';
+import { deleteTeam, newTeam } from '../../Apis/team';
 import AddTeam from './AddTeam';
+import Alert from '@material-ui/lab/Alert';
 
 export class Teams extends Component {
 	state = {
@@ -65,6 +66,23 @@ export class Teams extends Component {
 		}
 	};
 
+	removeTeam = async teamId => {
+		if (window.confirm('Are you sure you wanna delete this team ?')) {
+			Nprogress.start();
+			try {
+				const response = await deleteTeam(teamId);
+
+				await this.getTeams();
+
+				this.props.enqueueSnackbar(response.data.message, { variant: 'success' });
+
+				Nprogress.done();
+			} catch (error) {
+				console.error(error);
+				Nprogress.done();
+			}
+		}
+	};
 	render() {
 		const { teams, modalOpen, loading } = this.state;
 		return (
@@ -81,7 +99,15 @@ export class Teams extends Component {
 						</div>
 
 						<hr />
-						<div className='row'>{teams.map((team, i) => <TeamBox key={i} team={team} />)}</div>
+						<div className='row'>
+							{teams.length > 0 ? (
+								teams.map((team, i) => <TeamBox key={i} team={team} removeTeam={this.removeTeam} />)
+							) : (
+								<Alert severity='info' variant='standard' style={{ width: '100%' }}>
+									You have not teams.
+								</Alert>
+							)}
+						</div>
 					</div>
 				)}
 

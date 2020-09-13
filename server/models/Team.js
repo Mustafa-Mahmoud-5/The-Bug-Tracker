@@ -199,7 +199,7 @@ class TeamClass {
 		return { projects: projects, bugs: bugs };
 	};
 
-	static async deleteTeam(leaderId, { teamId, ProjectModal }) {
+	static async deleteTeam(leaderId, ProjectModal, teamId) {
 		const team = await this.findById(teamId);
 
 		if (!team) sendError('Team is not found', 404);

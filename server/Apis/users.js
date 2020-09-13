@@ -187,7 +187,7 @@ exports.deleteProject = async (req, res, next) => {
 	const { userId } = req;
 
 	try {
-		await Project.deleteProject(userId, req.body);
+		await Project.deleteProject(userId, req.query);
 
 		res.status(200).json({ message: 'Project removed successfully' });
 	} catch (error) {

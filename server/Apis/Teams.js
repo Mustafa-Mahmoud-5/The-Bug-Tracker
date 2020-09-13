@@ -112,7 +112,8 @@ exports.deleteTeam = async (req, res, next) => {
 	const { userId } = req;
 	const { teamId } = req.params;
 	try {
-		await Team.deleteTeam(userId, { Project, teamId });
+		await Team.deleteTeam(userId, Project, teamId);
+		res.status(200).json({ message: 'Team deleted successfully' });
 	} catch (error) {
 		error.statusCode = error.statusCode || 500;
 		next(error);

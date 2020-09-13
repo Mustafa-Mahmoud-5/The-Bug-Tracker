@@ -2,7 +2,7 @@ import React from 'react';
 import './Box.scss';
 import Paper from '@material-ui/core/Paper';
 import { toDate } from '../../helpers';
-import { DeleteForever, LockOutlined } from '@material-ui/icons';
+import { DeleteForever, LockOutlined, Visibility } from '@material-ui/icons';
 import { IconButton } from '@material-ui/core';
 import { LockOpenOutlined } from '@material-ui/icons';
 import { withRouter } from 'react-router-dom';
@@ -20,7 +20,7 @@ function ProjectBox(props) {
 
 	return (
 		<div className='col-sm-6 col-md-3' style={{ marginBottom: '20px' }}>
-			<Paper elevation={3} className='Box' onClick={goToDetails}>
+			<Paper elevation={3} className='Box'>
 				<h2 className='capitalize'>{project.name}</h2>
 				<h4>
 					{' '}
@@ -29,15 +29,20 @@ function ProjectBox(props) {
 				<p className='secondary' style={{ fontStyle: 'italic' }}>
 					Created at {toDate(project.createdAt)}
 				</p>
-				{userId === project.owner && (
-					<div className=''>
+				<div className='controllers'>
+					<Tooltip title='View Project' onClick={goToDetails}>
+						<IconButton>
+							<Visibility color='primary' />
+						</IconButton>
+					</Tooltip>
+					{userId === project.owner && (
 						<Tooltip title='Delete Project'>
-							<IconButton>
+							<IconButton onClick={props.removeProject}>
 								<DeleteForever color='secondary' />
 							</IconButton>
 						</Tooltip>
-					</div>
-				)}
+					)}
+				</div>
 				<div className='status'>
 					{project.status === 1 ? (
 						<Tooltip title='Status: Closed'>

@@ -39,7 +39,7 @@ export class ProjectDetails extends Component {
 
   projectId = this.props.match.params.projectId
 
-  socketEvents = ['newPublicBug', 'publicBugFixed', 'publicBugReopened', 'projectClosingOrReopening']
+  socketEvents = ['newPublicBug', 'publicBugFixed', 'publicBugReopened', 'projectClosingOrReopening', 'teamIsDeleted']
 
 
 
@@ -94,6 +94,17 @@ export class ProjectDetails extends Component {
 
     })
 
+
+    socket.on('teamIsDeleted', data => {
+      
+      const {teamId} = data;
+      console.log("ProjectDetails -> componentDidMount -> teamId", teamId)
+      if(this.currentTeamId === teamId && this.state.project.type === 'public') this.props.history.push('/bugtracker/teams')
+      console.log("ProjectDetails -> componentDidMount -> is.state.project.type", this.state.project.type)
+      console.log("ProjectDetails -> componentDidMount -> teamId", teamId)
+      console.log("ProjectDetails -> componentDidMount -> currentTeamId", this.currentTeamId)
+      this.props.enqueueSnackbar('This team has been deleted by its owner', {variant: 'info'})
+    })
 
 
 

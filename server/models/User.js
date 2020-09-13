@@ -90,7 +90,7 @@ class UserClass {
 			{ firstName: user.firstName, lastName: user.lastName, email: user.email, userId: user._id },
 			`${process.env.TOKEN_SECRET}`,
 			{
-				expiresIn: '30d'
+				expiresIn: '3d'
 			}
 		);
 

@@ -20,3 +20,7 @@ export function teamNotifications(teamId, page) {
 export function kickMember(body) {
 	return sendRequest('PATCH', '/teams/kickMember', body);
 }
+
+export function deleteTeam(teamId) {
+	return sendRequest('DELETE', `/teams/deleteTeam/${teamId}`);
+}

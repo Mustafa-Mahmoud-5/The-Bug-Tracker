@@ -5,8 +5,9 @@ const jwt = require('jsonwebtoken'),
 const isAuth = (req, res, next) => {
 	console.log('isAuth -> req.props', req.body);
 	try {
+		const secret = `${process.env.TOKEN_SECRET}`;
+
 		const authHeader = req.get('Authorization');
-		console.log('isAuth -> authHeader', authHeader);
 
 		if (!authHeader) sendError('User is not authenticated', 401);
 
@@ -14,10 +15,13 @@ const isAuth = (req, res, next) => {
 
 		if (!token) sendError('Token was not passed', 401);
 
-		const decodedToken = jwt.decode(token, `${process.env.TOKEN_SECRET}`);
+		const decodedToken = jwt.decode(token, secret);
+
 		console.log('isAuth -> decodedToken', decodedToken);
 
 		if (!decodedToken) sendError('Token is fake', 401);
+
+		if (Date.now() > decodedToken.exp * 1000) sendError('Token is expired', 401);
 
 		req.userId = decodedToken.userId;
 

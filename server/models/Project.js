@@ -305,10 +305,10 @@ class ProjectClass {
 		return bugs;
 	}
 
-	static async deleteProject(ownerId, { projectId, teamId }) {
+	static async deleteProject(ownerId, { projectId }) {
 		// receive the teamId if the project type is public
 
-		const project = this.findById(projectId);
+		const project = await this.findById(projectId);
 
 		if (!project) sendError('Project is not found', 404);
 
@@ -322,44 +322,6 @@ class ProjectClass {
 			Timeline.deleteMany({ _id: { $in: projectTimeline } }),
 			Bug.deleteMany({ _id: { $in: projectBugs } })
 		]);
-
-		if (project.type === 'public') {
-			const team = await Team.findById(teamId);
-
-			if (!team) sendError('Team is not found', 403);
-
-			const content = 'deleted a team',
-				notificationType = 'projectCreation';
-
-			const notificationId = await Team.newNotification(
-				team,
-				notificationType,
-				content,
-				ownerId,
-				projectId,
-				null
-			);
-
-			const socketObject = {
-				ownerId,
-				projectId,
-				public: true,
-				teamId,
-				newTeamNotification: {
-					_id: notificationId,
-					from: team.leader,
-					createdAt: new Date(),
-					content,
-					notificationType,
-					to: null,
-					project: projectId
-				}
-			};
-
-			// save the team modal because we add a newNotification to team.notifications via the newNotification Method
-
-			await team.save();
-		}
 	}
 }
 

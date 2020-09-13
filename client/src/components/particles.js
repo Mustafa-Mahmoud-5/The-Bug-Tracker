@@ -1,6 +1,6 @@
 import Particles from 'react-particles-js';
 
-import React from 'react';
+import React from 'react'; // for using JSX
 
 function particles() {
 	return (

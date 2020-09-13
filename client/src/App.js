@@ -6,7 +6,35 @@ import AOS from 'aos';
 import SignUp from './containers/SignUp/SignUp';
 import SignIn from './containers/SignIn/signIn';
 import BugTracker from './containers/bugTracker/BugTracker';
+import axios from 'axios';
 class App extends Component {
+	componentDidMount() {
+		window.addEventListener('storage', this.detectTokenPlaying, false);
+
+		AOS.init({
+			offset: 120, // offset (in px) from the original trigger point
+			delay: 0, // values from 0 to 3000, with step 50ms
+			duration: 1200, // values from 0 to 3000, with step 50ms
+			easing: 'ease', // default easing for AOS animations
+			once: false, // whether animation should happen only once - while scrolling down
+			mirror: true // whether elements should animate out while scrolling past them
+		});
+	}
+
+	detectTokenPlaying = event => {
+		if (event.key === 'token' && event.oldValue !== event.newValue) {
+			this.getOut();
+		}
+	};
+
+	getOut = () => {
+		localStorage.removeItem('token');
+		this.props.history.push('/');
+	};
+
+	static test = () => {
+		alert('TESTINGs');
+	};
 	render() {
 		const userToken = localStorage.getItem('token');
 
@@ -27,26 +55,18 @@ class App extends Component {
 
 		return <div id='App'>{routes}</div>;
 	}
-
-	detectTokenPlaying = event => {
-		if (event.key === 'token' && event.oldValue !== event.newValue) {
-			localStorage.removeItem('token');
-			this.props.history.push('/');
-		}
-	};
-
-	componentDidMount() {
-		window.addEventListener('storage', this.detectTokenPlaying, false);
-
-		AOS.init({
-			offset: 120, // offset (in px) from the original trigger point
-			delay: 0, // values from 0 to 3000, with step 50ms
-			duration: 1200, // values from 0 to 3000, with step 50ms
-			easing: 'ease', // default easing for AOS animations
-			once: false, // whether animation should happen only once - while scrolling down
-			mirror: true // whether elements should animate out while scrolling past them
-		});
-	}
 }
+
+axios.interceptors.response.use(
+	response => {
+		return response;
+	},
+	error => {
+		if (error.response.status === 401 && error.response.data.error === 'Token is expired') {
+			localStorage.removeItem('token');
+		}
+		return Promise.reject(error);
+	}
+);
 
 export default withRouter(App);

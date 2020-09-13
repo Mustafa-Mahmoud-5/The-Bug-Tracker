@@ -1,11 +1,11 @@
 import React from 'react';
 import './Box.scss';
-import { Paper } from '@material-ui/core';
+import { IconButton, Paper, Tooltip } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import { DeleteForever, Visibility } from '@material-ui/icons';
 function TeamBox(props) {
 	const { team } = props;
-
 	const memberWord = team.members.length === 1 ? 'Member' : 'Members';
 	const projectWord = team.projects.length === 1 ? 'Project' : 'Projects';
 
@@ -14,7 +14,7 @@ function TeamBox(props) {
 	};
 
 	return (
-		<div className='col-md-4' style={{ marginBottom: '20px' }} onClick={goToDetails}>
+		<div className='col-md-4' style={{ marginBottom: '20px' }}>
 			<Paper className='Box teamBox'>
 				<h2>{team.name}</h2>
 				<div style={{ marginBottom: '10px' }}>
@@ -25,6 +25,20 @@ function TeamBox(props) {
 					Created by{' '}
 					{team.leader._id === props.userId ? 'you' : `${team.leader.firstName} ${team.leader.lastName}`}
 				</p>
+				<div className='controllers'>
+					<Tooltip title='view Project'>
+						<IconButton onClick={goToDetails}>
+							<Visibility color='primary' />
+						</IconButton>
+					</Tooltip>
+					{team.leader._id === props.userId && (
+						<Tooltip title='Delete Project'>
+							<IconButton onClick={() => props.removeTeam(team._id)}>
+								<DeleteForever color='secondary' />
+							</IconButton>
+						</Tooltip>
+					)}
+				</div>
 			</Paper>
 		</div>
 	);

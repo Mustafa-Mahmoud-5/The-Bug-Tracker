@@ -3,26 +3,44 @@ import Nprogress from 'nprogress';
 import { personalProjects } from '../../Apis/user';
 import ProjectBox from '../../components/Boxes/ProjectBox';
 import Alert from '@material-ui/lab/Alert';
+import { deleteProject } from '../../Apis/project';
+import { withSnackbar } from 'notistack';
 export class PersonalProjects extends Component {
 	state = {
 		projects: null
 	};
 
 	async componentDidMount() {
+		Nprogress.start();
 		try {
-			Nprogress.start();
-
-			const response = await personalProjects();
-			console.log('PersonalProjects -> componentDidMount -> response', response);
+			await this.getPersonalProjects();
 			Nprogress.done();
-
-			this.setState({ projects: response.data.projects });
 		} catch (error) {
 			Nprogress.done();
-			// alert(error.response.data.error || 'Something went wrong, please try again later');
 		}
 	}
 
+	getPersonalProjects = async () => {
+		const response = await personalProjects();
+		this.setState({ projects: response.data.projects });
+	};
+
+	removeProject = async projectId => {
+		if (window.confirm('Do you want to remove this project ?')) {
+			Nprogress.start();
+
+			try {
+				const response = await deleteProject(projectId, null);
+
+				await this.getPersonalProjects();
+
+				this.props.enqueueSnackbar(response.data.message, { variant: 'success' });
+				Nprogress.done();
+			} catch (error) {
+				Nprogress.done();
+			}
+		}
+	};
 	render() {
 		const { projects } = this.state;
 
@@ -33,15 +51,19 @@ export class PersonalProjects extends Component {
 				personalProjects = (
 					<div className='row'>
 						{projects.map(project => {
-							return <ProjectBox key={project._id} project={project} />;
+							return (
+								<ProjectBox
+									key={project._id}
+									project={project}
+									removeProject={() => this.removeProject(project._id)}
+								/>
+							);
 						})}
 					</div>
 				);
 			} else {
 				personalProjects = (
-					<Alert severity='warning'>
-						You have no projects! start adding some from the navbar at the top.
-					</Alert>
+					<Alert severity='info'>You have no projects! start adding some from the navbar at the top.</Alert>
 				);
 			}
 		}
@@ -56,4 +78,4 @@ export class PersonalProjects extends Component {
 	}
 }
 
-export default PersonalProjects;
+export default withSnackbar(PersonalProjects);

@@ -20,3 +20,7 @@ export function projectTimeline(projectId, page) {
 export function closeOrReOpenProject(body) {
 	return sendRequest('PATCH', '/users/closeOrReOpenProject', body);
 }
+
+export function deleteProject(projectId, teamId) {
+	return sendRequest('DELETE', `/users/deleteProject?projectId=${projectId}&teamId=${teamId}`);
+}
