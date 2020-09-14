@@ -3,7 +3,7 @@ const express = require('express'),
 	router = express.Router(),
 	checkValidation = require('../middlewares/checkValidation');
 
-const { body } = require('express-validator');
+const { body, validationResult } = require('express-validator');
 
 router.post(
 	'/signup',
@@ -18,5 +18,16 @@ router.post(
 );
 
 router.post('/signIn', authApis.signIn);
+
+router.post('/forgetPassword', authApis.forgetPassword);
+
+router.post('/receivePasswordRecoveryCode', authApis.receivePasswordRecoveryCode);
+
+router.post(
+	'/changePassword',
+	[ body('firstPassword').isLength({ min: 9 }) ],
+	checkValidation,
+	authApis.changePassword
+);
 
 module.exports = router;

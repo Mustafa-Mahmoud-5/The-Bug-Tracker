@@ -3,9 +3,11 @@ const mongoose = require('mongoose'),
 	jwt = require('jsonwebtoken'),
 	sendError = require('../helpers/sendError'),
 	bcrypt = require('bcryptjs'),
+	crypto = require('crypto'),
 	cloudinary = require('../helpers/cloudinary'),
 	fs = require('fs'),
 	generateRandomCode = require('../helpers/forgetPassowrdCode'),
+	expiryDate = require('../helpers/expiryDate'),
 	nodemailer = require('nodemailer'),
 	sendGridTransport = require('nodemailer-sendgrid-transport');
 
@@ -17,6 +19,7 @@ const nodemailerTransporter = nodemailer.createTransport(
 	})
 );
 
+const { send } = require('process');
 const { v4: uuidv4 } = require('uuid');
 
 const userSchema = new Schema(
@@ -65,7 +68,11 @@ const userSchema = new Schema(
 					default: false
 				}
 			}
-		]
+		],
+		passwordRecoveryToken: {
+			type: Schema.Types.Mixed,
+			default: null
+		}
 	},
 	{ timestamps: true }
 );
@@ -163,10 +170,6 @@ class UserClass {
 		return user.save();
 	}
 
-	static async forgetPasswordCodeCreation(email) {
-		const code = generateRandomCode(6);
-	}
-
 	static async newNotification(toId, fromId, content) {
 		const notificationObject = { from: fromId, content, date: new Date() };
 
@@ -179,6 +182,79 @@ class UserClass {
 		if (!user) sendError('User is not found', 404);
 
 		user.notifications.forEach(notification => (notification.seen = true));
+
+		return user.save();
+	}
+
+	// FORGET PASSWORD METHODS
+
+	// This is not a static function... i will depend on getting the user object first
+	static passwordRecoveryMail(code, email) {
+		return nodemailerTransporter.sendMail({
+			from: 'mustafaemailing21@gmail.com',
+			to: email,
+			subject: 'The_Bug_Tracker Forget Password',
+			html: `
+				Your Password recovery code is ${code}</h1>
+				
+				<h2>This code is available only for 10 minutes</h2>
+			`
+		});
+	}
+
+	// this method will create a code that able to retrieve the user`s password later
+	static async forgetPasswordCodeCreation({ email }) {
+		const user = await this.findOne({ email });
+
+		if (!user) sendError('User with given email is not founc', 404);
+
+		const code = generateRandomCode(6);
+
+		const exp = expiryDate(10);
+
+		crypto.randomBytes(32, async (err, buffer) => {
+			if (err) return console.log(err);
+
+			const slug = buffer.toString('hex');
+
+			const token = { code, exp, slug };
+
+			user.passwordRecoveryToken = token;
+
+			await Promise.all([ this.passwordRecoveryMail(code, email), user.save() ]);
+		});
+	}
+
+	static async passwordCodeSubmition({ email, code }) {
+		const user = await this.findOne({ email });
+
+		if (!user) sendError('User is not found', 404);
+
+		const passwordRecoveryToken = user.passwordRecoveryToken; // {exp, slug, code}
+
+		if (!passwordRecoveryToken) sendError('User have not reported for password recovery');
+
+		if (passwordRecoveryToken.exp <= Date.now()) {
+			sendError('Your recovery code is expired, regenerate a new one', 401);
+		}
+
+		if (Number(passwordRecoveryToken.code) !== Number(code)) sendError('Invalid Code', 401);
+
+		return passwordRecoveryToken.slug; // return the slug so the client navigate to it(the slug is unique and hashed for security reasons)
+	}
+
+	static async changePassword({ firstPassword, secondPassword, slug }) {
+		const user = await this.findOne({ 'passwordRecoveryToken.slug': slug });
+
+		if (!user) sendError('User not found', 404);
+
+		if (firstPassword !== secondPassword) sendError('Passwords are not matched', 422);
+
+		const hashedPassord = await bcrypt.hash(firstPassword, 12);
+
+		user.password = hashedPassord;
+
+		user.passwordRecoveryToken = null;
 
 		return user.save();
 	}
