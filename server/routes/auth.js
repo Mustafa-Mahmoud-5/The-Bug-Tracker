@@ -25,7 +25,7 @@ router.post('/receivePasswordRecoveryCode', authApis.receivePasswordRecoveryCode
 
 router.post(
 	'/changePassword',
-	[ body('firstPassword').isLength({ min: 9 }) ],
+	[ body('firstPassword').isLength({ min: 9 }).withMessage('Password should be 9 characters at least') ],
 	checkValidation,
 	authApis.changePassword
 );

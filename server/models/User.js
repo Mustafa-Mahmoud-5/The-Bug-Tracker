@@ -195,9 +195,9 @@ class UserClass {
 			to: email,
 			subject: 'The_Bug_Tracker Forget Password',
 			html: `
-				Your Password recovery code is ${code}</h1>
+				<h1>Your Password recovery code is ${code}</h1>
 				
-				<h2>This code is available only for 10 minutes</h2>
+				<h3>This code is available only for 10 minutes</h3>
 			`
 		});
 	}
@@ -206,14 +206,14 @@ class UserClass {
 	static async forgetPasswordCodeCreation({ email }) {
 		const user = await this.findOne({ email });
 
-		if (!user) sendError('User with given email is not founc', 404);
+		if (!user) sendError('User with given email is not found', 404);
 
 		const code = generateRandomCode(6);
 
-		const exp = expiryDate(10);
+		const exp = expiryDate(5); // the token will be availabe for only 5min
 
 		crypto.randomBytes(32, async (err, buffer) => {
-			if (err) return console.log(err);
+			if (err) return sendError('Something Went Wrong, please try again', 500);
 
 			const slug = buffer.toString('hex');
 
@@ -232,7 +232,7 @@ class UserClass {
 
 		const passwordRecoveryToken = user.passwordRecoveryToken; // {exp, slug, code}
 
-		if (!passwordRecoveryToken) sendError('User have not reported for password recovery');
+		if (!passwordRecoveryToken) sendError('User have not reported for password recovery', 401);
 
 		if (passwordRecoveryToken.exp <= Date.now()) {
 			sendError('Your recovery code is expired, regenerate a new one', 401);

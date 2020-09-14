@@ -6,6 +6,17 @@ export function signup(body) {
 }
 
 export function signin(body) {
-	const loginResponse = sendRequest('POST', '/auth/signIn', body, false);
-	return loginResponse;
+	return sendRequest('POST', '/auth/signIn', body, false);
+}
+
+export function forgetPassword(body) {
+	return sendRequest('POST', '/auth/forgetPassword', body, false);
+}
+
+export function receivePasswordRecoveryCode(body) {
+	return sendRequest('POST', '/auth/receivePasswordRecoveryCode', body, false);
+}
+
+export function changePassword(body) {
+	return sendRequest('POST', '/auth/changePassword', body, false);
 }

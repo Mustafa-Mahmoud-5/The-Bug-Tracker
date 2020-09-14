@@ -27,7 +27,7 @@ exports.forgetPassword = async (req, res, next) => {
 	try {
 		await User.forgetPasswordCodeCreation(req.body);
 
-		res.status(200).json({ message: 'Please check you email for your password recovery code' });
+		res.status(200).json({ message: 'Please check your email for your password recovery code' });
 	} catch (error) {
 		error.statusCode = error.statusCode || 500;
 		next(error);

@@ -1,6 +1,6 @@
 function generateRandomCode(digits) {
 	let code = '';
-	for (let i = 0; i <= digits; i++) {
+	for (let i = 1; i <= digits; i++) {
 		const randomDigit = Math.round(Math.random() * 9);
 		code += randomDigit;
 	}

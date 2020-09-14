@@ -3,7 +3,8 @@ import * as actionTypes from './actionTypes';
 const initialState = {
 	currentUser: null,
 	loading: false,
-	currentTeamId: null
+	currentTeamId: null,
+	forgetPasswordEmail: null
 };
 
 const reducer = (state = initialState, action) => {
@@ -48,6 +49,13 @@ const reducer = (state = initialState, action) => {
 			return {
 				...state,
 				currentTeamId
+			};
+
+		case actionTypes.forgetPassword:
+			const email = action.payload.email;
+			return {
+				...state,
+				forgetPasswordEmail: email
 			};
 		default:
 			return state;

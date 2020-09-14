@@ -1,6 +1,8 @@
 import * as actionTypes from './actionTypes';
 import { personalData } from '../Apis/user';
 
+
+// Error and Loading actions
 const start = () => ({
 	type: actionTypes.start
 });
@@ -12,6 +14,8 @@ const errorOccured = message => ({
 	}
 });
 
+
+// USER actions
 const storeUserData = user => ({
 	type: actionTypes.storeUserData,
 	payload: {
@@ -27,7 +31,6 @@ export const updateUserData  = updatedUser => ({
 	}
 })
 
-export const newKey = (updatedKey) => ({type: actionTypes.newKey, payload: {updatedKey}})
 
 export const fetchUser = () => {
 	return async dispatch => {
@@ -42,10 +45,24 @@ export const fetchUser = () => {
 	};
 };
 
+// NEW KEY action
+export const newKey = (updatedKey) => ({type: actionTypes.newKey, payload: {updatedKey}})
 
+// TEAM actions
 export const saveCurrentTeamId = currentTeamId => ({
 	type: actionTypes.saveCurrentTeam,
 	payload: {
 		currentTeamId
 	}
 })
+
+
+// FORGET PASSWORD actions
+
+export const storeForgetedPasswordEmail = email => ({
+	type: actionTypes.forgetPassword,
+	payload: {
+		email
+	}
+})
+

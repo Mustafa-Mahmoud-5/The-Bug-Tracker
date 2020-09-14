@@ -27,7 +27,7 @@ function BugDetails(props) {
 			)}
 
 			{projectType === 'public' &&
-			selectedBug && (
+			selectedBug?.fixer && (
 				<Tooltip title = {<Avatar src = {selectedBug.fixer?.image?.url}></Avatar>}>
 
 				<p style={{ color: 'lightgreen' }}>

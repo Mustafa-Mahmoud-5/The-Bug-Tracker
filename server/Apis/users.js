@@ -302,11 +302,13 @@ exports.getProjectDetails = async (req, res, next) => {
 			.select('-timeline')
 			.populate({
 				path: 'bugs',
-				populate: {
-					path: 'creator',
-					select: User.publicProps().join(' ')
-				},
-				populate: { path: 'fixer', select: User.publicProps().join(' ') }
+				populate: [
+					{
+						path: 'creator',
+						select: User.publicProps().join(' ')
+					},
+					{ path: 'fixer', select: User.publicProps().join(' ') }
+				]
 			})
 			.populate({ path: 'owner', select: User.publicProps().join(' ') })
 			.lean();
