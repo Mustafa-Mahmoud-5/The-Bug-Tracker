@@ -54,8 +54,6 @@ class ProjectClass {
 
 		if (type === 'public') {
 			const addingResult = await Team.addNewProject({ ownerId, teamId, projectId, name });
-
-			console.log('ProjectClass -> createProject -> addingResult', addingResult);
 		}
 	}
 	// SOCKET
@@ -292,7 +290,6 @@ class ProjectClass {
 	}
 
 	static analyzeProjectStatistics(project) {
-		console.log('project(N)', project);
 		// bug status 0 is buggy, 1 is fixed
 		const bugs = { total: 0, fixed: 0, buggy: 0 };
 

@@ -95,7 +95,6 @@ class UserClass {
 	}
 
 	static async signIn({ email, password }) {
-		console.log('signIn -> email', email);
 		const user = await this.findOne({ email: email })
 			.lean()
 			.select(this.publicProps().join(' ') + ' password email');
@@ -149,8 +148,6 @@ class UserClass {
 				}
 
 				const result = await cloudinary.cloudinaryRemoval(oldImagePublicKey);
-
-				console.log('editPersonalData -> result', result);
 			}
 
 			const filePath = file.path.replace('\\', '/');

@@ -31,8 +31,6 @@ exports.editPersonalData = async (req, res, next) => {
 exports.createNewProject = async (req, res, next) => {
 	const { userId: ownerId } = req;
 
-	console.log('exports.createNewProject -> ownerId', ownerId);
-
 	try {
 		await Project.createProject(ownerId, req.body);
 
@@ -98,7 +96,6 @@ exports.closeOrReOpenProject = async (req, res, next) => {
 exports.editBugDetails = async (req, res, next) => {
 	const { userId } = req;
 	const { bugId, newName, newDescription, projectId } = req.body;
-	console.log('exports.editBugDetails -> bugId', bugId);
 
 	try {
 		const bug = await Bug.findById(bugId);
@@ -125,7 +122,6 @@ exports.editBugDetails = async (req, res, next) => {
 
 exports.editProjectDetails = async (req, res, next) => {
 	const { userId } = req;
-	console.log('exports.editBugDetails -> userId', userId);
 
 	const { projectId, newName } = req.body;
 
@@ -224,7 +220,6 @@ exports.getUserNotifications = async (req, res, next) => {
 		if (user.notifications.length > 0) {
 			user.notifications = user.notifications.sort((a, b) => b.date - a.date);
 		}
-		console.log('exports.getUserNotifications -> user', user);
 		res.status(200).json({ notifications: user.notifications });
 	} catch (error) {
 		error.statusCode = error.statusCode || 500;
@@ -247,8 +242,6 @@ exports.getUserWithPrivateKey = async (req, res, next) => {
 		if (!team) sendError('Team is not found', 404);
 
 		const teamMembers = team.members;
-
-		console.log(user._id, teamMembers[0]._id);
 
 		const foundUser = teamMembers.find(member => member.toString() === user._id.toString());
 
@@ -295,7 +288,6 @@ exports.getBugDetails = async (req, res, next) => {
 
 exports.getProjectDetails = async (req, res, next) => {
 	const { projectId } = req.params;
-	console.log('exports.getProjectDetails -> projectId', projectId);
 
 	try {
 		const project = await Project.findById(projectId)
@@ -335,7 +327,6 @@ exports.getProjectTimeline = async (req, res, next) => {
 
 	const SKIP = (page - 1) * PER_PAGE;
 
-	console.log('exports.getProjectTimeline -> projectId', projectId);
 	try {
 		const project = await Project.findById(projectId).lean();
 
@@ -354,7 +345,6 @@ exports.getProjectTimeline = async (req, res, next) => {
 			.skip(SKIP)
 			.limit(PER_PAGE)
 			.lean();
-		console.log('exports.getProjectTimeline -> timeline', timeline);
 
 		const paginationItemsCount = paginationItems(projectTimelines.length, PER_PAGE);
 
@@ -368,7 +358,6 @@ exports.getProjectTimeline = async (req, res, next) => {
 exports.getUserTeams = async (req, res, next) => {
 	const { userId } = req;
 	const { forTeamSelecting } = req.query;
-	console.log('exports.getUserTeams -> forTeamSelecting', typeof forTeamSelecting);
 
 	try {
 		const query = { members: userId };

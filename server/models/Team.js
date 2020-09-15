@@ -61,9 +61,7 @@ class TeamClass {
 
 	// SOCKET
 	static async addMembers(leaderId, { teamId, members }) {
-		console.log('addMembers -> teamId', teamId);
 		const team = await this.findById(teamId).populate({ path: 'leader', select: User.publicProps().join(' ') });
-		console.log('addMembers -> team', team);
 
 		if (!team) sendError('Team is not found', 404);
 
@@ -183,7 +181,6 @@ class TeamClass {
 		const bugs = { totalBugs: 0, fixedBugs: 0, buggyBugs: 0 };
 
 		team.projects.forEach(project => {
-			console.log('project', project);
 			projects.totalProjects++;
 
 			if (project.status === 0) projects.openedProjects++;

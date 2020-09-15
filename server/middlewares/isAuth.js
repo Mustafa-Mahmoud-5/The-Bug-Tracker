@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken'),
 	sendError = require('../helpers/sendError');
 
 const isAuth = (req, res, next) => {
-	console.log('isAuth -> req.props', req.body);
 	try {
 		const secret = `${process.env.TOKEN_SECRET}`;
 
@@ -16,8 +15,6 @@ const isAuth = (req, res, next) => {
 		if (!token) sendError('Token was not passed', 401);
 
 		const decodedToken = jwt.decode(token, secret);
-
-		console.log('isAuth -> decodedToken', decodedToken);
 
 		if (!decodedToken) sendError('Token is fake', 401);
 
