@@ -26,6 +26,10 @@ class App extends Component {
 	}
 
 	detectTokenPlaying = event => {
+		// any playing with the token will get this user out.. but we have only one exception which is if the user have 2 tabs with the application opened for the same browser. this will trigger a change and will kick him out after the login because the other tab has no token... so we want to prevent the logic from kicking him out if the oldValue was null.
+
+		if (event.key === 'token' && event.oldValue === null) return;
+
 		if (event.key === 'token' && event.oldValue !== event.newValue) {
 			this.getOut();
 		}

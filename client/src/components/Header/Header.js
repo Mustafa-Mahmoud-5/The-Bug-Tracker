@@ -33,14 +33,14 @@ function header(props) {
 					<div className='authBox'>
 						<Button
 							color='primary'
-							variant='outlined'
+							variant='contained'
 							style={{ marginRight: '10px' }}
 							size='large'
 							onClick={() => goToAuth('/signup')}
 						>
 							Sign Up
 						</Button>
-						<Button color='primary' variant='outlined' size='large' onClick={() => goToAuth('/signin')}>
+						<Button color='primary' variant='contained' size='large' onClick={() => goToAuth('/signin')}>
 							Sign In
 						</Button>
 					</div>
