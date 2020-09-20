@@ -72,7 +72,7 @@ export class PersonalProjects extends Component {
 			<Fragment>
 				<div style={{ fontSize: '1.6rem', fontWeight: 'bold' }}>Your Personal Projects.</div>
 				<hr />
-				<div id='personalProjects'>{personalProjects}</div>
+				<div>{personalProjects}</div>
 			</Fragment>
 		);
 	}

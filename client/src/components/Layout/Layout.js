@@ -23,7 +23,7 @@ class Layout extends Component {
     
       const userIds = usersToAdd.map(user => user._id.toString());
 
-      if(userIds.includes(this.userId)) {
+      if(userIds.includes(this.props.userId)) {
     
         await this.getUserNotifications()
     
@@ -35,7 +35,7 @@ class Layout extends Component {
     socket.on('userHasKicked', async data => {
       const {kickedUser} = data;
     
-      if(this.userId === kickedUser) await this.getUserNotifications()
+      if(this.props.userId === kickedUser) await this.getUserNotifications()
     })
 
 
