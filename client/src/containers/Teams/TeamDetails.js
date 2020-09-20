@@ -30,7 +30,7 @@ export class TeamDetails extends Component {
 	userId = this.props.userId
 
 
-	socketListeners = ['newMembersForTeam', 'userHasKicked', 'newPublicBug', 'publicBugFixed', 'publicBugReopened', 'newTeamProject', 'projectClosingOrReopening', 'teamIsDeleted']
+	socketListeners = ['newMembersForTeam', 'userHasKicked', 'newPublicBug', 'publicBugFixed', 'publicBugReopened', 'newTeamProject', 'projectClosingOrReopening', 'teamIsDeleted', 'leaderKickedProjectOwner']
 
 	async componentDidMount() {
 		Nprogrss.start();
@@ -59,12 +59,17 @@ export class TeamDetails extends Component {
 			
 		})
 		
-		socket.on('userHasKicked', data => {
+		socket.on('userHasKicked', async data => {
 			
-			const {newTeamNotification, team, kickedUser, leaderId} = data;
+			const {newTeamNotification, team, kickedUser, leaderId, projectLeaderIsKicked} = data;
 			
 			
 			if(team._id === this.teamId && leaderId !== this.userId ) {
+				
+				if(projectLeaderIsKicked) {
+
+					return await this.getTeamData()
+				}
 				
 				if(this.userId === kickedUser) return this.props.history.push('/bugTracker/teams');
 				

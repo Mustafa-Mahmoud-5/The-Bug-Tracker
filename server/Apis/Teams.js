@@ -99,7 +99,7 @@ exports.kickMember = async (req, res, next) => {
 	const { userId } = req;
 
 	try {
-		await Team.kickMember(userId, req.body);
+		await Team.kickMember(userId, req.body, Project);
 		res.status(200).json({ message: 'User kicked successfully', user: userId });
 	} catch (error) {
 		if (!error.statusCode) error.statusCode = 500;

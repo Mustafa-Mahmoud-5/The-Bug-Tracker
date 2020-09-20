@@ -59,7 +59,6 @@ class TeamClass {
 		return team.save();
 	}
 
-	// SOCKET
 	static async addMembers(leaderId, { teamId, members }) {
 		const team = await this.findById(teamId).populate({ path: 'leader', select: User.publicProps().join(' ') });
 
@@ -109,15 +108,16 @@ class TeamClass {
 		return team.save();
 	}
 
-	// SOCKET
-	static async kickMember(leaderId, { teamId, memberId }) {
-		const team = await this.findById(teamId).populate({ path: 'leader', select: User.publicProps().join(' ') });
+	static async kickMember(leaderId, { teamId, memberId }, projectModal) {
+		console.log('a7a0');
+
+		const team = await this.findById(teamId)
+			.populate({ path: 'leader', select: User.publicProps().join(' ') })
+			.populate({ path: 'projects', select: 'owner' });
 
 		if (!team) sendError('Team is not found', 404);
 
 		if (team.leader._id.toString() !== leaderId) sendError('User is not team leader', 401);
-
-		const socketObject = { team: { _id: team._id }, kickedUser: memberId, leaderId };
 
 		team.members.pull(memberId);
 
@@ -131,6 +131,10 @@ class TeamClass {
 			User.findById(memberId).select(User.publicProps().join(' ')).lean()
 		]);
 
+		const io = getIo();
+
+		const socketObject = { team: { _id: team._id }, kickedUser: memberId, leaderId };
+
 		const newTeamNotificationId = result[0];
 
 		socketObject.newTeamNotification = {
@@ -142,9 +146,43 @@ class TeamClass {
 			createdAt: new Date()
 		};
 
-		getIo().emit('userHasKicked', socketObject);
+		console.log('a7a1');
+
+		const memberProjectId = await this.kickedMemberIsProjectOwner(team, memberId, projectModal);
+		console.log('kickMember -> memberProjectId', memberProjectId);
+
+		if (memberProjectId) socketObject.projectLeaderIsKicked = true;
+
+		io.emit('userHasKicked', socketObject);
+		console.log('a7a3');
 
 		await team.save();
+	}
+
+	static async kickedMemberIsProjectOwner(team, memberId, projectModal) {
+		console.log('a7a2');
+		let memberIsProjectLeader = false;
+		let memberProjectId;
+
+		for (const project of team.projects) {
+			console.log('kickedMemberIsProjectOwner -> project', project);
+
+			if (project.owner.toString() === memberId) {
+				memberIsProjectLeader = true;
+
+				memberProjectId = project._id;
+
+				break;
+			}
+		}
+
+		if (memberIsProjectLeader) {
+			await projectModal.updateOne({ _id: memberProjectId }, { $set: { owner: team.leader._id } });
+
+			return memberProjectId; // true
+		}
+
+		return false;
 	}
 
 	static async newNotification(team, notificationType, content, from, project, to) {
