@@ -65,7 +65,7 @@ export class TeamDetails extends Component {
 			
 			
 			if(team._id === this.teamId && leaderId !== this.userId ) {
-				
+
 				if(projectLeaderIsKicked) {
 
 					return await this.getTeamData()
@@ -128,16 +128,6 @@ export class TeamDetails extends Component {
 		})
 		
 		
-		socket.on('publicProjectDeletion', async data => {
-			const {ownerId, projectId, teamId, newTeamNotification} = data;
-
-			if(teamId === this.teamId && this.userId !== ownerId) {
-
-				this.removeProjectForSocket(projectId);
-				this.updateTeamNotifications(newTeamNotification, 'addProjectNotification');
-				await this.paginateTeamNotifiactions(1);
-			}
-		})
 
 
 		socket.on('teamIsDeleted', data => {
@@ -247,7 +237,7 @@ export class TeamDetails extends Component {
 
 		try {
 			const response = await deleteProject(projectId,this.teamId);
-			await this.getTeam();
+			await this.getTeamData();
 			this.props.enqueueSnackbar(response.data.message, {variant: 'success'});
 			Nprogrss.done();
 

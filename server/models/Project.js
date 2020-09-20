@@ -1,7 +1,9 @@
 const mongoose = require('mongoose'),
 	Team = require('./Team'),
 	Bug = require('./Bug'),
-	Timeline = require('./Timeline');
+	Timeline = require('./Timeline'),
+	Notification = require('./Notification');
+
 const sendError = require('../helpers/sendError');
 const { getIo } = require('../helpers/socket');
 const User = require('./User');
@@ -302,7 +304,7 @@ class ProjectClass {
 		return bugs;
 	}
 
-	static async deleteProject(ownerId, { projectId }) {
+	static async deleteProject(ownerId, { projectId, teamId }) {
 		// receive the teamId if the project type is public
 
 		const project = await this.findById(projectId);
@@ -311,12 +313,40 @@ class ProjectClass {
 
 		if (project.owner.toString() !== ownerId) sendError('User is not project owner', 403);
 
+		let notificationsToRemove = [];
+
+		// remove the team notifications that has a relation with this project because it will be undefined if we didn`t remove it
+
+		if (teamId) {
+			const team = await Team.findById(teamId);
+
+			if (!team) sendError('Team is not found', 404);
+
+			const teamNotifications = await Notification.find({ _id: { $in: team.notifications } }).lean();
+			console.log('deleteProject -> teamNotifications', teamNotifications);
+
+			teamNotifications.forEach(notification => {
+				if (notification.notificationType === 'projectCreation') {
+					if (notification.project.toString() === projectId) {
+						notificationsToRemove.push(notification._id);
+						team.notifications.pull(notification._id);
+					}
+				}
+			});
+
+			const res = await team.save();
+			console.log('deleteProject -> res', res);
+		}
+
 		const projectTimeline = project.timeline; // [id, id]
 		const projectBugs = project.bugs; // [id, id]
+
+		console.log('deleteProject -> notificationsToRemove', notificationsToRemove);
 
 		await Promise.all([
 			this.deleteOne({ _id: projectId }),
 			Timeline.deleteMany({ _id: { $in: projectTimeline } }),
+			Notification.deleteMany({ _id: { $in: notificationsToRemove } }),
 			Bug.deleteMany({ _id: { $in: projectBugs } })
 		]);
 	}
