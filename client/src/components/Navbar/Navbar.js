@@ -266,7 +266,7 @@ function PersistentDrawerLeft(props) {
 
         
         
-        <Modal modalOpen = {notificationOpen} closeModal = {handleNotificationClose} header = 'Notifications'>
+        <Modal modalOpen = {notificationOpen} closeModal = {handleNotificationClose} header = 'Notifications'  >
 
             
           {props.userNotifications?.length === 0 ? <h2 style={{textAlign:'center'}}>You have no notifications.</h2> : <List>

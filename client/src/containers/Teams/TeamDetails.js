@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { addMembers, kickMember, teamNotifications, teamDetails, newTeam } from '../../Apis/team';
+import { addMembers, kickMember, teamNotifications, teamDetails } from '../../Apis/team';
 import {deleteProject} from '../../Apis/project';
 import Modal from '../../components/Modal/Modal';
 import Nprogrss from 'nprogress';
@@ -14,6 +14,7 @@ import { saveCurrentTeamId } from '../../store/actions';
 import TeamMembers from '../../components/Teams/TeamMembers';
 import AddMembers from './AddMembers';
 import {socket} from '../../index'
+import './Teams.scss'
 export class TeamDetails extends Component {
 	state = {
 		loading: false,
@@ -503,8 +504,9 @@ export class TeamDetails extends Component {
 						<br />
 						<br />
 						<div className='row'>
-							<div className='col-md-4'>
+							<div className='col-md-4' style={{marginBottom:'20px'}}>
 								<Notifications
+									
 									teamProjects={team.projects}
 									teamNotifications={teamNotifications}
 									paginationItemsCount={paginationItemsCount}

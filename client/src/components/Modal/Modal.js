@@ -4,6 +4,13 @@ import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
 import Paper from '@material-ui/core/Paper';
+import './Modal.scss';
+
+/*
+ modalOpen <bool> --> the modal is opened or not 
+ closeModal <func> --> to close the modal
+ header <string> --> the modal header 	
+ */
 const useStyles = makeStyles(theme => ({
 	modal: {
 		display: 'flex',
@@ -14,9 +21,8 @@ const useStyles = makeStyles(theme => ({
 	},
 	modalPaper: {
 		padding: '20px',
-		// backgroundColor: '#11161A',
-		width: '60%',
-		height: '80%',
+		width: '70%',
+		height: 'auto',
 		border: 'none',
 		outline: 'none',
 		color: 'inherit',
@@ -24,11 +30,6 @@ const useStyles = makeStyles(theme => ({
 	}
 }));
 
-/*
- modalOpen <bool> --> the modal is opened or not 
- closeModal <func> --> to close the modal
- header <string> --> the modal header 	
- */
 export default function TransitionsModal(props) {
 	const classes = useStyles();
 

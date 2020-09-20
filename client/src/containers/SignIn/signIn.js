@@ -77,7 +77,7 @@ export class SignIn extends Component {
 							onChange={this.writeHandler}
 						/>
 					</div>
-					<LoadingBtn loading={this.state.loading} type='submit' name='sign up' fullWidth={true} />
+					<LoadingBtn loading={this.state.loading} type='submit' name='sign in' fullWidth={true} />
 				</form>
 
 					<div style={{textAlign: 'center', marginTop: '10px'}}>
