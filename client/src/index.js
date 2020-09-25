@@ -6,8 +6,6 @@ import io from 'socket.io-client';
 import * as serviceWorker from './serviceWorker';
 import { BrowserRouter } from 'react-router-dom';
 
-import Nprogress from 'nprogress';
-
 // NOTISTACK
 import { SnackbarProvider } from 'notistack';
 
