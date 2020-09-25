@@ -33,7 +33,7 @@ router.post(
 	isAuth,
 	[
 		body('name', 'Name must be not empty, ').trim().isLength({ max: 100 }).notEmpty(),
-		body('description', 'Description is required, at most 100 characters').notEmpty()
+		body('description', 'Description is required').notEmpty()
 	],
 	checkValidation,
 	usersApis.addNewBug
@@ -52,7 +52,7 @@ router.patch(
 	isAuth,
 	[
 		body('newName', 'Name must be not empty').notEmpty(),
-		body('newDescription', 'Description is required, at most 100 characters').notEmpty().isLength({ max: 100 })
+		body('newDescription', 'Description is required').notEmpty()
 	],
 	checkValidation,
 	usersApis.editBugDetails
