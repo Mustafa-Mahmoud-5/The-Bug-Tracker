@@ -322,8 +322,11 @@ class ProjectClass {
 
 			if (!team) sendError('Team is not found', 404);
 
+			team.projects.pull(projectId);
+
+			// get the real notifications object because i want to check their project id
+
 			const teamNotifications = await Notification.find({ _id: { $in: team.notifications } }).lean();
-			console.log('deleteProject -> teamNotifications', teamNotifications);
 
 			teamNotifications.forEach(notification => {
 				if (notification.notificationType === 'projectCreation') {
@@ -335,7 +338,6 @@ class ProjectClass {
 			});
 
 			const res = await team.save();
-			console.log('deleteProject -> res', res);
 		}
 
 		const projectTimeline = project.timeline; // [id, id]
