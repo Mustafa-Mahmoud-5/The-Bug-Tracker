@@ -5,8 +5,8 @@ const sendError = require('../helpers/sendError'),
 	Bug = require('../models/Bug'),
 	Timeline = require('../models/Timeline'),
 	fs = require('fs'),
-	{ v4: uuidv4 } = require('uuid'),
-	paginationItems = require('../helpers/paginationItems').paginationItems;
+	paginationItems = require('../helpers/paginationItems').paginationItems,
+	generateRandomId = require('../helpers/crypto');
 
 exports.editPersonalData = async (req, res, next) => {
 	// this api edit the personalData (editing the )
@@ -155,7 +155,7 @@ exports.regeneratePrivateKey = async (req, res, next) => {
 
 		if (!user) sendError('User is not found', 404);
 
-		user.privateKey = `${Math.random() * 0.123}-${uuidv4()}`;
+		user.privateKey = await generateRandomId(18);
 
 		const { privateKey: newPrivateKey } = await user.save();
 

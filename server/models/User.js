@@ -4,6 +4,7 @@ const mongoose = require('mongoose'),
 	sendError = require('../helpers/sendError'),
 	bcrypt = require('bcryptjs'),
 	crypto = require('crypto'),
+	generateRandomId = require('../helpers/crypto'),
 	cloudinary = require('../helpers/cloudinary'),
 	fs = require('fs'),
 	generateRandomCode = require('../helpers/forgetPassowrdCode'),
@@ -18,9 +19,6 @@ const nodemailerTransporter = nodemailer.createTransport(
 		}
 	})
 );
-
-const { send } = require('process');
-const { v4: uuidv4 } = require('uuid');
 
 const userSchema = new Schema(
 	{
@@ -44,7 +42,7 @@ const userSchema = new Schema(
 		},
 		privateKey: {
 			type: String,
-			default: `${Math.random() * 0.123}-${uuidv4()}`
+			required: true
 		},
 		image: {
 			// will be object
@@ -83,15 +81,17 @@ class UserClass {
 	}
 
 	static async signUp({ firstName, lastName, email, password }) {
-		const user = await this.findOne({ email: email }).lean();
+		const user = await this.findOne({ email }).lean();
 
 		if (user) sendError('This email is taken', 403);
 
 		const hashedPassord = await bcrypt.hash(password, 12);
 
+		const privateKey = await generateRandomId(18);
+
 		await this.welcomeMail({ email, firstName, lastName });
 
-		return this.create({ firstName, lastName, email, password: hashedPassord });
+		return this.create({ firstName, lastName, email, password: hashedPassord, privateKey });
 	}
 
 	static async signIn({ email, password }) {
