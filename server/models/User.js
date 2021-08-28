@@ -178,7 +178,9 @@ class UserClass {
 
 		if (!user) sendError('User is not found', 404);
 
-		user.notifications.forEach(notification => (notification.seen = true));
+		user.notifications.forEach(notification => {
+			notification.seen = true;
+		});
 
 		return user.save();
 	}
@@ -194,7 +196,7 @@ class UserClass {
 			html: `
 				<h1>Your Password recovery code is ${code}</h1>
 				
-				<h3>This code is available only for 10 minutes</h3>
+				<h3>This code is available only for 5 minutes</h3>
 			`
 		});
 	}

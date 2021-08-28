@@ -181,7 +181,7 @@ exports.seeNotifications = async (req, res, next) => {
 
 exports.deleteProject = async (req, res, next) => {
 	const { userId } = req;
-
+	console.log(typeof req.query.teamId)
 	try {
 		await Project.deleteProject(userId, req.query);
 

@@ -29,8 +29,8 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const store = createStore(reducer, composeEnhancers(applyMiddleware(thunk)));
 
-const baseUrl = 'https://thebugtracker-server.herokuapp.com';
-// const baseUrl = 'http://localhost:2300';
+// const baseUrl = 'https://thebugtracker-server.herokuapp.com';
+const baseUrl = 'http://localhost:2300';
 
 axios.defaults.baseURL = baseUrl;
 

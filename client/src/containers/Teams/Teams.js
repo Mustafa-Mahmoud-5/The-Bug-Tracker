@@ -104,7 +104,7 @@ export class Teams extends Component {
 								teams.map((team, i) => <TeamBox key={i} team={team} removeTeam={this.removeTeam} />)
 							) : (
 								<Alert severity='info' variant='standard' style={{ width: '100%' }}>
-									You have not teams.
+									You are not a member of any team.
 								</Alert>
 							)}
 						</div>

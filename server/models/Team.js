@@ -99,7 +99,6 @@ class TeamClass {
 				createdAt: new Date()
 			};
 
-			// :( , i know. unshift is bad in terms of bigO, but i have to.
 			socketObject.newTeamNotifications.unshift(teamNotificationForSocket);
 		}
 
@@ -109,8 +108,6 @@ class TeamClass {
 	}
 
 	static async kickMember(leaderId, { teamId, memberId }, projectModal) {
-		console.log('a7a0');
-
 		const team = await this.findById(teamId)
 			.populate({ path: 'leader', select: User.publicProps().join(' ') })
 			.populate({ path: 'projects', select: 'owner' });
@@ -131,8 +128,6 @@ class TeamClass {
 			User.findById(memberId).select(User.publicProps().join(' ')).lean()
 		]);
 
-		const io = getIo();
-
 		const socketObject = { team: { _id: team._id }, kickedUser: memberId, leaderId };
 
 		const newTeamNotificationId = result[0];
@@ -146,26 +141,22 @@ class TeamClass {
 			createdAt: new Date()
 		};
 
-		console.log('a7a1');
-
 		const memberProjectId = await this.kickedMemberIsProjectOwner(team, memberId, projectModal);
 		console.log('kickMember -> memberProjectId', memberProjectId);
 
 		if (memberProjectId) socketObject.projectLeaderIsKicked = true;
 
-		io.emit('userHasKicked', socketObject);
-		console.log('a7a3');
+		getIo().emit('userHasKicked', socketObject);
+
 
 		await team.save();
 	}
 
 	static async kickedMemberIsProjectOwner(team, memberId, projectModal) {
-		console.log('a7a2');
 		let memberIsProjectLeader = false;
 		let memberProjectId;
 
 		for (const project of team.projects) {
-			console.log('kickedMemberIsProjectOwner -> project', project);
 
 			if (project.owner.toString() === memberId) {
 				memberIsProjectLeader = true;

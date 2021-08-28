@@ -11,7 +11,6 @@ class Layout extends Component {
   }
 
 
-  userId = this.props.userId
 
   async componentDidMount() {
 
@@ -19,7 +18,11 @@ class Layout extends Component {
 
     
     socket.on('newMembersForTeam', async data => {
+
+      
       const {usersToAdd} = data;
+ 
+      console.log("Layout -> componentDidMount -> usersToAdd", usersToAdd, this.props.userId)
     
       const userIds = usersToAdd.map(user => user._id.toString());
 
@@ -34,7 +37,9 @@ class Layout extends Component {
 
     socket.on('userHasKicked', async data => {
       const {kickedUser} = data;
-    
+      
+      console.log("Layout -> componentDidMount -> kickedUser", kickedUser, this.props.userId)
+
       if(this.props.userId === kickedUser) await this.getUserNotifications()
     })
 
@@ -101,7 +106,7 @@ class Layout extends Component {
 
 	render() {
     if(!this.userId) this.userId = this.props.userId;
-    
+    console.log('LAYOUT')
     return (
 			<div>
 				<Navbar userImg={this.props.userImg} userNotifications = {this.state.userNotifications} seeNewNotifications = {this.seeNewNotifications}>

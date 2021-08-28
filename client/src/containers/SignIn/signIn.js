@@ -82,7 +82,7 @@ export class SignIn extends Component {
 
 					<div style={{textAlign: 'center', marginTop: '10px'}}>
 
-				<Link to ='/forgetPassword'>Forget Password?</Link>
+				<Link to ='/forgetPassword'>Forgot Password?</Link>
 					</div>
 			</Form>
 		);

@@ -49,8 +49,7 @@ export class ForgetPassword extends Component {
 		return (
 			<Form type='Forget Password'>
 				<Alert severity='info' fullWidth>
-					We`ll send you a gmail with the verification code that is available for only 5 minutes on the given
-					email.
+					We`ll send you a gmail with the verification code. Please not that the code is available for only 5 minutes.
 				</Alert>
 
 				<br />

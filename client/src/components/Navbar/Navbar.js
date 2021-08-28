@@ -26,6 +26,7 @@ import Modal from '../Modal/Modal';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import {NavLink, withRouter}from 'react-router-dom'
 import { toDate } from '../../helpers';
+import {socket} from '../../index'
 const drawerWidth = 240;
 
 const useStyles = makeStyles(theme => ({
@@ -111,6 +112,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function PersistentDrawerLeft(props) {
+
 	const classes = useStyles();
 	const theme = useTheme();
 	const [ open, setOpen ] = React.useState(!(window.innerWidth < 700));
@@ -150,14 +152,18 @@ function PersistentDrawerLeft(props) {
 	}
 
 	const logOut = () => {
-		localStorage.removeItem('token');
-		props.history.push('/');
+		if(window.confirm('Are you sure you want to logout?')) {
+
+			localStorage.removeItem('token');
+			props.history.push('/');
+		}
 	}
 
 
 	let unseen = 0;
-
+	
 	if(props.userNotifications?.length > 0) {
+    console.log("PersistentDrawerLeft -> props.userNotifications", props.userNotifications)
 		
 		
 		props.userNotifications.forEach(n => {
@@ -167,6 +173,7 @@ function PersistentDrawerLeft(props) {
 		
 	}
 	
+	console.log("PersistentDrawerLeft -> unseen", unseen)
 		
 		return (
 		<div className={classes.root}>

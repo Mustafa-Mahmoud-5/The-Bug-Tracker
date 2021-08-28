@@ -307,6 +307,7 @@ class ProjectClass {
 	static async deleteProject(ownerId, { projectId, teamId }) {
 		// receive the teamId if the project type is public
 
+		console.log("teamId", typeof teamId)
 		const project = await this.findById(projectId);
 
 		if (!project) sendError('Project is not found', 404);
@@ -317,7 +318,9 @@ class ProjectClass {
 
 		// remove the team notifications that has a relation with this project because it will be undefined if we didn`t remove it
 
-		if (teamId) {
+		if (teamId && teamId !== 'null') {
+			// Delete request allows only to send req params or req query, hence the teamId will be null but of string data type when we delete personal project of null teamId
+			
 			const team = await Team.findById(teamId);
 
 			if (!team) sendError('Team is not found', 404);
@@ -337,7 +340,7 @@ class ProjectClass {
 				}
 			});
 
-			const res = await team.save();
+			await team.save();
 		}
 
 		const projectTimeline = project.timeline; // [id, id]

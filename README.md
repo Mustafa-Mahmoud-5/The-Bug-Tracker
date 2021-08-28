@@ -22,6 +22,4 @@
 
 **BACKEND:** NodeJs, ExpressJs, MongoDb(mongoose), socket.io, express-validator, Cloudinary, multer, JWT, NodeMailer, SendGrid.
 
-**FRONTEND:** ReactJs, Redux, Redux-thunk, Material Ui, socket.io-client, notistack, nprogress, chart.js, react-particles-js, axios. 
-
-If you liked the project please star the repo and i will be happy to get you connected with me on [Linkedin](https://www.linkedin.com/in/mustafa-mahmoud-a80a221b4/)
+**FRONTEND:** ReactJs, Redux, Redux-thunk, Material Ui, socket.io-client, notistack, nprogress, chart.js, react-particles-js, axios

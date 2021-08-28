@@ -40,9 +40,6 @@ class App extends Component {
 		this.props.history.push('/');
 	};
 
-	static test = () => {
-		alert('TESTINGs');
-	};
 	render() {
 		const userToken = localStorage.getItem('token');
 
