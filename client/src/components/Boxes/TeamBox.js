@@ -3,7 +3,7 @@ import './Box.scss';
 import { IconButton, Paper, Tooltip } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { DeleteForever, Visibility } from '@material-ui/icons';
+import { DeleteForever, Visibility, ExitToApp } from '@material-ui/icons';
 function TeamBox(props) {
 	const { team } = props;
 	const memberWord = team.members.length === 1 ? 'Member' : 'Members';
@@ -31,10 +31,16 @@ function TeamBox(props) {
 							<Visibility color='primary' />
 						</IconButton>
 					</Tooltip>
-					{team.leader._id === props.userId && (
+					{team.leader._id === props.userId ? (
 						<Tooltip title='Delete Project'>
 							<IconButton onClick={() => props.removeTeam(team._id)}>
 								<DeleteForever color='secondary' />
+							</IconButton>
+						</Tooltip>
+					) : (
+						<Tooltip title='Leave team'>
+							<IconButton onClick={() => props.leaveTeam(team._id, team.name)}>
+								<ExitToApp color='secondary' />
 							</IconButton>
 						</Tooltip>
 					)}

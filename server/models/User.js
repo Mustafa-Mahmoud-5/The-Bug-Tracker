@@ -123,14 +123,19 @@ class UserClass {
 			from: 'mustafaemailing21@gmail.com',
 			subject: 'Welcome To THE_BUG_TRACKER',
 			html: `
+					<p>Dear ${firstName} ${lastName},<p>
 					<h1>THE_BUG_TRACKER platform is happy to have you as one of its users.</h1>
 					
-					<h2><em>This platform is totally free, you can start use it if you want for tracking your applications so you can become more productive.</em></h2>
+					<h2><em>This platform is totally free, you can start using it if you want for tracking your applications so you can become more productive.</em></h2>
 					
 
-					<h3>Nice for you to hear also that this platform is open source on my github account</h3>
+					<h3>Nice for you to hear also that this platform is open source on my github account if you are interested in how it was built.</h3>
 
-					<h3>Dear ${firstName} ${lastName}, hope you are safe and sound. This is a direct message from the platform author 'Mustafa Mahmoud' via a dedicated mailing gmail. if you liked the platform please star/follow me on github <a href = 'https://github.com/Mustafa-Mahmoud-5'>Github</a> repo and i will be happy if we connected on <a href = 'https://www.linkedin.com/in/mustafa-mahmoud-a80a221b4/'>Linkedin</a> as well.</h3>
+					<h3> 
+						<a href = 'https://github.com/Mustafa-Mahmoud-5'>Github</a> </h3> 
+					<h3>
+						<a href = 'https://www.linkedin.com/in/mustafa-mahmoud-a80a221b4/'>Linkedin</a> 
+					</h3>
 			`
 		});
 	}

@@ -7,10 +7,9 @@ import Modal from '../../components/Modal/Modal';
 import { Add } from '@material-ui/icons';
 import { Button, IconButton, Tooltip } from '@material-ui/core';
 import './Teams.scss';
-import { deleteTeam, newTeam } from '../../Apis/team';
+import { deleteTeam, newTeam, leaveTeam } from '../../Apis/team';
 import AddTeam from './AddTeam';
 import Alert from '@material-ui/lab/Alert';
-
 export class Teams extends Component {
 	state = {
 		loading: false,
@@ -27,7 +26,7 @@ export class Teams extends Component {
 			Nprogress.done();
 		} catch (error) {
 			Nprogress.done();
-			alert((error.response && error.response.data.erro) || 'Something went wrong, please try again later.');
+			alert((error.response && error.response.data.error) || 'Something went wrong, please try again later.');
 		}
 	}
 
@@ -83,6 +82,22 @@ export class Teams extends Component {
 			}
 		}
 	};
+
+	leaveTeam = async (teamId, teamName) => {
+		if (window.confirm(`Are you sure you want to leave "${teamName}" ?`)) {
+			Nprogress.start();
+
+			try {
+				const response = await leaveTeam(teamId);
+				await this.getTeams();
+				this.props.enqueueSnackbar(response.data.message, { variant: 'success' });
+				Nprogress.done();
+			} catch (error) {
+				this.props.enqueueSnackbar(error.response && error.response.data.message, { variant: 'error' });
+				Nprogress.done();
+			}
+		}
+	};
 	render() {
 		const { teams, modalOpen, loading } = this.state;
 		return (
@@ -101,7 +116,14 @@ export class Teams extends Component {
 						<hr />
 						<div className='row'>
 							{teams.length > 0 ? (
-								teams.map((team, i) => <TeamBox key={i} team={team} removeTeam={this.removeTeam} />)
+								teams.map((team, i) => (
+									<TeamBox
+										key={i}
+										team={team}
+										removeTeam={this.removeTeam}
+										leaveTeam={this.leaveTeam}
+									/>
+								))
 							) : (
 								<Alert severity='info' variant='standard' style={{ width: '100%' }}>
 									You are not a member of any team.

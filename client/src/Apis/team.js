@@ -24,3 +24,7 @@ export function kickMember(body) {
 export function deleteTeam(teamId) {
 	return sendRequest('DELETE', `/teams/deleteTeam/${teamId}`);
 }
+
+export function leaveTeam(teamId) {
+	return sendRequest('PATCH', `/teams/leaveTeam/${teamId}`);
+}

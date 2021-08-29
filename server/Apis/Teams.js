@@ -119,14 +119,14 @@ exports.deleteTeam = async (req, res, next) => {
 	}
 };
 
-
 exports.leaveTeam = async (req, res, next) => {
-	const {userId, teamId} = req.body;
+	const { teamId } = req.params;
+	const userId = req.userId;
 	try {
-		await Team.leaveTeam(userId, teamId, Project); 
-		res.status(200).json({message: "Team is left successfully"})
+		await Team.leaveTeam(userId, teamId, Project);
+		res.status(200).json({ message: 'Team is left successfully' });
 	} catch (error) {
 		error.statusCode = error.statusCode || 500;
 		next(error);
 	}
-}
+};

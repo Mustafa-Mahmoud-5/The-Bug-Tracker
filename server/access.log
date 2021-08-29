@@ -1,8 +1,0 @@
-::1 - - [29/Aug/2021:09:03:58 +0000] "GET /users/userNotifications HTTP/1.1" 200 5208 "-" "PostmanRuntime/7.26.8"
-::1 - - [29/Aug/2021:09:04:20 +0000] "PATCH /users/clearNotifications HTTP/1.1" 200 36 "-" "PostmanRuntime/7.26.8"
-::1 - - [29/Aug/2021:09:04:27 +0000] "OPTIONS /users/personalData HTTP/1.1" 200 8 "http://localhost:3000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36 Edg/92.0.902.84"
-::1 - - [29/Aug/2021:09:04:27 +0000] "GET /users/personalData HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36 Edg/92.0.902.84"
-::1 - - [29/Aug/2021:09:04:27 +0000] "OPTIONS /users/personalProjects HTTP/1.1" 200 8 "http://localhost:3000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36 Edg/92.0.902.84"
-::1 - - [29/Aug/2021:09:04:27 +0000] "OPTIONS /users/userNotifications HTTP/1.1" 200 8 "http://localhost:3000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36 Edg/92.0.902.84"
-::1 - - [29/Aug/2021:09:04:28 +0000] "GET /users/personalProjects HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36 Edg/92.0.902.84"
-::1 - - [29/Aug/2021:09:04:28 +0000] "GET /users/userNotifications HTTP/1.1" 200 20 "http://localhost:3000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36 Edg/92.0.902.84"
