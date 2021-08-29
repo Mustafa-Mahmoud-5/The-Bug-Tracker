@@ -23,4 +23,7 @@ router.get('/teamNotifications/:teamId', isAuth, teamApis.getTeamNotifications);
 router.patch('/kickMember', isAuth, teamApis.kickMember);
 
 router.delete('/deleteTeam/:teamId', isAuth, teamApis.deleteTeam);
+
+router.patch('/leaveTeam', isAuth, teamApis.leaveTeam);
+
 module.exports = router;

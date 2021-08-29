@@ -1,7 +1,8 @@
 const mongoose = require('mongoose'),
 	sendError = require('../helpers/sendError'),
 	Notification = require('./Notification'),
-	User = require('./User');
+	User = require('./User'),
+	Project = require('./Project');
 
 const getIo = require('../helpers/socket').getIo;
 
@@ -247,6 +248,30 @@ class TeamClass {
 		const socketObject = { teamId, teamMembers, teamProjects };
 
 		getIo().emit('teamIsDeleted', socketObject);
+	}
+
+	static async leaveTeam(userId, teamId, ProjectModel) {
+		const team = await Team.findById(teamId).select("leader projects members").populate({path: "projects", select: "owner"});
+		console.log("TEAM: ", team);
+		const teamLeader = team.leader.toString();
+		console.log('TYPEOF', typeof teamLeader);
+		if(!team) sendError("Team is not found !", 404);
+		if(teamLeader === userId) sendError("Team Leader can`t leave his team.", 403);
+	
+		// give all of the projects ownership to the team leader
+		const projectsIds = [];
+		team.projects.forEach(project => {
+			if (project.owner.toString() === userId) projectsIds.push(project._id);
+		});
+
+		console.log("projectIDS: ", projectsIds)
+		if(projectsIds.length > 0) {
+			console.log(">0")
+			await ProjectModel.updateMany({_id: {$in: projectsIds }}, {$set: {owner: teamLeader}});
+		}
+
+		team.members.pull(userId);
+		await team.save();
 	}
 }
 
