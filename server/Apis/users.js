@@ -181,7 +181,7 @@ exports.seeNotifications = async (req, res, next) => {
 
 exports.deleteProject = async (req, res, next) => {
 	const { userId } = req;
-	console.log(typeof req.query.teamId)
+	console.log(typeof req.query.teamId);
 	try {
 		await Project.deleteProject(userId, req.query);
 
@@ -371,6 +371,18 @@ exports.getUserTeams = async (req, res, next) => {
 						.lean();
 
 		res.status(200).json({ teams });
+	} catch (error) {
+		error.statusCode = error.statusCode || 500;
+		next(error);
+	}
+};
+
+exports.clearUserNotifications = async (req, res, next) => {
+	const userId = req.userId;
+
+	try {
+		await User.clearNotifications(userId);
+		res.status(200).json({ message: 'Notifications cleared.' });
 	} catch (error) {
 		error.statusCode = error.statusCode || 500;
 		next(error);

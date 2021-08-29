@@ -257,6 +257,10 @@ class UserClass {
 
 		return user.save();
 	}
+
+	static async clearNotifications(userId) {
+		await User.updateOne({ _id: userId }, { $set: { notifications: [] } });
+	}
 }
 
 userSchema.loadClass(UserClass);

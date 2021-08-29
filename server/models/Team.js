@@ -252,9 +252,9 @@ class TeamClass {
 
 	static async leaveTeam(userId, teamId, ProjectModel) {
 		const team = await Team.findById(teamId).select("leader projects members").populate({path: "projects", select: "owner"});
-		console.log("TEAM: ", team);
+		
 		const teamLeader = team.leader.toString();
-		console.log('TYPEOF', typeof teamLeader);
+		
 		if(!team) sendError("Team is not found !", 404);
 		if(teamLeader === userId) sendError("Team Leader can`t leave his team.", 403);
 	
@@ -264,9 +264,7 @@ class TeamClass {
 			if (project.owner.toString() === userId) projectsIds.push(project._id);
 		});
 
-		console.log("projectIDS: ", projectsIds)
 		if(projectsIds.length > 0) {
-			console.log(">0")
 			await ProjectModel.updateMany({_id: {$in: projectsIds }}, {$set: {owner: teamLeader}});
 		}
 

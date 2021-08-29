@@ -80,4 +80,5 @@ router.get('/projectTimeline/:projectId', isAuth, usersApis.getProjectTimeline);
 
 router.get('/userTeams', isAuth, usersApis.getUserTeams);
 
+router.patch('/clearNotifications', isAuth, usersApis.clearUserNotifications);
 module.exports = router;
