@@ -31,8 +31,8 @@ function Bugs(props) {
 				className='TableControllers'
 				style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}
 			>
-				<Typography variant='h6' style={{ textAlign: 'center' }}>
-					Bugs
+				<Typography variant='h5' style={{ textAlign: 'center', fontWeight: 'bold' }}>
+					Project Bugs
 				</Typography>
 				{/* AddBug */}
 				<IconButton
@@ -47,22 +47,30 @@ function Bugs(props) {
 				<Table className={classes.table} aria-label='simple table'>
 					<TableHead>
 						<TableRow>
-							<TableCell align='center'>Name</TableCell>
-							<TableCell align='center'>Status</TableCell>
-							<TableCell align='center'>CreatedAt</TableCell>
-							<TableCell align='center'>Actions</TableCell>
+							<TableCell align='center' style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>
+								Name
+							</TableCell>
+							<TableCell align='center' style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>
+								Status
+							</TableCell>
+							<TableCell align='center' style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>
+								CreatedAt
+							</TableCell>
+							<TableCell align='center' style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>
+								Actions
+							</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
 						{sortedBugs.map((bug, i) => {
 							return (
 								<TableRow key={i}>
-									<TableCell align='center' component='th' scope='row'>
+									<TableCell align='center' component='th' scope='row' style={{ fontSize: '17.5px' }}>
 										{bug.name}
 									</TableCell>
 									<TableCell
 										align='center'
-										style={{ color: bug.status === 1 ? '#5cb85c' : '#d9534f' }}
+										style={{ color: bug.status === 1 ? '#5cb85c' : '#d9534f', fontWeight: 'bold' }}
 									>
 										{bug.status === 1 ? 'Fixed' : 'Buggy'}
 									</TableCell>
