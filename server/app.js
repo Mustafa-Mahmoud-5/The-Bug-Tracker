@@ -44,13 +44,14 @@ app.use((error, req, res, next) => {
 
 // DB, SERVER CONNECTION
 const mongoURL = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.71gmc.mongodb.net/${process.env
-		.DB_NAME}?retryWrites=true&w=majority`,
-	mongoConfigs = {
-		useUnifiedTopology: true,
-		useNewUrlParser: true,
-		useCreateIndex: true
-	},
-	port = 2300;
+	.DB_NAME}?retryWrites=true&w=majority`;
+
+const mongoConfigs = {
+	useUnifiedTopology: true,
+	useNewUrlParser: true,
+	useCreateIndex: true
+};
+const port = 2300;
 
 mongoose
 	.connect(mongoURL, mongoConfigs)

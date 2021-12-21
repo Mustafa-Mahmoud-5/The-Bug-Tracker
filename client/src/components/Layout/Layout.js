@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import Navbar from '../Navbar/Navbar';
 import { connect } from 'react-redux';
-import {userNotifications, seenNotifications} from '../../Apis/user'
+import {userNotifications, seenNotifications, clearNotifications} from '../../Apis/user'
 import {socket} from '../../index';
+import {withSnackbar} from 'notistack';
 
 class Layout extends Component {
 
   state = {
-    userNotifications: null
+    userNotifications: null,
+    loading: false
   }
 
 
@@ -104,12 +106,30 @@ class Layout extends Component {
 
   }
 
+  clearNotifications = async () => {
+
+    this.setState({loading:true});
+    
+    try {
+      const response = await clearNotifications();
+      this.setState({userNotifications: []});
+      this.props.enqueueSnackbar(response.data.message || 'Something went wrong', {variant: 'success'})
+    } catch (error) {
+
+      this.props.enqueueSnackbar(error.response.data.error || 'Something went wrong', {variant: 'error'})
+
+    }
+
+    this.setState({loading:false});
+
+  }
+
 	render() {
     if(!this.userId) this.userId = this.props.userId;
     console.log('LAYOUT')
     return (
 			<div>
-				<Navbar userImg={this.props.userImg} userNotifications = {this.state.userNotifications} seeNewNotifications = {this.seeNewNotifications}>
+				<Navbar userImg={this.props.userImg} userNotifications = {this.state.userNotifications} seeNewNotifications = {this.seeNewNotifications} clearNotifications = {this.clearNotifications} loading = {this.state.loading}>
           {/* This will be the entire Application */}
 					{this.props.children}
 				</Navbar>
@@ -121,4 +141,4 @@ class Layout extends Component {
 const mapStateToProps = state => {
 	return { userImg: state.currentUser?.image, userId: state.currentUser?._id };
 };
-export default connect(mapStateToProps)(Layout);
+export default connect(mapStateToProps)(withSnackbar(Layout));

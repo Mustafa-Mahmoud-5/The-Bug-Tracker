@@ -211,7 +211,7 @@ class ProjectClass {
 		// HOW THIS FUNC WORK ?
 		// if the project is closed, open it, if it is opened close it
 		// if the project is a public project, then it must be in a team, get the teamId and make a newNotification for this team saying that project X has been closed
-		// this func will have alot of if statments :)
+		// this func will have alot of if statments :
 
 		const project = await this.findById(projectId)
 			.populate({ path: 'owner', select: User.publicProps().join(' ') })
@@ -307,7 +307,7 @@ class ProjectClass {
 	static async deleteProject(ownerId, { projectId, teamId }) {
 		// receive the teamId if the project type is public
 
-		console.log("teamId", typeof teamId)
+		console.log('teamId', typeof teamId);
 		const project = await this.findById(projectId);
 
 		if (!project) sendError('Project is not found', 404);
@@ -320,7 +320,7 @@ class ProjectClass {
 
 		if (teamId && teamId !== 'null') {
 			// Delete request allows only to send req params or req query, hence the teamId will be null but of string data type when we delete personal project of null teamId
-			
+
 			const team = await Team.findById(teamId);
 
 			if (!team) sendError('Team is not found', 404);

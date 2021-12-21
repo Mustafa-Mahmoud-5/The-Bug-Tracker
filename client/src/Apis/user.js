@@ -32,3 +32,7 @@ export function userTeams(forTeamSelecting) {
 export function seenNotifications() {
 	return sendRequest('PATCH', '/users/seenNotifications');
 }
+
+export function clearNotifications() {
+	return sendRequest('PATCH', '/users/clearNotifications');
+}

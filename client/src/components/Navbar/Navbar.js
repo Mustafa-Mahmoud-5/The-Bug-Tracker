@@ -21,6 +21,7 @@ import GroupIcon from '@material-ui/icons/Group';
 import Badge from '@material-ui/core/Badge';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import Button from '@material-ui/core/Button';
+import LoadingBtn from '../Btn/LoadingBtn';
 import Tooltip from '@material-ui/core/Tooltip';
 import Modal from '../Modal/Modal';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
@@ -163,7 +164,6 @@ function PersistentDrawerLeft(props) {
 	let unseen = 0;
 	
 	if(props.userNotifications?.length > 0) {
-    console.log("PersistentDrawerLeft -> props.userNotifications", props.userNotifications)
 		
 		
 		props.userNotifications.forEach(n => {
@@ -173,7 +173,6 @@ function PersistentDrawerLeft(props) {
 		
 	}
 	
-	console.log("PersistentDrawerLeft -> unseen", unseen)
 		
 		return (
 		<div className={classes.root}>
@@ -277,6 +276,9 @@ function PersistentDrawerLeft(props) {
 
             
           {props.userNotifications?.length === 0 ? <h2 style={{textAlign:'center'}}>You have no notifications.</h2> : <List>
+						<LoadingBtn name = "Clear" loading = {props.loading} func = {props.clearNotifications}/>
+						<br />
+						<br />
           {props.userNotifications?.map((n, i) => {
                 return (
 
@@ -295,6 +297,7 @@ function PersistentDrawerLeft(props) {
 
             </List>
             }
+
         </Modal>
 
 
