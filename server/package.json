@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js",
     "start:dev": "nodemon -r dotenv/config app.js",
-    "pushToHeroku:server": "cd ../ && git subtree push --prefix server heroku-server master || true"
+    "pushToHeroku:server": "cd ../ && git subtree push --prefix server heroku-server master || true",
+    "serverDeploy" : "cd ../ && git subtee push --prefix server serverDeploy master"
   },
   "engines": {
     "node": "13.10.1"
