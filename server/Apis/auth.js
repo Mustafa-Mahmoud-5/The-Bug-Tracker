@@ -1,5 +1,35 @@
 const sendError = require('../helpers/sendError');
 const User = require('../models/User');
+const {OAuth2Client} = require("google-auth-library");
+const client_id = process.env.GOOGLE_CLIENT_ID;
+const client_secret = process.env.GOOGLE_CLIENT_SECRET;
+
+
+const oAuth2Client = new OAuth2Client(
+  client_id,
+  client_secret,
+  'postmessage',
+);
+
+
+
+exports.googleSignIn = async (req, res, next) => {
+	try {
+		console.log("REACHED 1");
+		const { tokens} = await oAuth2Client.getToken(req.body.code);
+		console.log("REACHED 2");
+
+		const token = await User.googleSignUpOrSignIn(tokens);
+		console.log("REACHED 6");
+
+		res.status(200).json({message: 'User logged in successfully', token}); 
+	} catch (error) {
+		if (!error.statusCode) error.statusCode = 500;
+		next(error);
+	}
+}
+
+
 
 exports.signUp = async (req, res, next) => {
 	try {

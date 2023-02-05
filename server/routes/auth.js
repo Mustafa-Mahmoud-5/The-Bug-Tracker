@@ -5,6 +5,9 @@ const express = require('express'),
 
 const { body, validationResult } = require('express-validator');
 
+
+router.post("/google", authApis.googleSignIn);
+
 router.post(
 	'/signup',
 	[

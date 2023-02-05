@@ -49,7 +49,7 @@ const mongoURL = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cl
 const mongoConfigs = {
 	useUnifiedTopology: true,
 	useNewUrlParser: true,
-	useCreateIndex: true
+	// useCreateIndex: true
 };
 const port = 2300;
 

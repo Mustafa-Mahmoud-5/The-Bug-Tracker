@@ -1,10 +1,51 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import Particles from '../particles';
 import './Header.scss';
+import { withSnackbar } from 'notistack';
 import OuterNav from '../OuterNav/OuterNav';
 import { withRouter } from 'react-router-dom';
-function header(props) {
+import GoogleButton from 'react-google-button';
+import { useGoogleLogin } from '@react-oauth/google';
+import {googleAuth} from "../../Apis/auth"
+import axios from "axios";
+function Header(props) {
+	
+	const [loading, setLoading] = useState(false);
+
+
+	const googleLogin = useGoogleLogin({
+    flow: 'auth-code',
+    onSuccess: async (codeResponse) => {
+			setLoading(true);
+			try {
+				const body = {code: codeResponse};
+				const res = await googleAuth(body);
+        const {token} = res.data;
+        if(token) {
+					setLoading(false);
+          localStorage.setItem('token', token);
+					props.enqueueSnackbar(res.data.message, { variant: 'success' });				
+					gotToProfile();
+					return;
+        }
+				setLoading(false);
+			} catch (error) {
+				props.enqueueSnackbar(error.response?.data?.error, { variant: 'error' });
+				setLoading(false);
+				console.log(error.message);
+			}
+			
+			
+      },
+    onError: errorResponse => console.log(errorResponse),
+  });
+
+
+	const	gotToProfile = () => {
+		props.history.push('/bugtracker/profile');
+	}
+
 	const goToAuth = route => {
 		props.history.push(route);
 	};
@@ -44,10 +85,11 @@ function header(props) {
 							Sign In
 						</Button>
 					</div>
+					<GoogleButton  id="google-btn" disabled={loading} onClick={googleLogin}/>
 				</div>
 			</div>
 		</header>
 	);
 }
 
-export default withRouter(header);
+export default withRouter(withSnackbar(Header));

@@ -20,3 +20,7 @@ export function receivePasswordRecoveryCode(body) {
 export function changePassword(body) {
 	return sendRequest('POST', '/auth/changePassword', body, false);
 }
+
+export function googleAuth(body) {
+	return sendRequest("POST", "/auth/google", body, false);
+}

@@ -15,6 +15,7 @@ export class SignIn extends Component {
 	gotToProfile = () => {
 		this.props.history.push('/bugtracker/profile')
 	}
+	
 	submitHandler = async (e, cb) => {
 		e.preventDefault();
 

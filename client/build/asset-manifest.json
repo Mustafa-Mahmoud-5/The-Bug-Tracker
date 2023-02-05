@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/static/css/main.72be21d0.chunk.css",
+    "main.js": "/static/js/main.47b53833.chunk.js",
+    "main.js.map": "/static/js/main.47b53833.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.09b85ec0.js",
+    "runtime-main.js.map": "/static/js/runtime-main.09b85ec0.js.map",
+    "static/js/2.031fc71c.chunk.js": "/static/js/2.031fc71c.chunk.js",
+    "static/js/2.031fc71c.chunk.js.map": "/static/js/2.031fc71c.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.3d71529e75319d87bea492057148ef9f.js": "/precache-manifest.3d71529e75319d87bea492057148ef9f.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/main.72be21d0.chunk.css.map": "/static/css/main.72be21d0.chunk.css.map",
+    "static/js/2.031fc71c.chunk.js.LICENSE.txt": "/static/js/2.031fc71c.chunk.js.LICENSE.txt",
+    "static/media/undraw_charts_jj6t.png": "/static/media/undraw_charts_jj6t.9a13f988.png",
+    "static/media/undraw_my_files_swob.png": "/static/media/undraw_my_files_swob.fece5d93.png",
+    "static/media/undraw_real_time_collaboration_c62i.png": "/static/media/undraw_real_time_collaboration_c62i.acc980ab.png"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.09b85ec0.js",
+    "static/js/2.031fc71c.chunk.js",
+    "static/css/main.72be21d0.chunk.css",
+    "static/js/main.47b53833.chunk.js"
+  ]
+}

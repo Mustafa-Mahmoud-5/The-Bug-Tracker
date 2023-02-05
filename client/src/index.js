@@ -5,7 +5,7 @@ import App from './App';
 import io from 'socket.io-client';
 import * as serviceWorker from './serviceWorker';
 import { BrowserRouter } from 'react-router-dom';
-
+import {GoogleOAuthProvider} from "@react-oauth/google";
 // NOTISTACK
 import { SnackbarProvider } from 'notistack';
 
@@ -29,8 +29,9 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const store = createStore(reducer, composeEnhancers(applyMiddleware(thunk)));
 
-const baseUrl = 'https://the-bug-tracker-server.glitch.me/';
-// const baseUrl = 'http://localhost:2300';
+const {REACT_APP_GOOGLE_CLIENT_ID} = process.env;
+// const baseUrl = 'https://the-bug-tracker-server.glitch.me/';
+const baseUrl = 'http://localhost:2300/';
 
 axios.defaults.baseURL = baseUrl;
 
@@ -48,7 +49,9 @@ ReactDOM.render(
 							horizontal: 'left'
 						}}
 					>
-						<App />
+						<GoogleOAuthProvider clientId={REACT_APP_GOOGLE_CLIENT_ID}>
+							<App />
+						</GoogleOAuthProvider>
 					</SnackbarProvider>
 				</ThemeProvider>
 			</BrowserRouter>

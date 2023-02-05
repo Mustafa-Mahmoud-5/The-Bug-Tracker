@@ -38,7 +38,7 @@ const userSchema = new Schema(
 		},
 		password: {
 			type: String,
-			required: true
+			default: null
 		},
 		privateKey: {
 			type: String,
@@ -80,6 +80,42 @@ class UserClass {
 		return [ 'firstName', 'lastName', 'image' ];
 	}
 
+
+	static createToken(userId, email) {
+		const token = jwt.sign({email, userId },`${process.env.TOKEN_SECRET}`,
+			{
+				expiresIn: '3d'
+			}
+		);
+		return token;
+	}
+
+	static async googleSignUpOrSignIn({id_token}) {
+		const decodedToken = jwt.decode(id_token);
+
+    const {given_name, family_name, picture, email} = decodedToken;
+    
+		let user = await this.findOne({email}).lean();
+		
+		if(user) {
+      return this.createToken(user._id, email);
+    }
+
+		const imgObj = { url: picture, publicId: "none" };
+
+		const privateKey = await generateRandomId(18);
+
+		
+		user = await this.create({firstName: given_name, lastName: family_name, password: null, email, privateKey, image: imgObj });
+		console.log("REACHED 4");
+		
+		await this.welcomeMail({ email, firstName: given_name, lastName: family_name });
+		console.log("REACHED 5");
+
+    return this.createToken(user._id, email);
+	}
+
+
 	static async signUp({ firstName, lastName, email, password }) {
 		const user = await this.findOne({ email }).lean();
 
@@ -105,14 +141,8 @@ class UserClass {
 
 		if (!verefiedPassword) sendError('Invalid Password', 403);
 
-		const token = jwt.sign(
-			{ firstName: user.firstName, lastName: user.lastName, email: user.email, userId: user._id },
-			`${process.env.TOKEN_SECRET}`,
-			{
-				expiresIn: '3d'
-			}
-		);
-
+		const token = this.createToken(user._id, email);
+		
 		return token;
 	}
 

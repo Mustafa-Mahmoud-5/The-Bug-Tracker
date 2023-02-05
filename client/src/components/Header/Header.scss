@@ -12,6 +12,16 @@
     margin-top: 50px;
     text-align: center;
     width: 80%;
+
+    #google-btn {
+      background-color: #03A9F4 !important; 
+      // display: block;
+      margin: 15px auto;
+      border-radius: 2px !important;
+      &:hover {
+        background-color: #0288D1 !important;
+      }
+    }
   }
 }
 
