@@ -197,7 +197,7 @@ exports.getPersonalUserData = async (req, res, next) => {
 	const { userId } = req;
 
 	try {
-		const user = await User.findById(userId).select(User.publicProps().join(' ') + ' privateKey email').lean();
+		const user = await User.findById(userId).select(User.publicProps().join(' ') + ' privateKey email googleId').lean();
 
 		if (!user) sendError('User is not found', 404);
 

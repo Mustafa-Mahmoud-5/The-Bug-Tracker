@@ -40,6 +40,10 @@ const userSchema = new Schema(
 			type: String,
 			default: null
 		},
+		googleId: {
+			type: String,
+			default: null
+		},
 		privateKey: {
 			type: String,
 			required: true
@@ -93,7 +97,7 @@ class UserClass {
 	static async googleSignUpOrSignIn({id_token}) {
 		const decodedToken = jwt.decode(id_token);
 
-    const {given_name, family_name, picture, email} = decodedToken;
+    const {given_name, family_name, picture, email, sub} = decodedToken;
     
 		let user = await this.findOne({email}).lean();
 		
@@ -106,7 +110,7 @@ class UserClass {
 		const privateKey = await generateRandomId(18);
 
 		
-		user = await this.create({firstName: given_name, lastName: family_name, password: null, email, privateKey, image: imgObj });
+		user = await this.create({firstName: given_name, lastName: family_name, password: null, email, privateKey, image: imgObj, googleId: sub});
 		console.log("REACHED 4");
 		
 		await this.welcomeMail({ email, firstName: given_name, lastName: family_name });

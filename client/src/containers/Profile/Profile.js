@@ -108,6 +108,8 @@ export class Profile extends PureComponent {
           <div className="col-md-4">
           <div id='profilePicWrapper'>
 							{/* EDIT ICON */}
+              {!this.props.user?.googleId && 
+              (
 							<div className='editProfilePic'>
 								<input accept='image/*' style={{ display: 'none' }} id='icon-button-file' type='file' onChange={this.newImageHandler} />
 								<label htmlFor='icon-button-file'>
@@ -115,7 +117,8 @@ export class Profile extends PureComponent {
 										<PhotoCamera />
 									</IconButton>
 								</label>
-							</div>
+							</div> 
+              )}
 							{/* IMG */}
 							<Avatar src={user?.image?.url} alt="Profile-Pic" id='profilePic'/>
 						</div>
@@ -127,7 +130,7 @@ export class Profile extends PureComponent {
                   <hr/>
                 </div>
 
-                <Button color = 'primary' variant = 'contained' onClick={() => this.props.history.push('/bugtracker/profile/edit')}>Edit</Button>
+                {!this.props.user?.googleId && <Button color = 'primary' variant = 'contained' onClick={() => this.props.history.push('/bugtracker/profile/edit')}>Edit</Button>}
             </div>
             }
           </div>
