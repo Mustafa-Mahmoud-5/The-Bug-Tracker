@@ -15,12 +15,9 @@ const oAuth2Client = new OAuth2Client(
 
 exports.googleSignIn = async (req, res, next) => {
 	try {
-		console.log("REACHED 1");
 		const { tokens} = await oAuth2Client.getToken(req.body.code);
-		console.log("REACHED 2");
 
 		const token = await User.googleSignUpOrSignIn(tokens);
-		console.log("REACHED 6");
 
 		res.status(200).json({message: 'User logged in successfully', token}); 
 	} catch (error) {

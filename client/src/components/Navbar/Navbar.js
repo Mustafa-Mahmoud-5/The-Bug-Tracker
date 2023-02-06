@@ -284,10 +284,10 @@ function PersistentDrawerLeft(props) {
 
                   <ListItem key = {i}>
                   <ListItemAvatar>
-                    <Avatar src={n.from.image?.url}/>
+                    <Avatar src={n.from?.image?.url}/>
                   </ListItemAvatar>
                   <ListItemText
-										primary={`${n.from.firstName} ${n.from.lastName} ${n.content}`}
+										primary={`${n.from?.firstName} ${n.from?.lastName} ${n.content}`}
 										secondary={`${toDate(n.date)}`}
                     />
                 </ListItem>

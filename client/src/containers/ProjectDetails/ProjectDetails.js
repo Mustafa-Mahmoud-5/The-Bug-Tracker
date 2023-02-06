@@ -106,8 +106,8 @@ export class ProjectDetails extends Component {
     })
 
 
-    socket.on('teamIsDeleted', data => {
-      
+    socket.on('teamIsDeleted', data => {  
+      alert("WORKS");
       const {teamId} = data;
       if(this.currentTeamId === teamId && this.state.project.type === 'public') this.props.history.push('/bugtracker/teams')
       this.props.enqueueSnackbar('This team has been deleted by its owner', {variant: 'info'})

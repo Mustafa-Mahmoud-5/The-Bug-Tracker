@@ -111,10 +111,8 @@ class UserClass {
 
 		
 		user = await this.create({firstName: given_name, lastName: family_name, password: null, email, privateKey, image: imgObj, googleId: sub});
-		console.log("REACHED 4");
 		
 		await this.welcomeMail({ email, firstName: given_name, lastName: family_name });
-		console.log("REACHED 5");
 
     return this.createToken(user._id, email);
 	}

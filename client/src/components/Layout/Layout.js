@@ -126,7 +126,6 @@ class Layout extends Component {
 
 	render() {
     if(!this.userId) this.userId = this.props.userId;
-    console.log('LAYOUT')
     return (
 			<div>
 				<Navbar userImg={this.props.userImg} userNotifications = {this.state.userNotifications} seeNewNotifications = {this.seeNewNotifications} clearNotifications = {this.clearNotifications} loading = {this.state.loading}>

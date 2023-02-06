@@ -60,10 +60,10 @@ mongoose
 		const httpServer = app.listen(process.env.PORT || port);
 
 		const io = initIo(httpServer);
-
 		io.on('connection', socket => {
 			console.log(socket.id);
 		});
+
 	})
 	.catch(err => {
 		console.log('Failed To Connect...', err);
